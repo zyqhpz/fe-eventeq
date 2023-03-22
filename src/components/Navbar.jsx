@@ -14,9 +14,18 @@ import {
   useDisclosure,
   IconButton,
   Hide,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
 } from "@chakra-ui/react";
 import {
   MoonIcon,
+  ChevronDownIcon,
   SunIcon,
   HamburgerIcon,
   CloseIcon,
@@ -40,12 +49,22 @@ import {
 // }
 
 import React from "react";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee, faPerson, faCircleUser } from "@fortawesome/free-solid-svg-icons";
+
+// import { solid, regular, brands, icon } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
+
+
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
+  
+  // var first_name = "John";
+
   return (
-    <nav className="bg-gray-800 w-96" style={{ width: "100%" }}>
+    <nav className="bg-gray-800 w-full fixed">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-between h-16">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -89,9 +108,12 @@ const Navbar = () => {
                 />
               </svg>
             </button>
+            {/* <FontAwesomeIcon icon={solid("user-secret")} /> */}
+            {/* <FontAwesomeIcon icon={icon({ name: "coffee", style: "solid" })} /> */}
+            {/* <FontAwesomeIcon icon={brands("twitter")} /> */}
           </div>
 
-          <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+          <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start sm:justify-between">
             <div className="flex-shrink-0 flex items-center">
               {/* <FontAwesomeIcon icon={faUser} className="text-white mr-2" /> */}
               <h1 className="text-white font-bold text-xl">My Website</h1>
@@ -119,6 +141,20 @@ const Navbar = () => {
                 >
                   Contact
                 </a>
+                <Menu>
+                  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                    <FontAwesomeIcon icon={faCircleUser} />
+                    {/* &nbsp; Hi, {first_name} */}
+                    &nbsp; Hi, {"John"}
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem>Login</MenuItem>
+                    <MenuItem>Sign Up</MenuItem>
+                    <MenuDivider />
+                    <MenuItem>Help</MenuItem>
+                    <MenuItem>About Us</MenuItem>
+                  </MenuList>
+                </Menu>
               </div>
             </div>
           </div>
