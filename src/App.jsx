@@ -1,17 +1,15 @@
-import { useState } from "react";
-import Navbar from "./components/Navbar";
-import { ChakraProvider } from "@chakra-ui/react";
-import SignIn from "./components/SignIn";
+import SignIn from "./components/pages/SignIn";
+import Home from "./components/pages/Home";
 
-import Navigation from "./components/Navigation";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
-
   return (
     <div className="App">
-      <Navigation />
-      {/* <Navbar /> */}
-      <div className="bg-gray-100 w-full h-screen"></div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<SignIn />} />
+      </Routes>
     </div>
   );
 }
