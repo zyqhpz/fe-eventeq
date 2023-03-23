@@ -1,8 +1,9 @@
+import Footer from "../ui/Footer";
 import Navbar from "../ui/Navbar";
 
 function Home() {
   return (
-    <div className="Home">
+    <div className="Home min-h-screen flex flex-col">
       <Navbar />
       <div className="bg-gray-100 w-screen h-screen">
         <div className="flex flex-col items-center justify-center h-full">
@@ -11,6 +12,7 @@ function Home() {
             <p className="text-gray-600">This is the home page</p>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }
