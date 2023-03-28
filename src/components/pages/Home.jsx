@@ -59,11 +59,11 @@ function Home() {
   return (
     <div className="Home min-h-screen flex flex-col">
       <Navbar />
-      <div className="bg-gray-100 w-screen h-screen">
+      <div className="bg-gray-100 h-screen">
         {/* div for items list */}
-        <div className="flex flex-col items-center justify-center lg:px-32 py-12">
+        <div className="flex flex-col items-center justify-center px-12 lg:px-32 py-12">
           {/* For loop of items */}
-          <div className="grid grid-cols-3 md:grid-cols-5 items-center justify-center gap-4">
+          <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
             {items.map((item) => (
               <ItemCard item={item} key={item.id} className="m-2" />
             ))}

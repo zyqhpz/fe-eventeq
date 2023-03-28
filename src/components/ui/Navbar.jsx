@@ -12,6 +12,7 @@ import {
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 
 import EventEQLogo from './../../assets/EventEQ.png'
+import SearchBar from './SearchBar'
 
 const products = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -57,7 +58,10 @@ export default function Navbar() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <Popover.Group className="hidden lg:flex lg:gap-x-12">
+        <div className="hidden lg:flex lg:gap-x-12">
+          <SearchBar />
+        </div>
+        {/* <Popover.Group className="hidden lg:flex lg:gap-x-12">
           <Popover className="relative">
             <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 px-2 hover:text-orange-500">
               Product
@@ -139,7 +143,7 @@ export default function Navbar() {
           >
             Company
           </a>
-        </Popover.Group>
+        </Popover.Group> */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <a
             href="/login"
@@ -149,7 +153,7 @@ export default function Navbar() {
           </a>
         </div>
       </nav>
-      <hr/>
+      <hr />
       <Dialog
         as="div"
         className="lg:hidden"
