@@ -8,7 +8,7 @@ export default function SearchBar() {
           type="text"
           className="border-none rounded-l-lg pl-4 h-full w-full"
           placeholder="What to rent?"
-          autocomplete="off"
+          autoComplete="off"
         />
         <button className="px-2 rounded-none rounded-r-lg h-full">
           <FontAwesomeIcon icon={faMagnifyingGlass} className="px-2" />

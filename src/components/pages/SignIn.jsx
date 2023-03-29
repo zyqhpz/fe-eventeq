@@ -76,7 +76,7 @@ export default function SignIn() {
             <p className="mt-2 text-center text-sm text-gray-600">
               Need an account?{" "}
               <a
-                href="#"
+                href="/register"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Sign up here!
@@ -84,15 +84,18 @@ export default function SignIn() {
             </p>
           </div>
           <form
-            className="mt-8 space-y-6"
+            className="space-y-6"
             onSubmit={handleSubmit}
             method="POST"
           >
             <input type="hidden" name="remember" defaultValue="true" />
             <div className="-space-y-px rounded-md shadow-sm">
-              <div>
-                <label htmlFor="email-address" className="sr-only">
-                  Email address
+              <div className="">
+                <label
+                  htmlFor="email-address"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Email
                 </label>
                 <input
                   id="email-address"
@@ -100,14 +103,17 @@ export default function SignIn() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Email address"
+                  className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  placeholder="name@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div>
-                <label htmlFor="password" className="sr-only">
+              <div className="pt-4">
+                <label
+                  htmlFor="password"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
                   Password
                 </label>
                 <input
@@ -116,10 +122,10 @@ export default function SignIn() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Password"
+                  className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="•••••••••"
                 />
               </div>
             </div>
