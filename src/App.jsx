@@ -4,6 +4,8 @@ import NotFound from "./components/pages/NotFound";
 import SignUp from "./components/pages/SignUp";
 
 import { Route, Routes } from "react-router-dom";
+import NewItem from "./components/pages/NewItem";
+import DisplayImage from "./components/pages/DisplayImage";
 
 function App() {
   return (
@@ -13,6 +15,11 @@ function App() {
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
         <Route path="*" element={<NotFound/>} />
+
+
+        {/* item */}
+        <Route path="/item/create" element={<NewItem/>} />
+        <Route path="/item/:id" element={<DisplayImage/>} />
       </Routes>
     </div>
   );
