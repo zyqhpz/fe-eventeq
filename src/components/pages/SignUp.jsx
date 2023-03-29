@@ -14,7 +14,7 @@ import { Alert, AlertIcon } from "@chakra-ui/react";
 import Footer from "../ui/Footer";
 
 export default function SignUp() {
-  const login = (email, password) => {
+  const register = (firstName, lastName, email, password) => {
     return axios.post(
       "http://localhost:8080/api/user/register",
       {
@@ -36,10 +36,10 @@ export default function SignUp() {
   const RegisterError = () => {
     return toast({
       title: "Login failed.",
-      description: "Please check your email and password.",
+      description: "Email has been taken.",
       status: "error",
       position: "top-right",
-      duration: 9000,
+      duration: 5000,
       isClosable: true,
     });
   };
@@ -47,7 +47,7 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault(); // prevent the default form submission behavior
 
-    login(email, password)
+    register(firstName, lastName, email, password)
       .then((response) => {
         if (response.data.status == "success") {
           window.location.href = "/";
@@ -62,10 +62,12 @@ export default function SignUp() {
 
   // function to check if password and confirm password match
   const validatePassword = (e) => {
+    setConfirmPassword(e.target.value);
     if (password != e.target.value) {
       setIsPasswordMatch(false);
       return false;
     } else {
+      // console.log("password match")
       setIsPasswordMatch(true);
       setConfirmPassword(e.target.value);
       return true;
@@ -79,11 +81,12 @@ export default function SignUp() {
       email != "" &&
       password != "" &&
       confirmPassword != "" &&
-      IsPasswordMatch
+      validatePassword
     ) {
-      console.log("all fields are filled");
+      // console.log("all fields are filled");
       setIsAvailableToSubmit(true);
     } else {
+      // console.log("all fields are not filled");
       setIsAvailableToSubmit(false);
     }
   };
@@ -179,7 +182,7 @@ export default function SignUp() {
                   id="email-address"
                   name="email"
                   type="email"
-                  autoComplete="email"
+                  autoComplete="off"
                   required
                   className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   placeholder="name@email.com"
