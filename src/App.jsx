@@ -6,6 +6,7 @@ import SignUp from "./components/pages/SignUp";
 import { Route, Routes } from "react-router-dom";
 import NewItem from "./components/pages/NewItem";
 import DisplayImage from "./components/pages/DisplayImage";
+import ItemDetails from "./components/pages/ItemDetails";
 
 function App() {
   return (
@@ -20,6 +21,10 @@ function App() {
         {/* item */}
         <Route path="/item/create" element={<NewItem/>} />
         <Route path="/item/:id" element={<DisplayImage/>} />
+        <Route path="/listing/item/:id" element={<ItemDetails/>} />
+
+        {/* Event */}
+        <Route path="/listing/event/:id" element={<DisplayImage/>} />
       </Routes>
     </div>
   );
