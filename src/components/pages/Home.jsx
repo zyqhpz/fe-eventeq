@@ -2,62 +2,25 @@ import Footer from "../ui/Footer";
 import Navbar from "../ui/Navbar";
 import ItemCard from "../ui/ItemCard";
 
-function Home() {
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-  const items = [
-    {
-      id: 1,
-      name: "Item 1",
-      price: 10,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Johnny",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-  ];
+function Home() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/item")
+      .then((res) => {
+        setItems(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
-    <div className="Home min-h-screen flex flex-col">
+    <div className="Home min-h-screen flex flex-col w-screen">
       <Navbar />
       <div className="bg-gray-100 h-screen">
         {/* div for items list */}
@@ -65,7 +28,7 @@ function Home() {
           {/* For loop of items */}
           <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
             {items.map((item) => (
-              <ItemCard item={item} key={item.id} className="m-2" />
+              <ItemCard item={item} key={item.ID} className="m-2" />
             ))}
           </div>
         </div>
