@@ -19,10 +19,13 @@ export default function ItemCard({ item }) {
 
   var imagePath = "http://localhost:8080/api/item/image/" + item.Image;
 
+  var detailsPath = "/listing/item/" + item.ID;
+
   return (
-    <div
+    <a
       key={item.ID}
       className="flex max-w-xl flex-col items-start justify-between p-3 lg:p-5 space-y-6 transition duration-200 ease-in-out transform bg-white rounded-lg shadow-xl hover:scale-105 hover:shadow-2xl"
+      href={detailsPath}
     >
       <div className="group relative">
         <img src={imagePath} className="rounded-md object-cover h-44 w-52" />
@@ -41,6 +44,6 @@ export default function ItemCard({ item }) {
         </div>
         <p className="text-gray-500">RM {item.Price} /day</p>
       </div>
-    </div>
+    </a>
   );
 }
