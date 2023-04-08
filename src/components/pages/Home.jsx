@@ -2,72 +2,52 @@ import Footer from "../ui/Footer";
 import Navbar from "../ui/Navbar";
 import ItemCard from "../ui/ItemCard";
 
-function Home() {
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-  const items = [
-    {
-      id: 1,
-      name: "Item 1",
-      price: 10,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Johnny",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-    {
-      id: 2,
-      name: "Item 2",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80",
-      owner: "Jason",
-    },
-  ];
+function Home() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/item")
+      .then((res) => {
+        setItems(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        // console.log(err);
+      });
+  }, []);
 
   return (
-    <div className="Home min-h-screen flex flex-col">
+    <div className="Home min-h-screen flex flex-col w-screen">
       <Navbar />
       <div className="bg-gray-100 h-screen">
         {/* div for items list */}
         <div className="flex flex-col items-center justify-center px-12 lg:px-32 py-12">
-          {/* For loop of items */}
-          <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
-            {items.map((item) => (
-              <ItemCard item={item} key={item.id} className="m-2" />
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
+              {[...Array(10)].map((x, i) => (
+                <div role="status" className="max-w-sm animate-pulse m-6" key={i}>
+                  <div className="h-44 w-52 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                    <div className="h-4 w-40 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                  </div>
+                  <span className="sr-only">Loading...</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            // For loop of items
+            <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
+              {items.map((item) => (
+                <ItemCard item={item} key={item.ID} className="m-2" />
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <Footer />
