@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 
 import axios from "axios";
 
+import path from "../utils/path";
+
 export default function ItemDetails() {
     const { id } = useParams();
     const [item, setItem] = useState(null);
@@ -10,7 +12,7 @@ export default function ItemDetails() {
     
     useEffect(() => {
         axios
-        .get(`http://localhost:8080/api/item/${id}`)
+        .get(path.url + "api/item/" + id)
         .then((response) => {
             setItem(response.data);
             setLoading(false);

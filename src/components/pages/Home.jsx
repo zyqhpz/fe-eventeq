@@ -5,13 +5,15 @@ import ItemCard from "../ui/ItemCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+import path from "../utils/path";
+
 function Home() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/item")
+      .get(path.url + "api/item")
       .then((res) => {
         setItems(res.data);
         setLoading(false);
