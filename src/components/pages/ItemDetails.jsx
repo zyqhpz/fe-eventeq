@@ -44,7 +44,7 @@ export default function ItemDetails() {
             {/* <p>{item.Image}</p> */}
             <img
               className="w-72"
-              src={"http://localhost:8080/api/item/image/" + item.Image}
+              src={path.url + "api/item/image/" + item.Image}
               alt="item image"
             />
           </div>
