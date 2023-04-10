@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+import path from "../utils/path";
+
 export default function DisplayImage() {
   const [imageData, setImageData] = useState(null);
 
   // get the :id parameter from the URL
-    const { id } = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
     // Make GET request to retrieve image data from backend API
     axios
-      .get("http://localhost:8080/api/item/image/" + id, {
+      .get(path.url + id, {
         responseType: "arraybuffer",
       })
       .then((response) => {

@@ -15,9 +15,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
+import path from "../utils/path";
+
 export default function ItemCard({ item }) {
 
-  var imagePath = "http://localhost:8080/api/item/image/" + item.Image;
+  var imagePath = path.url + "api/item/image/" + item.Image;
 
   var detailsPath = "/listing/item/" + item.ID;
 
