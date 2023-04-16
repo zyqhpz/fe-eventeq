@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -64,28 +64,28 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
             </Menu.Item>
             <Menu.Item className={isAuthenticated ? "hidden" : "block"}>
               {({ active }) => (
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className={classNames(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block px-4 py-2 text-sm"
                   )}
                 >
                   Login
-                </a>
+                </Link>
               )}
             </Menu.Item>
             <Menu.Item className={isAuthenticated ? "hidden" : "block"}>
               {({ active }) => (
-                <a
-                  href="/register"
+                <Link
+                  to="/register"
                   className={classNames(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block px-4 py-2 text-sm"
                   )}
                 >
                   Register
-                </a>
+                </Link>
               )}
             </Menu.Item>
             <form
