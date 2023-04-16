@@ -3,8 +3,10 @@ import Navbar from "../ui/Navbar";
 import EventEQLogo from "../../assets/EventEQ.png";
 
 import axios from "axios";
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import path from "../utils/path";
 
 import {
   useToast,
@@ -12,17 +14,10 @@ import {
 import Footer from "../ui/Footer";
 
 export default function SignIn() {
-  const login = (email, password) => {
-    return axios.post("http://localhost:8080/api/user/login", {
-      email: email,
-      password: password,
 
-    }, {
-        headers: {
-          "Content-Type": "application/json",
-      }
-    });
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   // Error feedback for login failure
   const toast = useToast();
@@ -39,25 +34,29 @@ export default function SignIn() {
     );
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault(); // prevent the default form submission behavior
 
-    login(email, password)
-      .then((response) => {
-        if (response.data.status == "success") {
-          window.location.href = "/";
-        }
-        else {
-          ErrorLogin();
-        }
-      })
-      .catch((error) => {
-        console.error("Login error:", error.response.data);
-      });
-  };
+    const response = await fetch(path.url + "api/user/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+    const data = await response.json();
+
+    if (data.status == "success") {
+      navigate("/");
+    } else {
+      ErrorLogin();
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
