@@ -16,7 +16,6 @@ export default function SignIn() {
     return axios.post("http://localhost:8080/api/user/login", {
       email: email,
       password: password,
-
     }, {
         headers: {
           "Content-Type": "application/json",
@@ -39,20 +38,46 @@ export default function SignIn() {
     );
   };
 
+  const auth = () => {
+    return axios.get("http://localhost:8080/api/user/auth", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+  };
+
+
   const handleSubmit = (event) => {
     event.preventDefault(); // prevent the default form submission behavior
 
     login(email, password)
       .then((response) => {
         if (response.data.status == "success") {
-          window.location.href = "/";
+          // window.location.href = "/";
+          // GET to /api/user/auth/
+          // if success, redirect to home page
+          // if fail, redirect to login page
+          const authResponse = auth();
+          console.log(authResponse)
+          if (authResponse.data.status == "success") {
+            window.location.href = "/";
+          }
+          else {
+            // window.location.href = "/login";
+            ErrorLogin();
+            console.log("auth fail");
+          }
         }
         else {
           ErrorLogin();
+          console.log("login fail");
         }
       })
       .catch((error) => {
-        console.error("Login error:", error.response.data);
+        // console.error("Login error:", error.response.data);
+        ErrorLogin();
+        console.log(error)
       });
   };
 
