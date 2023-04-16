@@ -3,8 +3,10 @@ import Navbar from "../ui/Navbar";
 import EventEQLogo from "../../assets/EventEQ.png";
 
 import axios from "axios";
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import path from "../utils/path";
 
 import {
   useToast,
@@ -12,16 +14,10 @@ import {
 import Footer from "../ui/Footer";
 
 export default function SignIn() {
-  const login = (email, password) => {
-    return axios.post("http://localhost:8080/api/user/login", {
-      email: email,
-      password: password,
-    }, {
-        headers: {
-          "Content-Type": "application/json",
-      }
-    });
-  };
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   // Error feedback for login failure
   const toast = useToast();
@@ -38,51 +34,29 @@ export default function SignIn() {
     );
   };
 
-  const auth = () => {
-    return axios.get("http://localhost:8080/api/user/auth", {
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // prevent the default form submission behavior
+
+    const response = await fetch(path.url + "api/user/login", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      withCredentials: true,
+      credentials: "include",
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
     });
+
+    const data = await response.json();
+
+    if (data.status == "success") {
+      navigate("/");
+    } else {
+      ErrorLogin();
+    }
   };
-
-
-  const handleSubmit = (event) => {
-    event.preventDefault(); // prevent the default form submission behavior
-
-    login(email, password)
-      .then((response) => {
-        if (response.data.status == "success") {
-          // window.location.href = "/";
-          // GET to /api/user/auth/
-          // if success, redirect to home page
-          // if fail, redirect to login page
-          const authResponse = auth();
-          console.log(authResponse)
-          if (authResponse.data.status == "success") {
-            window.location.href = "/";
-          }
-          else {
-            // window.location.href = "/login";
-            ErrorLogin();
-            console.log("auth fail");
-          }
-        }
-        else {
-          ErrorLogin();
-          console.log("login fail");
-        }
-      })
-      .catch((error) => {
-        // console.error("Login error:", error.response.data);
-        ErrorLogin();
-        console.log(error)
-      });
-  };
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   return (
     <div className="min-h-screen flex flex-col">

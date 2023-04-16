@@ -12,14 +12,13 @@ function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
+      axios
       .get(path.url + "api/item")
       .then((res) => {
         setItems(res.data);
         setLoading(false);
       })
       .catch((err) => {
-        // console.log(err);
       });
   }, []);
 
