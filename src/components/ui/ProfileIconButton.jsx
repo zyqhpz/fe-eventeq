@@ -34,6 +34,7 @@ const navigate = useNavigate();
         setIsAuthenticated(true);
         setUser(data.user);
         setName(data.user.FirstName + " " + data.user.LastName);
+        console.log(data.user, "user");
       } else {
         setIsAuthenticated(false);
       }
@@ -131,6 +132,20 @@ const navigate = useNavigate();
                   )}
                 >
                   Register
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item className={isAuthenticated ? "block" : "hidden"}>
+              {({ active }) => (
+                <Link
+                  to="/item/manage"
+                  state={user }
+                  className={classNames(
+                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    "block w-full px-4 py-2 text-left text-sm"
+                  )}
+                >
+                  Manage Items
                 </Link>
               )}
             </Menu.Item>
