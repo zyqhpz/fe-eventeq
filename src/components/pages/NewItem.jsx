@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import axios from "axios";
+import path from "../utils/path";
 
 export default function NewItem() {
     const [name, setName] = useState("");
@@ -8,8 +10,12 @@ export default function NewItem() {
     const [price, setPrice] = useState(0);
     const [quantity, setQuantity] = useState(0);
     const [image, setImage] = useState(null);
+    const [userID, setUserID] = useState("");
+
+    const state = useLocation().state;
 
     const handleSubmit = (event) => {
+        setUserID(state.ID);
         event.preventDefault();
         const formData = new FormData();
         formData.append("name", name);
@@ -17,8 +23,9 @@ export default function NewItem() {
         formData.append("price", price);
         formData.append("quantity", quantity);
         formData.append("image", image);
+        formData.append("userID", userID);
 
-        axios.post("http://localhost:8080/api/item/create", formData, {
+        axios.post(path.url + "api/item/create", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },

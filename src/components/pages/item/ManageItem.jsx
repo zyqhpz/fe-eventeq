@@ -5,24 +5,13 @@ import React from "react";
 import NewItem from "../NewItem";
 import { useLocation } from "react-router-dom";
 
-export default function ManageItem(props) {
+export default function ManageItem() {
 
     const location = useLocation()
-
-    const state = location.state?.data
-
-    // console.log(props, "props")
-    console.log(location, "location")
-
-    console.log(location.state, "data")
-
-
-    // console.log(state)
-    // const { data } = state;
+    const state = location.state
 
     return (
-        <div className="Home">
-            {/* <div>{data.FirstName + data.LastName}</div> */}
+        <div className="ManageItem">
         <Navbar />
         <div className="bg-gray-100 w-screen h-screen">
             <div className="flex flex-col items-center justify-center h-full">

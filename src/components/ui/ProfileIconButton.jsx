@@ -34,7 +34,6 @@ const navigate = useNavigate();
         setIsAuthenticated(true);
         setUser(data.user);
         setName(data.user.FirstName + " " + data.user.LastName);
-        console.log(data.user, "user");
       } else {
         setIsAuthenticated(false);
       }
