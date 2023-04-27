@@ -7,6 +7,7 @@ import { Route, Routes } from "react-router-dom";
 import NewItem from "./components/pages/NewItem";
 import DisplayImage from "./components/pages/DisplayImage";
 import ItemDetails from "./components/pages/ItemDetails";
+import ManageItem from "./components/pages/item/ManageItem";
 
 function App() {
   return (
@@ -17,8 +18,8 @@ function App() {
         <Route path="/register" element={<SignUp />} />
         <Route path="*" element={<NotFound/>} />
 
-
         {/* item */}
+        <Route path="/item/manage" element={<ManageItem/>}></Route>
         <Route path="/item/create" element={<NewItem/>} />
         <Route path="/item/:id" element={<DisplayImage/>} />
         <Route path="/listing/item/:id" element={<ItemDetails/>} />
