@@ -1,5 +1,11 @@
 import React, { useState } from "react";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+
+import axios from "axios";
+import path from "../../utils/path";
+
 export default function ImageUploader() {
   const [selectedImages, setSelectedImages] = useState([]);
 
@@ -13,6 +19,16 @@ export default function ImageUploader() {
 
     setSelectedImages((previousImages) => previousImages.concat(imagesArray));
 
+    // change value of id="file-upload" to null
+
+    // const fileUploadInput = document.getElementById("file-upload");
+    // fileUploadInput.value = selectedImages
+    //   .map((image) => image.name)
+    //   .join(", ");
+
+      console.log(selectedImages);
+
+
     // FOR BUG IN CHROME
     event.target.value = "";
   };
@@ -22,41 +38,71 @@ export default function ImageUploader() {
     URL.revokeObjectURL(image);
   }
 
+      const handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        formData.append("images", selectedImages);
+
+        axios
+          .post(path.url + "api/item/createImage", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      };
+
+
+
   return (
     <section>
-      <label
-        htmlFor="file-upload"
-        className="relative block w-full h-48 mt-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
-      >
-        <div className="absolute top-0 left-0 w-full h-full opacity-0"></div>
-        <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 hover:bg-gray-300">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-10 h-10 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          <p className="mt-1 text-sm text-gray-600">
-            Drag and drop or click to add images
-          </p>
-        </div>
+      <form onSubmit={handleSubmit}>
+      {/* <form action={path.url + "api/item/createImage"} encType="multipart/form-data" method="POST"> */}
+        <label
+          htmlFor="file-upload"
+          className="relative block w-full h-48 mt-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
+        >
+          <div className="absolute top-0 left-0 w-full h-full opacity-0"></div>
+          <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 hover:bg-gray-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-10 h-10 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            <p className="mt-1 text-sm text-gray-600">
+              Drag and drop or click to add images
+            </p>
+          </div>
+          <input
+            type="file"
+            id="file-upload"
+            className="absolute top-0 left-0 w-full h-full opacity-0"
+            accept="image/png,image/jpeg,image/webp"
+            name="images"
+            multiple
+            onChange={onSelectFile}
+          />
+        </label>
         <input
-          type="file"
-          id="file-upload"
-          className="absolute top-0 left-0 w-full h-full opacity-0"
-          accept="image/png,image/jpeg,image/webp"
-          multiple
-          onChange={onSelectFile}
+          type="submit"
+          className="bg-blue-400"
+          value="Add Images"
         />
-      </label>
+      </form>
       <br />
 
       {/* <input type="file" multiple /> */}
@@ -81,16 +127,23 @@ export default function ImageUploader() {
           </button>
         ))}
 
-      <div className="images">
+      <div className="images flex gap-2">
         {selectedImages &&
           selectedImages.map((image, index) => {
             return (
-              <div key={image} className="image">
+              <div key={image} className="image w-32 h-32">
                 <img src={image} height="200" alt="upload" />
-                <button onClick={() => deleteHandler(image)}>
-                  delete image
+                <button
+                  onClick={() => deleteHandler(image)}
+                  className="disabled:pointer-events-none w-6 h-6 rounded-full"
+                >
+                  {/* delete image */}
+                  <FontAwesomeIcon
+                    icon={faCircleXmark}
+                    className="text-red-500 w-full h-full"
+                  />
                 </button>
-                <p>{index + 1}</p>
+                {/* <p>{index + 1}</p> */}
               </div>
             );
           })}
