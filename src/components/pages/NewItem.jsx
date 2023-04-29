@@ -30,7 +30,7 @@ export default function NewItem() {
         formData.append("imagesCount", selectedImages.length);
         images.forEach(async (image, index) => {
           // const compressedImage = await compressImage(image);
-          // formData.append(`images-${index}`, compressedImage);\
+          // formData.append(`images-${index}`, compressedImage);
           formData.append(`images-${index}`, image);
         });
 

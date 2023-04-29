@@ -37,16 +37,26 @@ export default function ItemDetails() {
             <h1>{item.Name}</h1>
             <p>{item.Description}</p>
             <p>{item.Price}</p>
+            <p>{item.Images.length}</p>
             {/* <p>{item.ategory}</p> */}
             {/* <p>{item.location}</p> */}
             {/* <p>{item.contact}</p> */}
             {/* <p>{formattedDate}</p> */}
             {/* <p>{item.Image}</p> */}
-            <img
+            {/* <img
               className="w-72"
-              src={path.url + "api/item/image/" + item.Image}
+              src={path.url + "api/item/image/" + item.Images}
               alt="item image"
-            />
+            /> */}
+            {
+              item.Images.map((image) => (
+                <img
+                  className="w-72"
+                  src={path.url + "api/item/image/" + image}
+                  alt="item image"
+                />
+              ))
+            }
           </div>
         )}
       </div>
