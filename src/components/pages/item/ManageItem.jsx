@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import { useTable } from "react-table";
 
 import NewItem from "../NewItem";
+import ImageUploader from "./UploadImages";
 
 import axios from "axios";
 import path from "../../utils/path";
@@ -13,19 +14,19 @@ import path from "../../utils/path";
 export default function ManageItem(props) {
     const state = useLocation().state;
     const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        axios
-          .get(path.url + "api/item/user/" + state.ID)
-          .then((res) => {
-            setItems(res.data.map((
-                {Name, Description}
-            ) => ({Name, Description})))
-            setLoading(false);
-          })
-          .catch((err) => {});
-    }, [])
+    // useEffect(() => {
+    //     axios
+    //       .get(path.url + "api/item/user/" + state.ID)
+    //       .then((res) => {
+    //         setItems(res.data.map((
+    //             {Name, Description}
+    //         ) => ({Name, Description})))
+    //         setLoading(false);
+    //       })
+    //       .catch((err) => {});
+    // }, [])
 
     const data = useMemo(() => items, [items]);
 
@@ -78,7 +79,7 @@ export default function ManageItem(props) {
               </button>
             ) : (
               <div>
-                <table
+                {/* <table
                   {...getTableProps()}
                   className="w-9/12 text-sm text-left text-gray-500 mx-16 border-gray-700"
                 >
@@ -117,8 +118,9 @@ export default function ManageItem(props) {
                       );
                     })}
                   </tbody>
-                </table>
+                </table> */}
                 <NewItem />
+                {/* <ImageUploader /> */}
               </div>
             )}
           </div>

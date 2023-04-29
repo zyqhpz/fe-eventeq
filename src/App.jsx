@@ -16,16 +16,17 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
-        <Route path="*" element={<NotFound/>} />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/user/manage/profile"></Route>
 
         {/* item */}
-        <Route path="/item/manage" element={<ManageItem/>}></Route>
-        <Route path="/item/create" element={<NewItem/>} />
-        <Route path="/item/:id" element={<DisplayImage/>} />
-        <Route path="/listing/item/:id" element={<ItemDetails/>} />
+        <Route path="/user/manage/item" element={<ManageItem />}></Route>
+        <Route path="/item/create" element={<NewItem />} />
+        <Route path="/item/:id" element={<DisplayImage />} />
+        <Route path="/listing/item/:id" element={<ItemDetails />} />
 
         {/* Event */}
-        <Route path="/listing/event/:id" element={<DisplayImage/>} />
+        <Route path="/listing/event/:id" element={<DisplayImage />} />
       </Routes>
     </div>
   );
