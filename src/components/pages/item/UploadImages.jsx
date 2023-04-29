@@ -8,6 +8,7 @@ import path from "../../utils/path";
 
 export default function ImageUploader() {
   const [selectedImages, setSelectedImages] = useState([]);
+  const [images, setImages] = useState([]);
 
   const onSelectFile = (event) => {
     const selectedFiles = event.target.files;
@@ -16,18 +17,9 @@ export default function ImageUploader() {
     const imagesArray = selectedFilesArray.map((file) => {
       return URL.createObjectURL(file);
     });
-
+    
+    setImages((previousImages) => previousImages.concat(selectedFilesArray));
     setSelectedImages((previousImages) => previousImages.concat(imagesArray));
-
-    // change value of id="file-upload" to null
-
-    // const fileUploadInput = document.getElementById("file-upload");
-    // fileUploadInput.value = selectedImages
-    //   .map((image) => image.name)
-    //   .join(", ");
-
-      console.log(selectedImages);
-
 
     // FOR BUG IN CHROME
     event.target.value = "";
@@ -38,31 +30,37 @@ export default function ImageUploader() {
     URL.revokeObjectURL(image);
   }
 
-      const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData();
-        formData.append("images", selectedImages);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
 
-        axios
-          .post(path.url + "api/item/createImage", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      };
+    formData.append("count", selectedImages.length);
 
+    images.forEach((image, index) => {
+      formData.append(`images-${index}`, image);
+    });
 
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+    
+    axios
+      .post(path.url + "api/item/createImage", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   return (
     <section>
       <form onSubmit={handleSubmit}>
-      {/* <form action={path.url + "api/item/createImage"} encType="multipart/form-data" method="POST"> */}
         <label
           htmlFor="file-upload"
           className="relative block w-full h-48 mt-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
@@ -104,9 +102,6 @@ export default function ImageUploader() {
         />
       </form>
       <br />
-
-      {/* <input type="file" multiple /> */}
-
       {selectedImages.length > 0 &&
         (selectedImages.length > 10 ? (
           <p className="error">
@@ -126,7 +121,6 @@ export default function ImageUploader() {
             {selectedImages.length === 1 ? "" : "S"}
           </button>
         ))}
-
       <div className="images flex gap-2">
         {selectedImages &&
           selectedImages.map((image, index) => {
