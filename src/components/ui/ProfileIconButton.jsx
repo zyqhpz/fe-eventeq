@@ -137,14 +137,14 @@ const navigate = useNavigate();
             <Menu.Item className={isAuthenticated ? "block" : "hidden"}>
               {({ active }) => (
                 <Link
-                  to="/item/manage"
+                  to="/user/manage/item"
                   state={user }
                   className={classNames(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block w-full px-4 py-2 text-left text-sm"
                   )}
                 >
-                  Manage Items
+                  Manage items
                 </Link>
               )}
             </Menu.Item>

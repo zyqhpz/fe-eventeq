@@ -19,7 +19,7 @@ import path from "../utils/path";
 
 export default function ItemCard({ item }) {
 
-  var imagePath = path.url + "api/item/image/" + item.Image;
+  var imagePath = path.url + "api/item/image/" + item.Images[0]
 
   var detailsPath = "/listing/item/" + item.ID;
 

@@ -6,29 +6,27 @@ import { useLocation } from "react-router-dom";
 import { useTable } from "react-table";
 
 import NewItem from "../NewItem";
+import ImageUploader from "./UploadImages";
 
 import axios from "axios";
 import path from "../../utils/path";
 
 export default function ManageItem(props) {
-
-    const location = useLocation();
-    const state = location.state;
-
+    const state = useLocation().state;
     const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        axios
-          .get(path.url + "api/item/user/" + state.ID)
-          .then((res) => {
-            setItems(res.data.map((
-                {Name, Description}
-            ) => ({Name, Description})))
-            setLoading(false);
-          })
-          .catch((err) => {});
-    }, [])
+    // useEffect(() => {
+    //     axios
+    //       .get(path.url + "api/item/user/" + state.ID)
+    //       .then((res) => {
+    //         setItems(res.data.map((
+    //             {Name, Description}
+    //         ) => ({Name, Description})))
+    //         setLoading(false);
+    //       })
+    //       .catch((err) => {});
+    // }, [])
 
     const data = useMemo(() => items, [items]);
 
@@ -54,7 +52,6 @@ export default function ManageItem(props) {
         <Navbar />
         <div className="bg-gray-100 w-screen h-screen">
           <div className="flex flex-col items-center justify-center h-full">
-            {/* <NewItem /> */}
             {loading ? (
               <button
                 disabled
@@ -64,7 +61,7 @@ export default function ManageItem(props) {
                 <svg
                   aria-hidden="true"
                   role="status"
-                  class="inline w-4 h-4 mr-3 text-white animate-spin"
+                  className="inline w-4 h-4 mr-3 text-white animate-spin"
                   viewBox="0 0 100 101"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -81,46 +78,50 @@ export default function ManageItem(props) {
                 Loading...
               </button>
             ) : (
-              <table
-                {...getTableProps()}
-                className="w-9/12 text-sm text-left text-gray-500 mx-16 border-gray-700"
-              >
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                  {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
-                        <th
-                          {...column.getHeaderProps()}
-                          style={{
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {column.render("Header")}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                  {rows.map((row) => {
-                    prepareRow(row);
-                    return (
-                      <tr
-                        {...row.getRowProps()}
-                        className="bg-white border-b border-gray-200 hover:bg-gray-100"
-                      >
-                        {row.cells.map((cell) => {
-                          return (
-                            <td {...cell.getCellProps()}>
-                              {cell.render("Cell")}
-                            </td>
-                          );
-                        })}
+              <div>
+                {/* <table
+                  {...getTableProps()}
+                  className="w-9/12 text-sm text-left text-gray-500 mx-16 border-gray-700"
+                >
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    {headerGroups.map((headerGroup) => (
+                      <tr {...headerGroup.getHeaderGroupProps()}>
+                        {headerGroup.headers.map((column) => (
+                          <th
+                            {...column.getHeaderProps()}
+                            style={{
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {column.render("Header")}
+                          </th>
+                        ))}
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </thead>
+                  <tbody {...getTableBodyProps()}>
+                    {rows.map((row) => {
+                      prepareRow(row);
+                      return (
+                        <tr
+                          {...row.getRowProps()}
+                          className="bg-white border-b border-gray-200 hover:bg-gray-100"
+                        >
+                          {row.cells.map((cell) => {
+                            return (
+                              <td {...cell.getCellProps()}>
+                                {cell.render("Cell")}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table> */}
+                <NewItem />
+                {/* <ImageUploader /> */}
+              </div>
             )}
           </div>
         </div>
