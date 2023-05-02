@@ -1,4 +1,4 @@
-const isProduction = true;
+const isProduction = false;
 // if ifProduction is true, then the path will be the production path
 // if ifProduction is false, then the path will be the development path
 export default {

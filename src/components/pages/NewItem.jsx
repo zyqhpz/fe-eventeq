@@ -15,10 +15,18 @@ export default function NewItem() {
     const [selectedImages, setSelectedImages] = useState([]);
     const [images, setImages] = useState([]);
     const [userID, setUserID] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const state = useLocation().state;
 
     const handleSubmit = async (event) => {
+        setLoading(true)
+
+        if (loading) {
+          processingSpinner();
+          console.log("loading");
+        }
+
         setUserID(state.ID);
         event.preventDefault();
         const formData = new FormData();
@@ -29,24 +37,30 @@ export default function NewItem() {
         formData.append("quantity", quantity);
         formData.append("imagesCount", selectedImages.length);
         images.forEach(async (image, index) => {
-          // const compressedImage = await compressImage(image);
-          // formData.append(`images-${index}`, compressedImage);
-          formData.append(`images-${index}`, image);
+          const compressedImage = await compressImage(image);
+          formData.append(`images-${index}`, compressedImage);
         });
 
-        console.log(images)
-
-        axios.post(path.url + "api/item/create", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        })
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+        // set interval to 2 seconds
+        const interval = setInterval(() => {
+          if (selectedImages.length === images.length) {
+            clearInterval(interval);
+            axios
+              .post(path.url + "api/item/create", formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              })
+              .then((response) => {
+                console.log(response);
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+            setLoading(false);
+            console.log("done");
+          }
+        }, 2000);
     }
 
     const onSelectFile = (event) => {
@@ -108,88 +122,112 @@ export default function NewItem() {
         };
       });
     };
+    
+    const processingSpinner = (
+      <div className="fixed inset-0 bg-gray-500 opacity-50 z-50">
+        <button type="button" className="bg-orange-500 ..." disabled>
+          <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+          </svg>
+          Creating...
+        </button>
+      </div>
+    );
 
     return (
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Name:
+      <div
+        className={loading ? "fixed inset-0 bg-gray-500 opacity-50 z-50" : ""}
+      >
+        {loading ? (
+                  <button type="button" className="bg-orange-500 fixed inset-0 " disabled>
+                    <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+                    </svg>
+                    Creating...
+                  </button>) : (<></>)}
+        <div>
+          <form onSubmit={handleSubmit}>
+            <label>
+              Name:
+              <input
+                type="text"
+                name="name"
+                autoComplete="off"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </label>
+            <label>
+              Description:
+              <input
+                type="text"
+                name="description"
+                autoComplete="off"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </label>
+            <label>
+              Price:
+              <input
+                type="number"
+                name="price"
+                autoComplete="off"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </label>
+            <label>
+              Quantity:
+              <input
+                type="number"
+                name="quantity"
+                autoComplete="off"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+            </label>
+            <label
+              htmlFor="file-upload"
+              className="relative block w-full h-48 mt-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
+            >
+              Image:
+              <div className="absolute top-0 left-0 w-full h-full opacity-0"></div>
+              <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 hover:bg-gray-300">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-10 h-10 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                <p className="mt-1 text-sm text-gray-600">
+                  Drag and drop or click to add images
+                </p>
+              </div>
+              <input
+                type="file"
+                id="file-upload"
+                className="absolute top-0 left-0 w-full h-full opacity-0"
+                accept="image/png,image/jpeg,image/webp"
+                name="images"
+                multiple
+                onChange={onSelectFile}
+              />
+            </label>
             <input
-              type="text"
-              name="name"
-              autoComplete="off"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              type="submit"
+              className="bg-blue-400 p-12"
+              value="Add Images"
             />
-          </label>
-          <label>
-            Description:
-            <input
-              type="text"
-              name="description"
-              autoComplete="off"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </label>
-          <label>
-            Price:
-            <input
-              type="number"
-              name="price"
-              autoComplete="off"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </label>
-          <label>
-            Quantity:
-            <input
-              type="number"
-              name="quantity"
-              autoComplete="off"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-            />
-          </label>
-          <label
-            htmlFor="file-upload"
-            className="relative block w-full h-48 mt-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
-          >
-            Image:
-            <div className="absolute top-0 left-0 w-full h-full opacity-0"></div>
-            <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 hover:bg-gray-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-10 h-10 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              <p className="mt-1 text-sm text-gray-600">
-                Drag and drop or click to add images
-              </p>
-            </div>
-            <input
-              type="file"
-              id="file-upload"
-              className="absolute top-0 left-0 w-full h-full opacity-0"
-              accept="image/png,image/jpeg,image/webp"
-              name="images"
-              multiple
-              onChange={onSelectFile}
-            />
-          </label>
-          <input type="submit" className="bg-blue-400 p-12" value="Add Images" />
-          {/* <input type="submit" value="Submit" /> */}
-        </form>
+            {/* <input type="submit" value="Submit" /> */}
+          </form>
+        </div>
         <br />
         {selectedImages.length > 0 &&
           (selectedImages.length > 10 ? (
