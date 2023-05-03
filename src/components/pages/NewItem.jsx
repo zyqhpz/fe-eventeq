@@ -35,6 +35,8 @@ export default function NewItem() {
           formData.append(`images-${index}`, compressedImage);
         });
 
+        console.log(images)
+
         // set interval to 2 seconds
         const interval = setInterval(() => {
           if (selectedImages.length === images.length) {
@@ -77,6 +79,10 @@ export default function NewItem() {
 
     function deleteHandler(image) {
       setSelectedImages(selectedImages.filter((e) => e !== image));
+      const index = images.findIndex((e) => e.name === image.name);
+      const newImages = [...images];
+      newImages.splice(index, 1);
+      setImages(newImages);
       URL.revokeObjectURL(image);
     }
 
