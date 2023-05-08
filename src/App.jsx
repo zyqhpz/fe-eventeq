@@ -8,6 +8,7 @@ import NewItem from "./components/pages/NewItem";
 import DisplayImage from "./components/pages/DisplayImage";
 import ItemDetails from "./components/pages/ItemDetails";
 import ManageItem from "./components/pages/item/ManageItem";
+import ChatPage from "./components/pages/chat/ChatPage";
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
 
         {/* Event */}
         <Route path="/listing/event/:id" element={<DisplayImage />} />
+
+        {/* Chat */}
+        <Route path="/message/" element={<ChatPage />} />
       </Routes>
     </div>
   );
