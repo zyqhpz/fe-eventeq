@@ -138,13 +138,31 @@ const navigate = useNavigate();
               {({ active }) => (
                 <Link
                   to="/user/manage/item"
-                  state={user }
+                  state={user}
                   className={classNames(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block w-full px-4 py-2 text-left text-sm"
                   )}
                 >
                   Manage items
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item className={isAuthenticated ? "flex gap-2" : "hidden"}>
+              {({ active }) => (
+                <Link
+                  to="/message"
+                  state={user}
+                  className={classNames(
+                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    "block w-full px-4 py-2 text-left text-sm"
+                  )}
+                >
+                  Message
+                  <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                  </span>
                 </Link>
               )}
             </Menu.Item>
