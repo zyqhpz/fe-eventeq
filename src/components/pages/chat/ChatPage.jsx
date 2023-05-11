@@ -1,4 +1,4 @@
-import React, { useState }from "react";
+import React, { useState, useEffect }from "react";
 
 import { useLocation } from "react-router-dom";
 
@@ -7,6 +7,9 @@ import Navbar from "../../ui/Navbar";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImages, faLocationArrow } from "@fortawesome/free-solid-svg-icons";
+
+import axios from "axios";
+import path from "../../utils/path";
 
 const MessageList = ({ messages }) => (
   <div className="flex flex-col flex-nowrap	space-y-4 w-full">
@@ -63,14 +66,66 @@ const Message = ({ text, sentBy, sentByID, sentAt }) => {
   );
 };
 
-export default function ChatPage() {
+const UsersList = ({ users }) => (
+  <div className="flex flex-col flex-nowrap	space-y-4 w-full overflow-auto">
+    {users &&
+      users.map(({ ID, FirstName, LastName }) => (
+        <User key={ID} FirstName={FirstName} LastName={LastName} />
+      ))}
+  </div>
+);
 
+const User = ({ id, FirstName, LastName }) => {
+  return (
+    <div
+      key={id}
+      className="px-3 flex items-center bg-grey-light cursor-pointer hover:bg-orange-100 pb-2 border-b"
+    >
+      <img
+        className="h-12 w-12 rounded-full"
+        src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"
+      />
+      <div className="ml-4 w-full flex items-center justify-between border-grey-lighter py-4">
+        <p className="text-grey-darkest">
+          {FirstName} {LastName}
+        </p>
+        <p className="text-xs text-grey-darkest">12:45 pm</p>
+      </div>
+    </div>
+  );
+};
+
+export default function ChatPage() {
   const state = useLocation().state;
 
   const [message, setMessage] = useState([]);
   const [messages, setMessages] = useState([]);
   const [messageIsEmpty, setMessageIsEmpty] = useState(true);
   const [error, setError] = useState(false);
+
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(path.url + "api/chat/getUsers/" + state.ID)
+      .then((res) => {
+        setUsers(res.data);
+        setLoadingUsers(false);
+      })
+      .catch((err) => {});
+  }, []);
+  
+  // useEffect(() => {
+  //   axios
+  //     .get(path.url + "api/message")
+  //     .then((res) => {
+  //       setMessages(res.data);
+
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => {});
+  // }, []);
 
   const sendMessage = (text) => {
     const newMessage = {
@@ -105,9 +160,6 @@ export default function ChatPage() {
       <div className="min-h-screen flex flex-col w-screen">
         <Navbar />
         <div className="bg-gray-100 h-full max-w-full">
-          {/* <div className="max-w-xl">
-            <h1>Chat Page</h1>
-          </div> */}
           <div>
             <div
               className="container mx-auto -mt-38 h-screen w-screen"
@@ -115,35 +167,41 @@ export default function ChatPage() {
             >
               <div className="py-2 h-full">
                 <div className="flex border border-grey rounded shadow-lg h-full w-full">
-                  <div className="w-1/3 border flex flex-col">
-                    <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-center items-center">
-                      {/* <div> */}
-                        {/* <img className="w-10 h-10 rounded-full" src="http://andressantibanez.com/res/avatar.png"/> */}
-                      {/* </div> */}
 
-                      {/* <div className="flex"></div> */}
+                  {/* LEFT SECTION */}
+                  <div className="w-1/3 border flex flex-col">
+                    <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-center items-center w-full">
+                      <div className="flex">
+                        <p className="text-grey-darkest">Contacts</p>
+                      </div>
                     </div>
 
-                    <div className="py-2 px-2 bg-grey-lightest">
+                    <div className="py-2 px-2 bg-grey-lightest w-full">
                       <input
                         type="text"
                         className="w-full px-2 py-2 text-sm"
                         placeholder="Search or start new chat"
                       />
+                      <div className="w-full mt-6">
+                        {loadingUsers ? (
+                          <div className="flex justify-center w-full">
+                            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+                          </div>
+                        ) : (
+                          <UsersList users={users} />
+                        )}
+                      </div>
                     </div>
                   </div>
 
+                  {/* RIGHT SECTION*/}
                   <div className="w-2/3 border flex flex-col">
                     <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
                       <div className="flex items-center">
-                        <div>
-                          {/* <img className="w-10 h-10 rounded-full" src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"/> */}
-                        </div>
                         <div className="ml-4">
                           <p className="text-grey-darkest">User Name</p>
                         </div>
                       </div>
-
                       <div className="flex">
                         <div className="ml-6">
                           <svg
