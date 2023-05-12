@@ -1,7 +1,7 @@
 export default function LoadingButton() {
     return (
     <div
-        className="text-white bg-orange-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 inline-flex items-center"
+        className="text-white bg-orange-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 inline-flex items-center select-none"
         >
         <svg
             aria-hidden="true"
