@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from "react";
+import React, { useState, useEffect, useRef }from "react";
 
 import { useLocation } from "react-router-dom";
 
@@ -12,90 +12,6 @@ import axios from "axios";
 import path from "../../utils/path";
 import LoadingButton from "../../ui/LoadingButton";
 
-const MessageList = ({ messages }) => (
-  <div className="flex flex-col flex-nowrap	space-y-4 w-full">
-    {messages &&
-      messages.map(({ id, text, sentBy, sentByID, sentAt }) => (
-        <Message
-          key={id}
-          text={text}
-          sentByID={sentByID}
-          sentBy={sentBy}
-          sentAt={sentAt}
-        />
-      ))}
-  </div>
-);
-
-const Message = ({ text, sentBy, sentByID, sentAt }) => {
-  const messageClassNames = [
-    "flex",
-    "rounded-xl",
-    "px-4",
-    "py-2",
-    "text-base",
-    "max-w-xs",
-    "shadow-sm",
-    sentByID === useLocation().state.ID
-      ? "bg-orange-200 text-black text-right"
-      : "bg-gray-400 text-white text-left",
-  ].join(" ");
-
-  const dateClassNames = [
-    "flex pt-1 ",
-    sentByID === useLocation().state.ID
-      ? "justify-end"
-      : "justify-start",
-  ].join(" ");
-
-  const messageBoxClassNames = [
-    "flex",
-    sentByID === useLocation().state.ID
-      ? "justify-end"
-      : "justify-start",
-  ].join(" ");
-
-  return (
-    <div className={messageBoxClassNames}>
-      <div className="grid grid-cols-1">
-        <div className={messageClassNames}>{text}</div>
-        <div className={dateClassNames}>
-          <p className="text-xs text-gray-500">{sentAt}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const UsersList = ({ users }) => (
-  <div className="flex flex-col flex-nowrap	space-y-4 w-full overflow-auto">
-    {users &&
-      users.map(({ ID, FirstName, LastName }) => (
-        <User key={ID} FirstName={FirstName} LastName={LastName} />
-      ))}
-  </div>
-);
-
-const User = ({ id, FirstName, LastName }) => {
-  return (
-    <div
-      key={id}
-      className="px-3 flex items-center bg-grey-light cursor-pointer hover:bg-orange-100 pb-2 border-b"
-    >
-      <img
-        className="h-12 w-12 rounded-full"
-        src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"
-      />
-      <div className="ml-4 w-full flex items-center justify-between border-grey-lighter py-4">
-        <p className="text-grey-darkest">
-          {FirstName} {LastName}
-        </p>
-        <p className="text-xs text-grey-darkest">12:45 pm</p>
-      </div>
-    </div>
-  );
-};
-
 export default function ChatPage() {
   const state = useLocation().state;
 
@@ -106,6 +22,88 @@ export default function ChatPage() {
 
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const messageEndRef = useRef(null);
+
+  const MessageList = ({ messages }) => (
+    <div className="flex flex-col flex-nowrap	space-y-4 w-full">
+      {messages &&
+        messages.map(({ id, text, sentBy, sentByID, sentAt }) => (
+          <Message
+            key={id}
+            text={text}
+            sentByID={sentByID}
+            sentBy={sentBy}
+            sentAt={sentAt}
+          />
+        ))}
+      <div ref={messageEndRef} />
+    </div>
+  );
+
+  const Message = ({ text, sentBy, sentByID, sentAt }) => {
+    const messageClassNames = [
+      "flex",
+      "rounded-xl",
+      "px-4",
+      "py-2",
+      "text-base",
+      "max-w-xs",
+      "shadow-sm",
+      sentByID === useLocation().state.ID
+        ? "bg-orange-200 text-black text-right"
+        : "bg-gray-400 text-white text-left",
+    ].join(" ");
+
+    const dateClassNames = [
+      "flex pt-1 ",
+      sentByID === useLocation().state.ID ? "justify-end" : "justify-start",
+    ].join(" ");
+
+    const messageBoxClassNames = [
+      "flex",
+      sentByID === useLocation().state.ID ? "justify-end" : "justify-start",
+    ].join(" ");
+
+    return (
+      <div className={messageBoxClassNames}>
+        <div className="grid grid-cols-1">
+          <div className={messageClassNames}>{text}</div>
+          <div className={dateClassNames}>
+            <p className="text-xs text-gray-500">{sentAt}</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const UsersList = ({ users }) => (
+    <div className="flex flex-col flex-nowrap	space-y-4 w-full overflow-auto">
+      {users &&
+        users.map(({ ID, FirstName, LastName }) => (
+          <User key={ID} FirstName={FirstName} LastName={LastName} />
+        ))}
+    </div>
+  );
+
+  const User = ({ id, FirstName, LastName }) => {
+    return (
+      <div
+        key={id}
+        className="px-3 flex items-center bg-grey-light cursor-pointer hover:bg-orange-100 pb-2 border-b"
+      >
+        <img
+          className="h-12 w-12 rounded-full"
+          src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"
+        />
+        <div className="ml-4 w-full flex items-center justify-between border-grey-lighter py-4">
+          <p className="text-grey-darkest">
+            {FirstName} {LastName}
+          </p>
+          <p className="text-xs text-grey-darkest">12:45 pm</p>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     axios
@@ -127,6 +125,10 @@ export default function ChatPage() {
   //     })
   //     .catch((err) => {});
   // }, []);
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const sendMessage = (text) => {
     const newMessage = {
