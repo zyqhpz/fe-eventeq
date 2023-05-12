@@ -10,6 +10,7 @@ import { faImages, faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
 import path from "../../utils/path";
+import LoadingButton from "../../ui/LoadingButton";
 
 const MessageList = ({ messages }) => (
   <div className="flex flex-col flex-nowrap	space-y-4 w-full">
@@ -184,8 +185,8 @@ export default function ChatPage() {
                       />
                       <div className="w-full mt-6">
                         {loadingUsers ? (
-                          <div className="flex justify-center w-full">
-                            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+                          <div className="flex justify-center">
+                            <LoadingButton />
                           </div>
                         ) : (
                           <UsersList users={users} />
