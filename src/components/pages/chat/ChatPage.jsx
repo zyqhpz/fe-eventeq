@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect, useRef }from "react";
+
+import { useLocation } from "react-router-dom";
 
 import Footer from "../../ui/Footer";
 import Navbar from "../../ui/Navbar";
@@ -6,62 +8,203 @@ import Navbar from "../../ui/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImages, faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 
+import axios from "axios";
+import path from "../../utils/path";
+import LoadingButton from "../../ui/LoadingButton";
+
 export default function ChatPage() {
+  const state = useLocation().state;
+
+  const [message, setMessage] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [messageIsEmpty, setMessageIsEmpty] = useState(true);
+  const [error, setError] = useState(false);
+
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const messageEndRef = useRef(null);
+
+  const MessageList = ({ messages }) => (
+    <div className="flex flex-col flex-nowrap	space-y-4 w-full">
+      {messages &&
+        messages.map(({ id, text, sentBy, sentByID, sentAt }) => (
+          <Message
+            key={id}
+            text={text}
+            sentByID={sentByID}
+            sentBy={sentBy}
+            sentAt={sentAt}
+          />
+        ))}
+      <div ref={messageEndRef} />
+    </div>
+  );
+
+  const Message = ({ text, sentBy, sentByID, sentAt }) => {
+    const messageClassNames = [
+      "flex",
+      "rounded-xl",
+      "px-4",
+      "py-2",
+      "text-base",
+      "max-w-xs",
+      "shadow-sm",
+      sentByID === useLocation().state.ID
+        ? "bg-orange-200 text-black text-right"
+        : "bg-gray-400 text-white text-left",
+    ].join(" ");
+
+    const dateClassNames = [
+      "flex pt-1 ",
+      sentByID === useLocation().state.ID ? "justify-end" : "justify-start",
+    ].join(" ");
+
+    const messageBoxClassNames = [
+      "flex",
+      sentByID === useLocation().state.ID ? "justify-end" : "justify-start",
+    ].join(" ");
+
+    return (
+      <div className={messageBoxClassNames}>
+        <div className="grid grid-cols-1">
+          <div className={messageClassNames}>{text}</div>
+          <div className={dateClassNames}>
+            <p className="text-xs text-gray-500">{sentAt}</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const UsersList = ({ users }) => (
+    <div className="flex flex-col flex-nowrap	space-y-4 w-full overflow-auto">
+      {users &&
+        users.map(({ ID, FirstName, LastName }) => (
+          <User key={ID} FirstName={FirstName} LastName={LastName} />
+        ))}
+    </div>
+  );
+
+  const User = ({ id, FirstName, LastName }) => {
+    return (
+      <div
+        key={id}
+        className="px-3 flex items-center bg-grey-light cursor-pointer hover:bg-orange-100 pb-2 border-b"
+      >
+        <img
+          className="h-12 w-12 rounded-full"
+          src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"
+        />
+        <div className="ml-4 w-full flex items-center justify-between border-grey-lighter py-4">
+          <p className="text-grey-darkest">
+            {FirstName} {LastName}
+          </p>
+          <p className="text-xs text-grey-darkest">12:45 pm</p>
+        </div>
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    axios
+      .get(path.url + "api/chat/getUsers/" + state.ID)
+      .then((res) => {
+        setUsers(res.data);
+        setLoadingUsers(false);
+      })
+      .catch((err) => {});
+  }, []);
+  
+  // useEffect(() => {
+  //   axios
+  //     .get(path.url + "api/message")
+  //     .then((res) => {
+  //       setMessages(res.data);
+
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => {});
+  // }, []);
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = (text) => {
+    const newMessage = {
+      id: messages.length + 1,
+      text,
+      sentAt: new Date().toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+      }),
+      sentBy: state.FirstName + " " + state.LastName,
+      sentByID: "123"
+    };
+
+    setMessages([...messages, newMessage]);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (message.trim() === "") {
+      // setMessageIsEmpty(true);
+      setError(true);
+      return;
+    }
+    sendMessage(message);
+    setMessage("");
+    setError(false);
+    console.log(messages);
+  };
+
     return (
       <div className="min-h-screen flex flex-col w-screen">
         <Navbar />
-        <div className="bg-gray-100 h-screen max-w-full">
-          {/* <div className="max-w-xl">
-            <h1>Chat Page</h1>
-          </div> */}
+        <div className="bg-gray-100 h-full max-w-full">
           <div>
-            <div className="w-full h-32 bg-blue-400"></div>
+            <div
+              className="container mx-auto -mt-38 h-screen w-screen"
+              style={{ height: "calc(100vh - 96px)" }}
+            >
+              <div className="py-2 h-full">
+                <div className="flex border border-grey rounded shadow-lg h-full w-full">
 
-            <div className="container mx-auto -mt-32 h-screen max-w-xl">
-              <div className="py-6 h-screen">
-                <div className="flex border border-grey rounded shadow-lg h-full">
+                  {/* LEFT SECTION */}
                   <div className="w-1/3 border flex flex-col">
-                    <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
-                      <div>
-                        {/* <img className="w-10 h-10 rounded-full" src="http://andressantibanez.com/res/avatar.png"/> */}
-                      </div>
-
+                    <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-center items-center w-full">
                       <div className="flex">
-                        {/* <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#727A7E" d="M12 20.664a9.163 9.163 0 0 1-6.521-2.702.977.977 0 0 1 1.381-1.381 7.269 7.269 0 0 0 10.024.244.977.977 0 0 1 1.313 1.445A9.192 9.192 0 0 1 12 20.664zm7.965-6.112a.977.977 0 0 1-.944-1.229 7.26 7.26 0 0 0-4.8-8.804.977.977 0 0 1 .594-1.86 9.212 9.212 0 0 1 6.092 11.169.976.976 0 0 1-.942.724zm-16.025-.39a.977.977 0 0 1-.953-.769 9.21 9.21 0 0 1 6.626-10.86.975.975 0 1 1 .52 1.882l-.015.004a7.259 7.259 0 0 0-5.223 8.558.978.978 0 0 1-.955 1.185z"></path></svg>
-                                </div>
-                                <div className="ml-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path opacity=".55" fill="#263238" d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z"></path></svg>
-                                </div>
-                                <div className="ml-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#263238" fillOpacity=".6" d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"></path></svg>
-                                </div> */}
+                        <p className="text-grey-darkest">Contacts</p>
                       </div>
                     </div>
 
-                    <div className="py-2 px-2 bg-grey-lightest">
+                    <div className="py-2 px-2 bg-grey-lightest w-full">
                       <input
                         type="text"
                         className="w-full px-2 py-2 text-sm"
                         placeholder="Search or start new chat"
                       />
+                      <div className="w-full mt-6">
+                        {loadingUsers ? (
+                          <div className="flex justify-center">
+                            <LoadingButton />
+                          </div>
+                        ) : (
+                          <UsersList users={users} />
+                        )}
+                      </div>
                     </div>
                   </div>
 
+                  {/* RIGHT SECTION*/}
                   <div className="w-2/3 border flex flex-col">
                     <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
                       <div className="flex items-center">
-                        <div>
-                          {/* <img className="w-10 h-10 rounded-full" src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"/> */}
-                        </div>
                         <div className="ml-4">
                           <p className="text-grey-darkest">User Name</p>
-                          <p className="text-grey-darker text-xs mt-1">
-                            Andrés, Tom, Harrison, Arnold, Sylvester
-                          </p>
                         </div>
                       </div>
-
                       <div className="flex">
                         <div className="ml-6">
                           <svg
@@ -80,22 +223,42 @@ export default function ChatPage() {
                       </div>
                     </div>
 
-                    <div className="flex-1 overflow-auto bg-yellow-300">
-                      <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center"></div>
+                    <div className="flex-1 overflow-auto bg-gray-200">
+                      <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
+                        {messages && messages.length > 0 ? (
+                          <MessageList messages={messages} />
+                        ) : (
+                          <div className="mx-auto text-center text-gray-500">
+                            Start a conversation
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div className="bg-grey-lighter px-4 py-4 flex items-center">
-                        <FontAwesomeIcon icon={faImages} />
-                        <div className="flex-1 mx-4">
-                            <input
-                            className="w-full border rounded px-2 py-2"
-                            type="text"
-                            />
-                        </div>
-                        <FontAwesomeIcon
-                            icon={faLocationArrow}
-                            className="rotate-45"
+                      <FontAwesomeIcon icon={faImages} />
+                      <div className="flex-1 mx-4">
+                        <input
+                          className="w-full border rounded px-2 py-2"
+                          type="text"
+                          name="message"
+                          id="message-input"
+                          autoComplete="off"
+                          value={message}
+                          onChange={(event) => setMessage(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              handleSubmit(event);
+                            }
+                          }}
                         />
+                      </div>
+                      <FontAwesomeIcon
+                        icon={faLocationArrow}
+                        className="rotate-45 cursor-pointer text-black hover:text-orange-400"
+                        onClick={handleSubmit}
+                        id="send-message"
+                      />
                     </div>
                   </div>
                 </div>
@@ -103,7 +266,7 @@ export default function ChatPage() {
             </div>
           </div>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     );
 }
