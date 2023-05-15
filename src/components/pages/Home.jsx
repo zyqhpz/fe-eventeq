@@ -13,7 +13,7 @@ function Home() {
 
   useEffect(() => {
       axios
-      .get(path.url + "api/item")
+      .get(path.url + "api/itemWithUser")
       .then((res) => {
         setItems(res.data);
         setLoading(false);

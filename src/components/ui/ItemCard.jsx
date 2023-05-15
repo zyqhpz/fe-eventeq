@@ -37,12 +37,21 @@ export default function ItemCard({ item }) {
       </div>
       <div className="flex w-full items-center justify-between">
         <div className="flex gap-x-2">
-          <img
-            src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            alt=""
-            className="h-7 w-7 rounded-full bg-gray-50"
-          />
-          <p className="font-semibold text-gray-900">TEST</p>
+          {item.OwnedBy.IsImageAvatarSet ? (
+            <img
+              src={path.url + "api/user/image/" + item.OwnedBy.UserImageAvatar}
+              alt=""
+              className="h-7 w-7 rounded-full bg-gray-50"
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon={faCircleUser}
+              className="h-7 w-7 text-gray-500"
+            />
+          )}
+          <p className="font-semibold text-gray-900">
+            {item.OwnedBy.FirstName} {item.OwnedBy.LastName}
+          </p>
         </div>
         <p className="text-gray-500">RM {item.Price} /day</p>
       </div>
