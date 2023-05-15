@@ -20,6 +20,8 @@ export default function ChatPage() {
   const [messageIsEmpty, setMessageIsEmpty] = useState(true);
   const [error, setError] = useState(false);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const messageEndRef = useRef(null);
@@ -106,25 +108,21 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    axios
-      .get(path.url + "api/chat/getUsers/" + state.ID)
-      .then((res) => {
-        setUsers(res.data);
-        setLoadingUsers(false);
-      })
-      .catch((err) => {});
+    console.log(state);
+    if (state == null) {
+      setIsAuthenticated(false);
+      window.location.href = "/";
+    } else {
+      setIsAuthenticated(true)
+          axios
+            .get(path.url + "api/chat/getUsers/" + state.ID)
+            .then((res) => {
+              setUsers(res.data);
+              setLoadingUsers(false);
+            })
+            .catch((err) => {});
+    }
   }, []);
-  
-  // useEffect(() => {
-  //   axios
-  //     .get(path.url + "api/message")
-  //     .then((res) => {
-  //       setMessages(res.data);
-
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => {});
-  // }, []);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -149,7 +147,6 @@ export default function ChatPage() {
     event.preventDefault();
 
     if (message.trim() === "") {
-      // setMessageIsEmpty(true);
       setError(true);
       return;
     }
