@@ -26,12 +26,18 @@ export default function ChatPage() {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const messageEndRef = useRef(null);
 
+  // 2nd user
+  const [secondUser, setSecondUser] = useState({});
+  const [loadingSecondUser, setLoadingSecondUser] = useState(true);
+  const [isHavingConversation, setIsHavingConversation] = useState(false);
+
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap	space-y-4 w-full">
       {messages &&
         messages.map(({ id, text, sentBy, sentByID, sentAt }) => (
           <Message
             key={id}
+            id={id}
             text={text}
             sentByID={sentByID}
             sentBy={sentBy}
@@ -42,7 +48,7 @@ export default function ChatPage() {
     </div>
   );
 
-  const Message = ({ text, sentBy, sentByID, sentAt }) => {
+  const Message = ({ id, text, sentBy, sentByID, sentAt }) => {
     const messageClassNames = [
       "flex",
       "rounded-xl",
@@ -51,19 +57,21 @@ export default function ChatPage() {
       "text-base",
       "max-w-xs",
       "shadow-sm",
-      sentByID === useLocation().state.ID
+      // sentByID === state.ID
+      id % 2 === 0
         ? "bg-orange-200 text-black text-right"
-        : "bg-gray-400 text-white text-left",
+        : "bg-blue-300 text-white text-left",
     ].join(" ");
 
     const dateClassNames = [
       "flex pt-1 ",
-      sentByID === useLocation().state.ID ? "justify-end" : "justify-start",
+      // if key is odd then align right else align left (for date)
+      id % 2 === 0 ? "justify-end" : "justify-start",
     ].join(" ");
 
     const messageBoxClassNames = [
       "flex",
-      sentByID === useLocation().state.ID ? "justify-end" : "justify-start",
+      id % 2 === 0 ? "justify-end" : "justify-start",
     ].join(" ");
 
     return (
@@ -78,11 +86,71 @@ export default function ChatPage() {
     );
   };
 
+  const data = [
+    {
+      id: 1,
+
+      text: "Hello",
+      sentAt: "12:45 pm",
+      sentBy: "John Doe",
+      sentByID: 1,
+    },
+    {
+      id: 2,
+
+      text: "Hello",
+      sentAt: "12:45 pm",
+      sentBy: "John Doe",
+      sentByID: 1,
+    },
+    {
+      id: 3,
+
+      text: "Hello",
+      sentAt: "12:45 pm",
+      sentBy: "John Doe",
+      sentByID: 1,
+    },];
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = (text) => {
+    const newMessage = {
+      id: messages.length + 1,
+      text,
+      sentAt: new Date().toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+      }),
+      sentBy: state.FirstName + " " + state.LastName,
+      sentByID: state.ID,
+    };
+
+    console.log(newMessage.id);
+
+    setMessages([...messages, newMessage]);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (message.trim() === "") {
+      setError(true);
+      return;
+    }
+    sendMessage(message);
+    setMessage("");
+    setError(false);
+    console.log(messages);
+  };
+
   const UsersList = ({ users }) => (
     <div className="flex flex-col flex-nowrap	space-y-4 w-full overflow-auto">
       {users &&
         users.map(({ ID, FirstName, LastName }) => (
-          <User key={ID} FirstName={FirstName} LastName={LastName} />
+          <User key={ID} id={ID} FirstName={FirstName} LastName={LastName} />
         ))}
     </div>
   );
@@ -92,6 +160,13 @@ export default function ChatPage() {
       <div
         key={id}
         className="px-3 flex items-center bg-grey-light cursor-pointer hover:bg-orange-100 pb-2 border-b"
+        onClick={() => {
+          setSecondUser({ id, FirstName, LastName });
+          setLoadingSecondUser(false);
+          setIsHavingConversation(true);
+          setMessages(data);
+          }
+        }
       >
         <img
           className="h-12 w-12 rounded-full"
@@ -123,38 +198,6 @@ export default function ChatPage() {
             .catch((err) => {});
     }
   }, []);
-
-  useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const sendMessage = (text) => {
-    const newMessage = {
-      id: messages.length + 1,
-      text,
-      sentAt: new Date().toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-      }),
-      sentBy: state.FirstName + " " + state.LastName,
-      sentByID: "123"
-    };
-
-    setMessages([...messages, newMessage]);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (message.trim() === "") {
-      setError(true);
-      return;
-    }
-    sendMessage(message);
-    setMessage("");
-    setError(false);
-    console.log(messages);
-  };
 
     return (
       <div className="min-h-screen flex flex-col w-screen">
@@ -199,7 +242,7 @@ export default function ChatPage() {
                     <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
                       <div className="flex items-center">
                         <div className="ml-4">
-                          <p className="text-grey-darkest">User Name</p>
+                          <p className="text-grey-darkest">{isHavingConversation ? secondUser.FirstName + " " + secondUser.LastName : "No conversation selected"}</p>
                         </div>
                       </div>
                       <div className="flex">
