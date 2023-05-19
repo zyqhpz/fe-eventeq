@@ -10,7 +10,7 @@ import { faImages, faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
 import path from "../../utils/path";
-import LoadingButton from "../../ui/LoadingButton";
+import LoadingButton from "../../ui/button/LoadingButton";
 
 export default function ChatPage() {
   const state = useLocation().state;
