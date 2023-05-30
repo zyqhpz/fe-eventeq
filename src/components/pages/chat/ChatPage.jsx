@@ -26,29 +26,33 @@ export default function ChatPage() {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const messageEndRef = useRef(null);
 
+  const [data, setData] = useState([]);
+
   // 2nd user
   const [secondUser, setSecondUser] = useState({});
   const [loadingSecondUser, setLoadingSecondUser] = useState(true);
   const [isHavingConversation, setIsHavingConversation] = useState(false);
 
+  var messagesCount = 0;
+
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap	space-y-4 w-full">
       {messages &&
-        messages.map(({ id, text, sentBy, sentByID, sentAt }) => (
-          <Message
-            key={id}
-            id={id}
-            text={text}
-            sentByID={sentByID}
-            sentBy={sentBy}
-            sentAt={sentAt}
+        messages.map(({ ID, Message, Sender, Receiver, CreatedAt }) => (
+          <MessageBox
+            key={messagesCount++}
+            id={ID}
+            text={Message}
+            sender={Sender}
+            receiver={Receiver}
+            created_at={CreatedAt}
           />
         ))}
       <div ref={messageEndRef} />
     </div>
   );
 
-  const Message = ({ id, text, sentBy, sentByID, sentAt }) => {
+  const MessageBox = ({ key, id, text, sender, receiver, created_at }) => {
     const messageClassNames = [
       "flex",
       "rounded-xl",
@@ -57,8 +61,7 @@ export default function ChatPage() {
       "text-base",
       "max-w-xs",
       "shadow-sm",
-      // sentByID === state.ID
-      id % 2 === 0
+      sender === state.ID
         ? "bg-orange-200 text-black text-right"
         : "bg-blue-300 text-white text-left",
     ].join(" ");
@@ -66,51 +69,32 @@ export default function ChatPage() {
     const dateClassNames = [
       "flex pt-1 ",
       // if key is odd then align right else align left (for date)
-      id % 2 === 0 ? "justify-end" : "justify-start",
+      sender === state.ID ? "justify-end" : "justify-start",
     ].join(" ");
 
     const messageBoxClassNames = [
       "flex",
-      id % 2 === 0 ? "justify-end" : "justify-start",
+      sender === state.ID ? "justify-end" : "justify-start",
     ].join(" ");
 
+    // convert data to get only time (HH:MM AM/PM) format
+    const time = new Date(created_at).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+
     return (
-      <div className={messageBoxClassNames}>
+      <div className={messageBoxClassNames} key={key}>
         <div className="grid grid-cols-1">
           <div className={messageClassNames}>{text}</div>
           <div className={dateClassNames}>
-            <p className="text-xs text-gray-500">{sentAt}</p>
+            <p className="text-xs text-gray-500">{time}</p>
           </div>
         </div>
       </div>
     );
   };
-
-  const data = [
-    {
-      id: 1,
-
-      text: "Hello",
-      sentAt: "12:45 pm",
-      sentBy: "John Doe",
-      sentByID: 1,
-    },
-    {
-      id: 2,
-
-      text: "Hello",
-      sentAt: "12:45 pm",
-      sentBy: "John Doe",
-      sentByID: 1,
-    },
-    {
-      id: 3,
-
-      text: "Hello",
-      sentAt: "12:45 pm",
-      sentBy: "John Doe",
-      sentByID: 1,
-    },];
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -118,18 +102,12 @@ export default function ChatPage() {
 
   const sendMessage = (text) => {
     const newMessage = {
-      id: messages.length + 1,
-      text,
-      sentAt: new Date().toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-      }),
-      sentBy: state.FirstName + " " + state.LastName,
-      sentByID: state.ID,
+      ID: messagesCount++,
+      Message: text,
+      Sender: state.ID,
+      Receiver: secondUser.id,
+      CreatedAt: new Date(),
     };
-
-    console.log(newMessage.id);
-
     setMessages([...messages, newMessage]);
   };
 
@@ -155,6 +133,28 @@ export default function ChatPage() {
     </div>
   );
 
+  const getMessages = (sender, receiver) => {
+    const requestData = {
+      sender: sender,
+      receiver: receiver,
+    };
+
+    fetch(path.url + "api/chat/messages/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setMessages(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const User = ({ id, FirstName, LastName }) => {
     return (
       <div
@@ -164,7 +164,10 @@ export default function ChatPage() {
           setSecondUser({ id, FirstName, LastName });
           setLoadingSecondUser(false);
           setIsHavingConversation(true);
-          setMessages(data);
+
+          getMessages(state.ID, id);
+
+          // setMessages(data);
           }
         }
       >
