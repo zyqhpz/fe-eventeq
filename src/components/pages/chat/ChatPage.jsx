@@ -118,10 +118,31 @@ export default function ChatPage() {
       setError(true);
       return;
     }
+
+    const requestData = {
+      sender: state.ID,
+      receiver: secondUser.id,
+      message: message,
+    };
+
+    fetch(path.url + "api/chat/messages/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // setMessages(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    
     sendMessage(message);
     setMessage("");
     setError(false);
-    console.log(messages);
   };
 
   const UsersList = ({ users }) => (
@@ -146,13 +167,13 @@ export default function ChatPage() {
       },
       body: JSON.stringify(requestData),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setMessages(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    .then((response) => response.json())
+    .then((data) => {
+      setMessages(data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   };
 
   const User = ({ id, FirstName, LastName }) => {
@@ -164,10 +185,7 @@ export default function ChatPage() {
           setSecondUser({ id, FirstName, LastName });
           setLoadingSecondUser(false);
           setIsHavingConversation(true);
-
           getMessages(state.ID, id);
-
-          // setMessages(data);
           }
         }
       >
@@ -192,13 +210,13 @@ export default function ChatPage() {
       window.location.href = "/";
     } else {
       setIsAuthenticated(true)
-          axios
-            .get(path.url + "api/chat/getUsers/" + state.ID)
-            .then((res) => {
-              setUsers(res.data);
-              setLoadingUsers(false);
-            })
-            .catch((err) => {});
+      axios
+        .get(path.url + "api/chat/getUsers/" + state.ID)
+        .then((res) => {
+          setUsers(res.data);
+          setLoadingUsers(false);
+        })
+        .catch((err) => {});
     }
   }, []);
 
