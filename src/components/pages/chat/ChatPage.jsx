@@ -13,8 +13,6 @@ import path from "../../utils/path";
 import LoadingButton from "../../ui/button/LoadingButton";
 
 export default function ChatPage() {
-  const state = useLocation().state;
-
   const [message, setMessage] = useState([]);
   const [messages, setMessages] = useState([]);
   const [messageIsEmpty, setMessageIsEmpty] = useState(true);
@@ -33,7 +31,33 @@ export default function ChatPage() {
   const [loadingSecondUser, setLoadingSecondUser] = useState(true);
   const [isHavingConversation, setIsHavingConversation] = useState(false);
 
+  const [isFromItemDetails, setIsFromItemDetails] = useState(false);
+
   var messagesCount = 0;
+
+  var userId = localStorage.getItem("userId");
+
+  const location = useLocation();
+  const item = location.state?.item;
+
+  useEffect(() => {
+    if (userId == null) {
+      setIsAuthenticated(false);
+      window.location.href = "/";
+    } else {
+      setIsAuthenticated(true);
+
+      console.log(item);
+
+      axios
+        .get(path.url + "api/chat/getUsers/" + userId)
+        .then((res) => {
+          setUsers(res.data);
+          setLoadingUsers(false);
+        })
+        .catch((err) => {});
+    }
+  }, []);
 
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap	space-y-4 w-full">
@@ -61,7 +85,7 @@ export default function ChatPage() {
       "text-base",
       "max-w-xs",
       "shadow-sm",
-      sender === state.ID
+      sender === userId
         ? "bg-orange-200 text-black text-right"
         : "bg-blue-300 text-white text-left",
     ].join(" ");
@@ -69,12 +93,12 @@ export default function ChatPage() {
     const dateClassNames = [
       "flex pt-1 ",
       // if key is odd then align right else align left (for date)
-      sender === state.ID ? "justify-end" : "justify-start",
+      sender === userId ? "justify-end" : "justify-start",
     ].join(" ");
 
     const messageBoxClassNames = [
       "flex",
-      sender === state.ID ? "justify-end" : "justify-start",
+      sender === userId ? "justify-end" : "justify-start",
     ].join(" ");
 
     // convert data to get only time (HH:MM AM/PM) format
@@ -104,7 +128,7 @@ export default function ChatPage() {
     const newMessage = {
       ID: messagesCount++,
       Message: text,
-      Sender: state.ID,
+      Sender: userId,
       Receiver: secondUser.id,
       CreatedAt: new Date(),
     };
@@ -120,7 +144,7 @@ export default function ChatPage() {
     }
 
     const requestData = {
-      sender: state.ID,
+      sender: userId,
       receiver: secondUser.id,
       message: message,
     };
@@ -185,7 +209,7 @@ export default function ChatPage() {
           setSecondUser({ id, FirstName, LastName });
           setLoadingSecondUser(false);
           setIsHavingConversation(true);
-          getMessages(state.ID, id);
+          getMessages(userId, id);
           }
         }
       >
@@ -202,22 +226,6 @@ export default function ChatPage() {
       </div>
     );
   };
-
-  useEffect(() => {
-    if (state == null) {
-      setIsAuthenticated(false);
-      window.location.href = "/";
-    } else {
-      setIsAuthenticated(true)
-      axios
-        .get(path.url + "api/chat/getUsers/" + state.ID)
-        .then((res) => {
-          setUsers(res.data);
-          setLoadingUsers(false);
-        })
-        .catch((err) => {});
-    }
-  }, []);
 
     return (
       <div className="min-h-screen flex flex-col w-screen">
