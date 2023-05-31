@@ -52,7 +52,7 @@ export default function ChatPage() {
     </div>
   );
 
-  const MessageBox = ({ key, id, text, sender, receiver, created_at }) => {
+  const MessageBox = ({ id, text, sender, receiver, created_at }) => {
     const messageClassNames = [
       "flex",
       "rounded-xl",
@@ -85,7 +85,7 @@ export default function ChatPage() {
     });
 
     return (
-      <div className={messageBoxClassNames} key={key}>
+      <div className={messageBoxClassNames}>
         <div className="grid grid-cols-1">
           <div className={messageClassNames}>{text}</div>
           <div className={dateClassNames}>
@@ -204,7 +204,6 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    console.log(state);
     if (state == null) {
       setIsAuthenticated(false);
       window.location.href = "/";
@@ -327,7 +326,6 @@ export default function ChatPage() {
             </div>
           </div>
         </div>
-        {/* <Footer /> */}
       </div>
     );
 }
