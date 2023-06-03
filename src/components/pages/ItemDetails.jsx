@@ -119,9 +119,18 @@ export default function ItemDetails() {
                               Message Owner
                             </button>
                           </Link>
+                          <Link
+                            to={{
+                              pathname: "/booking/" + item.OwnedBy.ID,
+                              state: {
+                                item: item,
+                              },
+                            }}
+                          >
                           <button className="h-12 bg-orange-400 w-48 text-gray-800 px-6">
-                            Rent
+                            Rent Now
                           </button>
+                          </Link>
                         </div>
                       )
                     ) : (
