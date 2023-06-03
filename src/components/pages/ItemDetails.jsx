@@ -34,6 +34,7 @@ export default function ItemDetails () {
       .then((response) => {
         setItem(response.data)
         setLoading(false)
+        localStorage.setItem('tempItemId', response.data.ID)
         if (response.data.OwnedBy.ID === userId) {
           setIsOwner(true)
         }
