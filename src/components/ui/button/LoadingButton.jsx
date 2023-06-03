@@ -1,5 +1,5 @@
-export default function LoadingButton() {
-    return (
+export default function LoadingButton () {
+  return (
     <div
         className="text-white bg-orange-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 inline-flex items-center select-none"
         >
@@ -22,5 +22,5 @@ export default function LoadingButton() {
         </svg>
         Loading...
     </div>
-    );
+  )
 }

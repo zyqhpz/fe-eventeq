@@ -1,4 +1,4 @@
-export default function ProcessingButton() {
+export default function ProcessingButton () {
   return (
     <div className="text-white bg-orange-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 inline-flex items-center select-none">
       <svg
@@ -20,5 +20,5 @@ export default function ProcessingButton() {
       </svg>
       Processing...
     </div>
-  );
+  )
 }

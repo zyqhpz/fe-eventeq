@@ -1,27 +1,26 @@
-import React from 'react';
+import React from 'react'
 import {
-    Card,
-    CardBody,
-    CardFooter,
-    Image,
-    Stack,
-    Heading,
-    Text,
-    Divider,
-    ButtonGroup,
-    Button,
-} from '@chakra-ui/react';
+  Card,
+  CardBody,
+  CardFooter,
+  Image,
+  Stack,
+  Heading,
+  Text,
+  Divider,
+  ButtonGroup,
+  Button
+} from '@chakra-ui/react'
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleUser } from '@fortawesome/free-solid-svg-icons'
 
-import path from "../utils/path";
+import path from '../utils/path'
 
-export default function ItemCard({ item }) {
+export default function ItemCard ({ item }) {
+  const imagePath = path.url + 'api/item/image/' + item.Images[0]
 
-  var imagePath = path.url + "api/item/image/" + item.Images[0]
-
-  var detailsPath = "/listing/item/" + item.ID;
+  const detailsPath = '/listing/item/' + item.ID
 
   return (
     <a
@@ -37,18 +36,20 @@ export default function ItemCard({ item }) {
       </div>
       <div className="flex w-full items-center justify-between">
         <div className="flex gap-x-2">
-          {item.OwnedBy.IsImageAvatarSet ? (
+          {item.OwnedBy.IsImageAvatarSet
+            ? (
             <img
-              src={path.url + "api/user/image/" + item.OwnedBy.UserImageAvatar}
+              src={path.url + 'api/user/image/' + item.OwnedBy.UserImageAvatar}
               alt=""
               className="h-7 w-7 rounded-full bg-gray-50"
             />
-          ) : (
+              )
+            : (
             <FontAwesomeIcon
               icon={faCircleUser}
               className="h-7 w-7 text-gray-500"
             />
-          )}
+              )}
           <p className="font-semibold text-gray-900">
             {item.OwnedBy.FirstName} {item.OwnedBy.LastName}
           </p>
@@ -56,5 +57,5 @@ export default function ItemCard({ item }) {
         <p className="text-gray-500">RM {item.Price} /day</p>
       </div>
     </a>
-  );
+  )
 }

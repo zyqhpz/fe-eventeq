@@ -7,7 +7,7 @@ import {
   CursorArrowRaysIcon,
   FingerPrintIcon,
   SquaresPlusIcon,
-  XMarkIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 
@@ -20,18 +20,18 @@ const products = [
   { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
   { name: 'Security', description: 'Your customers’ data will be safe and secure', href: '#', icon: FingerPrintIcon },
   { name: 'Integrations', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
-  { name: 'Automations', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon },
+  { name: 'Automations', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon }
 ]
 const callsToAction = [
   { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-  { name: 'Contact sales', href: '#', icon: PhoneIcon },
+  { name: 'Contact sales', href: '#', icon: PhoneIcon }
 ]
 
-function classNames(...classes) {
+function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export default function Navbar () {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -103,8 +103,8 @@ export default function Navbar() {
                         Product
                         <ChevronDownIcon
                           className={classNames(
-                            open ? "rotate-180" : "",
-                            "h-5 w-5 flex-none"
+                            open ? 'rotate-180' : '',
+                            'h-5 w-5 flex-none'
                           )}
                           aria-hidden="true"
                         />
@@ -156,6 +156,5 @@ export default function Navbar() {
         </Dialog.Panel>
       </Dialog>
     </header>
-  );
+  )
 }
-

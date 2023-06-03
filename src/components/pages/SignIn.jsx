@@ -1,63 +1,62 @@
-import Navbar from "../ui/Navbar";
+import Navbar from '../ui/Navbar'
 
-import EventEQLogo from "../../assets/EventEQ.png";
+import EventEQLogo from '../../assets/EventEQ.png'
 
-import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from 'axios'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import path from "../utils/path";
+import path from '../utils/path'
 
 import {
-  useToast,
-} from "@chakra-ui/react";
-import Footer from "../ui/Footer";
+  useToast
+} from '@chakra-ui/react'
+import Footer from '../ui/Footer'
 
-export default function SignIn() {
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+export default function SignIn () {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const navigate = useNavigate()
 
   // Error feedback for login failure
-  const toast = useToast();
+  const toast = useToast()
   const ErrorLogin = () => {
     return (
       toast({
-        title: "Login failed.",
-        description: "Please check your email and password.",
-        status: "error",
-        position: "top-right",
+        title: 'Login failed.',
+        description: 'Please check your email and password.',
+        status: 'error',
+        position: 'top-right',
         duration: 9000,
-        isClosable: true,
+        isClosable: true
       })
-    );
-  };
+    )
+  }
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // prevent the default form submission behavior
+    event.preventDefault() // prevent the default form submission behavior
 
-    const response = await fetch(path.url + "api/user/login", {
-      method: "POST",
+    const response = await fetch(path.url + 'api/user/login', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
       },
-      credentials: "include",
+      credentials: 'include',
       body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+        email,
+        password
+      })
+    })
 
-    const data = await response.json();
+    const data = await response.json()
 
-    if (data.status == "success") {
-      localStorage.setItem("userId", data.userId);
-      navigate("/");
+    if (data.status === 'success') {
+      localStorage.setItem('userId', data.userId)
+      navigate('/')
     } else {
-      ErrorLogin();
+      ErrorLogin()
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -74,7 +73,7 @@ export default function SignIn() {
               Sign in to your account
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Need an account?{" "}
+              Need an account?{' '}
               <a
                 href="/register"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
@@ -169,5 +168,5 @@ export default function SignIn() {
       </div>
       <Footer />
     </div>
-  );
+  )
 }

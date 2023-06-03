@@ -1,21 +1,20 @@
-import SignIn from "./components/pages/SignIn";
-import Home from "./components/pages/Home";
-import NotFound from "./components/pages/NotFound";
-import SignUp from "./components/pages/SignUp";
+import SignIn from './components/pages/SignIn'
+import Home from './components/pages/Home'
+import NotFound from './components/pages/NotFound'
+import SignUp from './components/pages/SignUp'
 
-import { Route, Routes } from "react-router-dom";
-import NewItem from "./components/pages/NewItem";
-import DisplayImage from "./components/pages/DisplayImage";
+import { Route, Routes } from 'react-router-dom'
+import NewItem from './components/pages/NewItem'
+import DisplayImage from './components/pages/DisplayImage'
 
-import ItemDetails from "./components/pages/ItemDetails";
-import BookingItem from "./components/pages/BookingItem";
+import ItemDetails from './components/pages/ItemDetails'
+import BookingItem from './components/pages/BookingItem'
 
-import ManageItem from "./components/pages/item/ManageItem";
+import ManageItem from './components/pages/item/ManageItem'
 
-import ChatPage from "./components/pages/chat/ChatPage";
+import ChatPage from './components/pages/chat/ChatPage'
 
-
-function App() {
+function App () {
   return (
     <div className="App">
       <Routes>
@@ -41,7 +40,7 @@ function App() {
         <Route path="/message/" element={<ChatPage />} />
       </Routes>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

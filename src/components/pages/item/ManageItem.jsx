@@ -1,54 +1,54 @@
-import Footer from "../../ui/Footer";
-import Navbar from "../../ui/Navbar";
+import Footer from '../../ui/Footer'
+import Navbar from '../../ui/Navbar'
 
-import { React, useEffect, useState, useMemo } from "react";
-import { useLocation } from "react-router-dom";
-import { useTable } from "react-table";
+import { React, useEffect, useState, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useTable } from 'react-table'
 
-import NewItem from "../NewItem";
-import ImageUploader from "./UploadImages";
+import NewItem from '../NewItem'
+import ImageUploader from './UploadImages'
 
-import axios from "axios";
-import path from "../../utils/path";
-import LoadingButton from "../../ui/button/LoadingButton";
+import axios from 'axios'
+import path from '../../utils/path'
+import LoadingButton from '../../ui/button/LoadingButton'
 
-export default function ManageItem(props) {
-    const state = useLocation().state;
-    const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(false)
+export default function ManageItem (props) {
+  const state = useLocation().state
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(false)
 
-    // useEffect(() => {
-    //     axios
-    //       .get(path.url + "api/item/user/" + state.ID)
-    //       .then((res) => {
-    //         setItems(res.data.map((
-    //             {Name, Description}
-    //         ) => ({Name, Description})))
-    //         setLoading(false);
-    //       })
-    //       .catch((err) => {});
-    // }, [])
+  // useEffect(() => {
+  //     axios
+  //       .get(path.url + "api/item/user/" + state.ID)
+  //       .then((res) => {
+  //         setItems(res.data.map((
+  //             {Name, Description}
+  //         ) => ({Name, Description})))
+  //         setLoading(false);
+  //       })
+  //       .catch((err) => {});
+  // }, [])
 
-    const data = useMemo(() => items, [items]);
+  const data = useMemo(() => items, [items])
 
-    const columns = useMemo(
-      () => [
-        {
-            Header: "Item Name",
-            accessor: "Name",
-        },
-        {
-            Header: "Item Description",
-            accessor: "Description",
-        },
-      ],
-      []
-    );
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'Item Name',
+        accessor: 'Name'
+      },
+      {
+        Header: 'Item Description',
+        accessor: 'Description'
+      }
+    ],
+    []
+  )
 
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-      useTable({ columns, data });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+      useTable({ columns, data })
 
-    return (
+  return (
       <div className="ManageItem">
         <Navbar />
         <div className="bg-gray-100 w-screen h-screen">
@@ -105,5 +105,5 @@ export default function ManageItem(props) {
         </div>
         <Footer />
       </div>
-    );
+  )
 }

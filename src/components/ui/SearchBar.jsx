@@ -1,8 +1,8 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
-export default function SearchBar() {
-    return (
+export default function SearchBar () {
+  return (
       <div className="flex items-center border-2 border-grey-300 rounded-lg h-10">
         <input
           type="text"
@@ -14,5 +14,5 @@ export default function SearchBar() {
           <FontAwesomeIcon icon={faMagnifyingGlass} className="px-2" />
         </button>
       </div>
-    );
+  )
 };
