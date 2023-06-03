@@ -52,6 +52,7 @@ export default function SignIn() {
     const data = await response.json();
 
     if (data.status == "success") {
+      localStorage.setItem("userId", data.userId);
       navigate("/");
     } else {
       ErrorLogin();

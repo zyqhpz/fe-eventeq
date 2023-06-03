@@ -54,6 +54,7 @@ const navigate = useNavigate();
         setIsAuthenticated(false);
         setUser(null);
         setName("");
+        localStorage.removeItem("userId");
         navigate("/");
       }
     });

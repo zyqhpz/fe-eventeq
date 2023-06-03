@@ -10,7 +10,7 @@ import ImageUploader from "./UploadImages";
 
 import axios from "axios";
 import path from "../../utils/path";
-import LoadingButton from "../../ui/LoadingButton";
+import LoadingButton from "../../ui/button/LoadingButton";
 
 export default function ManageItem(props) {
     const state = useLocation().state;
