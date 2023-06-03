@@ -101,11 +101,12 @@ export default function ChatPage() {
       sender === userId ? "justify-end" : "justify-start",
     ].join(" ");
 
-    // convert data to get only time (HH:MM AM/PM) format
-    const time = new Date(created_at).toLocaleTimeString("en-US", {
+    const formattedDate = new Date(created_at).toLocaleString("en-MY", {
       hour: "numeric",
       minute: "numeric",
-      hour12: true,
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
 
     return (
@@ -113,7 +114,7 @@ export default function ChatPage() {
         <div className="grid grid-cols-1">
           <div className={messageClassNames}>{text}</div>
           <div className={dateClassNames}>
-            <p className="text-xs text-gray-500">{time}</p>
+            <p className="text-xs text-gray-500">{formattedDate}</p>
           </div>
         </div>
       </div>
