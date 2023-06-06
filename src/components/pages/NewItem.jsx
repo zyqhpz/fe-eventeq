@@ -1,130 +1,130 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
-import axios from "axios";
-import path from "../utils/path";
+import axios from 'axios'
+import path from '../utils/path'
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 
-import ProcessingButton from "../ui/button/ProcessingButton";
+import ProcessingButton from '../ui/button/ProcessingButton'
 
-export default function NewItem() {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState(0);
-    const [quantity, setQuantity] = useState(0);
-    const [selectedImages, setSelectedImages] = useState([]);
-    const [images, setImages] = useState([]);
-    const [userID, setUserID] = useState("");
-    const [loading, setLoading] = useState(false);
+export default function NewItem () {
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [price, setPrice] = useState(0)
+  const [quantity, setQuantity] = useState(0)
+  const [selectedImages, setSelectedImages] = useState([])
+  const [images, setImages] = useState([])
+  const [userID, setUserID] = useState('')
+  const [loading, setLoading] = useState(false)
 
-    const state = useLocation().state;
+  const state = useLocation().state
 
-    const handleSubmit = async (event) => {
-        setLoading(true)
-        setUserID(state.ID);
-        event.preventDefault();
-        const formData = new FormData();
-        formData.append("userID", userID);
-        formData.append("name", name);
-        formData.append("description", description);
-        formData.append("price", price);
-        formData.append("quantity", quantity);
-        formData.append("imagesCount", selectedImages.length);
-        images.forEach(async (image, index) => {
-          const compressedImage = await compressImage(image);
-          formData.append(`images-${index}`, compressedImage);
-        });
+  const handleSubmit = async (event) => {
+    setLoading(true)
+    setUserID(state.ID)
+    event.preventDefault()
+    const formData = new FormData()
+    formData.append('userID', userID)
+    formData.append('name', name)
+    formData.append('description', description)
+    formData.append('price', price)
+    formData.append('quantity', quantity)
+    formData.append('imagesCount', selectedImages.length)
+    images.forEach(async (image, index) => {
+      const compressedImage = await compressImage(image)
+      formData.append(`images-${index}`, compressedImage)
+    })
 
-        console.log(images)
+    console.log(images)
 
-        // set interval to 2 seconds
-        const interval = setInterval(() => {
-          if (selectedImages.length === images.length) {
-            clearInterval(interval);
-            axios
-              .post(path.url + "api/item/create", formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              })
-              .then((response) => {
-                console.log(response);
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-              });
-            setLoading(false);
-          }
-        }, 2000);
-    }
-
-    const onSelectFile = (event) => {
-      const selectedFiles = event.target.files;
-      const selectedFilesArray = Array.from(selectedFiles);
-
-      const imagesArray = selectedFilesArray.map((file) => {
-        return URL.createObjectURL(file);
-      });
-
-      setImages((previousImages) =>
-        previousImages.concat(selectedFilesArray)
-      );
-      setSelectedImages((previousImages) =>
-        previousImages.concat(imagesArray)
-      );
-
-      // FOR BUG IN CHROME
-      event.target.value = "";
-    };
-
-    function deleteHandler(image) {
-      setSelectedImages(selectedImages.filter((e) => e !== image));
-      const index = images.findIndex((e) => e.name === image.name);
-      const newImages = [...images];
-      newImages.splice(index, 1);
-      setImages(newImages);
-      URL.revokeObjectURL(image);
-    }
-
-    const compressImage = (file) => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-            const MAX_WIDTH = 800;
-            let width = img.width;
-            let height = img.height;
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
+    // set interval to 2 seconds
+    const interval = setInterval(() => {
+      if (selectedImages.length === images.length) {
+        clearInterval(interval)
+        axios
+          .post(path.url + 'api/item/create', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
             }
-            canvas.width = width;
-            canvas.height = height;
-            ctx.drawImage(img, 0, 0, width, height);
-            canvas.toBlob(
-              (blob) => {
-                const compressedFile = new File([blob], file.name, {
-                  type: file.type,
-                  lastModified: Date.now(),
-                });
-                resolve(compressedFile);
-              },
-              file.type,
-              0.7
-            );
-          };
-        };
-      });
-    };
-    
-    return (
+          })
+          .then((response) => {
+            console.log(response)
+          })
+          .catch((error) => {
+            console.error('Error:', error)
+          })
+        setLoading(false)
+      }
+    }, 2000)
+  }
+
+  const onSelectFile = (event) => {
+    const selectedFiles = event.target.files
+    const selectedFilesArray = Array.from(selectedFiles)
+
+    const imagesArray = selectedFilesArray.map((file) => {
+      return URL.createObjectURL(file)
+    })
+
+    setImages((previousImages) =>
+      previousImages.concat(selectedFilesArray)
+    )
+    setSelectedImages((previousImages) =>
+      previousImages.concat(imagesArray)
+    )
+
+    // FOR BUG IN CHROME
+    event.target.value = ''
+  }
+
+  function deleteHandler (image) {
+    setSelectedImages(selectedImages.filter((e) => e !== image))
+    const index = images.findIndex((e) => e.name === image.name)
+    const newImages = [...images]
+    newImages.splice(index, 1)
+    setImages(newImages)
+    URL.revokeObjectURL(image)
+  }
+
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (event) => {
+        const img = new Image()
+        img.src = event.target.result
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+          const MAX_WIDTH = 800
+          let width = img.width
+          let height = img.height
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width
+            width = MAX_WIDTH
+          }
+          canvas.width = width
+          canvas.height = height
+          ctx.drawImage(img, 0, 0, width, height)
+          canvas.toBlob(
+            (blob) => {
+              const compressedFile = new File([blob], file.name, {
+                type: file.type,
+                lastModified: Date.now()
+              })
+              resolve(compressedFile)
+            },
+            file.type,
+            0.7
+          )
+        }
+      }
+    })
+  }
+
+  return (
       <div>
         <div>
           <form onSubmit={handleSubmit} className="gap-2">
@@ -208,35 +208,39 @@ export default function NewItem() {
               value="Add new item"
             />
           </form>
-          {loading ? (
+          {loading
+            ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="absolute inset-0 bg-gray-400 opacity-50 z-40"></div>
               <ProcessingButton />
             </div>
-          ) : (
+              )
+            : (
             <></>
-          )}
+              )}
         </div>
         <br />
         {selectedImages.length > 0 &&
-          (selectedImages.length > 10 ? (
+          (selectedImages.length > 10
+            ? (
             <p className="error">
-              You can't upload more than 10 images! <br />
+              You cannot upload more than 10 images! <br />
               <span>
-                please delete <b> {selectedImages.length - 10} </b> of them{" "}
+                please delete <b> {selectedImages.length - 10} </b> of them{' '}
               </span>
             </p>
-          ) : (
+              )
+            : (
             <button
               className="upload-btn"
               onClick={() => {
-                console.log(selectedImages);
+                console.log(selectedImages)
               }}
             >
               UPLOAD {selectedImages.length} IMAGE
-              {selectedImages.length === 1 ? "" : "S"}
+              {selectedImages.length === 1 ? '' : 'S'}
             </button>
-          ))}
+              ))}
         <div className="images flex gap-2">
           {selectedImages &&
             selectedImages.map((image, index) => {
@@ -255,10 +259,9 @@ export default function NewItem() {
                   </button>
                   {/* <p>{index + 1}</p> */}
                 </div>
-              );
+              )
             })}
         </div>
       </div>
-    );
+  )
 }
-    

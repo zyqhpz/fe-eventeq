@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{html,js,ts,jsx,tsx}",
-    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
+    './index.html',
+    './src/**/*.{html,js,ts,jsx,tsx}',
+    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {
-    extend: {},
+    extend: {}
   },
-  plugins: [require("@tailwindcss/forms"), require("flowbite/plugin")],
-};
+  plugins: [require('@tailwindcss/forms'), require('flowbite/plugin'), require('daisyui')]
+}

@@ -1,9 +1,9 @@
-import Footer from "../ui/Footer";
-import Navbar from "../ui/Navbar";
+import Footer from '../ui/Footer'
+import Navbar from '../ui/Navbar'
 
-import Error from "./../../assets/error.png"
+import Error from './../../assets/error.png'
 
-export default function NotFound() {
+export default function NotFound () {
   return (
     <div className="Home">
       <Navbar />
@@ -16,5 +16,5 @@ export default function NotFound() {
       </div>
       <Footer/>
     </div>
-  );
+  )
 }

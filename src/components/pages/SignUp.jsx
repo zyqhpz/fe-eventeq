@@ -1,103 +1,100 @@
-import Navbar from "../ui/Navbar";
+import Navbar from '../ui/Navbar'
 
-import EventEQLogo from "../../assets/EventEQ.png";
+import EventEQLogo from '../../assets/EventEQ.png'
 
-import axios from "axios";
+import axios from 'axios'
 
-import { useState } from "react";
+import { useState } from 'react'
 
-import { useToast } from "@chakra-ui/react";
+import { useToast, Alert, AlertIcon } from '@chakra-ui/react'
 
+import Footer from '../ui/Footer'
 
-import { Alert, AlertIcon } from "@chakra-ui/react";
-
-import Footer from "../ui/Footer";
-
-export default function SignUp() {
+export default function SignUp () {
   const register = (firstName, lastName, email, password) => {
     return axios.post(
-      "http://localhost:8080/api/user/register",
+      'http://localhost:8080/api/user/register',
       {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
+        firstName,
+        lastName,
+        email,
+        password
       },
       {
         headers: {
-          "Content-Type": "application/json",
-        },
+          'Content-Type': 'application/json'
+        }
       }
-    );
-  };
+    )
+  }
 
   // Error feedback for login failure
-  const toast = useToast();
+  const toast = useToast()
   const RegisterError = () => {
     return toast({
-      title: "Login failed.",
-      description: "Email has been taken.",
-      status: "error",
-      position: "top-right",
+      title: 'Login failed.',
+      description: 'Email has been taken.',
+      status: 'error',
+      position: 'top-right',
       duration: 5000,
-      isClosable: true,
-    });
-  };
+      isClosable: true
+    })
+  }
 
   const handleSubmit = (event) => {
-    event.preventDefault(); // prevent the default form submission behavior
+    event.preventDefault() // prevent the default form submission behavior
 
     register(firstName, lastName, email, password)
       .then((response) => {
-        if (response.data.status == "success") {
-          window.location.href = "/";
+        if (response.data.status === 'success') {
+          window.location.href = '/'
         } else {
-          RegisterError();
+          RegisterError()
         }
       })
       .catch((error) => {
-        console.error("Register error:", error.response.data);
-      });
-  };
+        console.error('Register error:', error.response.data)
+      })
+  }
 
   // function to check if password and confirm password match
   const validatePassword = (e) => {
-    setConfirmPassword(e.target.value);
-    if (password != e.target.value) {
-      setIsPasswordMatch(false);
-      return false;
+    setConfirmPassword(e.target.value)
+    if (password !== e.target.value) {
+      setIsPasswordMatch(false)
+      return false
     } else {
       // console.log("password match")
-      setIsPasswordMatch(true);
-      setConfirmPassword(e.target.value);
-      return true;
+      setIsPasswordMatch(true)
+      setConfirmPassword(e.target.value)
+      return true
     }
-  };
+  }
 
   const checkInputFields = () => {
     if (
-      firstName != "" &&
-      lastName != "" &&
-      email != "" &&
-      password != "" &&
-      confirmPassword != "" &&
+      firstName !== '' &&
+      lastName !== '' &&
+      email !== '' &&
+      password !== '' &&
+      confirmPassword !== '' &&
       validatePassword
     ) {
       // console.log("all fields are filled");
-      setIsAvailableToSubmit(true);
+      setIsAvailableToSubmit(true)
     } else {
       // console.log("all fields are not filled");
-      setIsAvailableToSubmit(false);
+      setIsAvailableToSubmit(false)
     }
-  };
+  }
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isPasswordMatch, setIsPasswordMatch] = useState(true);
-  const [isAvailableToSubmit, setIsAvailableToSubmit] = useState(false);
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [isPasswordMatch, setIsPasswordMatch] = useState(true)
+  const [isAvailableToSubmit, setIsAvailableToSubmit] = useState(false)
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -114,7 +111,7 @@ export default function SignUp() {
               Register your account
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Have an existing account?{" "}
+              Have an existing account?{' '}
               <a
                 href="/login"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
@@ -143,8 +140,8 @@ export default function SignUp() {
                     placeholder="Your first name"
                     value={firstName}
                     onChange={(e) => {
-                      setFirstName(e.target.value);
-                      checkInputFields();
+                      setFirstName(e.target.value)
+                      checkInputFields()
                     }}
                   />
                 </div>
@@ -165,8 +162,8 @@ export default function SignUp() {
                     placeholder="Your last name"
                     value={lastName}
                     onChange={(e) => {
-                      setLastName(e.target.value);
-                      checkInputFields();
+                      setLastName(e.target.value)
+                      checkInputFields()
                     }}
                   />
                 </div>
@@ -188,8 +185,8 @@ export default function SignUp() {
                   placeholder="name@email.com"
                   value={email}
                   onChange={(e) => {
-                    setEmail(e.target.value);
-                    checkInputFields();
+                    setEmail(e.target.value)
+                    checkInputFields()
                   }}
                 />
               </div>
@@ -209,8 +206,8 @@ export default function SignUp() {
                   className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={password}
                   onChange={(e) => {
-                    setPassword(e.target.value);
-                    checkInputFields();
+                    setPassword(e.target.value)
+                    checkInputFields()
                   }}
                   placeholder="•••••••••"
                 />
@@ -236,8 +233,8 @@ export default function SignUp() {
                   required
                   className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   onChange={(e) => {
-                    validatePassword(e);
-                    checkInputFields();
+                    validatePassword(e)
+                    checkInputFields()
                   }}
                   placeholder="•••••••••"
                 />
@@ -250,8 +247,8 @@ export default function SignUp() {
                 className={`group relative flex w-full justify-center rounded-md py-2 px-3 text-sm font-semibold text-white 
                   ${
                     isAvailableToSubmit
-                      ? "bg-orange-400 hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? 'bg-orange-400 hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                      : 'bg-gray-400 cursor-not-allowed'
                   }`}
                 disabled={!isAvailableToSubmit}
               >
@@ -263,5 +260,5 @@ export default function SignUp() {
       </div>
       <Footer />
     </div>
-  );
+  )
 }

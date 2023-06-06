@@ -1,16 +1,20 @@
-import SignIn from "./components/pages/SignIn";
-import Home from "./components/pages/Home";
-import NotFound from "./components/pages/NotFound";
-import SignUp from "./components/pages/SignUp";
+import SignIn from './components/pages/SignIn'
+import Home from './components/pages/Home'
+import NotFound from './components/pages/NotFound'
+import SignUp from './components/pages/SignUp'
 
-import { Route, Routes } from "react-router-dom";
-import NewItem from "./components/pages/NewItem";
-import DisplayImage from "./components/pages/DisplayImage";
-import ItemDetails from "./components/pages/ItemDetails";
-import ManageItem from "./components/pages/item/ManageItem";
-import ChatPage from "./components/pages/chat/ChatPage";
+import { Route, Routes } from 'react-router-dom'
+import NewItem from './components/pages/NewItem'
+import DisplayImage from './components/pages/DisplayImage'
 
-function App() {
+import ItemDetails from './components/pages/ItemDetails'
+import BookingItem from './components/pages/BookingItem'
+
+import ManageItem from './components/pages/item/ManageItem'
+
+import ChatPage from './components/pages/chat/ChatPage'
+
+function App () {
   return (
     <div className="App">
       <Routes>
@@ -18,13 +22,16 @@ function App() {
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
         <Route path="*" element={<NotFound />} />
-        <Route path="/user/manage/profile"></Route>
+        <Route path="/user/manage/profile" />
 
         {/* item */}
-        <Route path="/user/manage/item" element={<ManageItem />}></Route>
+        <Route path="/user/manage/item" element={<ManageItem />} />
         <Route path="/item/create" element={<NewItem />} />
         <Route path="/item/:id" element={<DisplayImage />} />
         <Route path="/listing/item/:id" element={<ItemDetails />} />
+
+        {/* Booking Item */}
+        <Route path="/booking/:ownerId" element={<BookingItem />} />
 
         {/* Event */}
         <Route path="/listing/event/:id" element={<DisplayImage />} />
@@ -33,7 +40,7 @@ function App() {
         <Route path="/message/" element={<ChatPage />} />
       </Routes>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -1,62 +1,62 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 
-import axios from "axios";
-import path from "../../utils/path";
+import axios from 'axios'
+import path from '../../utils/path'
 
-export default function ImageUploader() {
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [images, setImages] = useState([]);
+export default function ImageUploader () {
+  const [selectedImages, setSelectedImages] = useState([])
+  const [images, setImages] = useState([])
 
   const onSelectFile = (event) => {
-    const selectedFiles = event.target.files;
-    const selectedFilesArray = Array.from(selectedFiles);
+    const selectedFiles = event.target.files
+    const selectedFilesArray = Array.from(selectedFiles)
 
     const imagesArray = selectedFilesArray.map((file) => {
-      return URL.createObjectURL(file);
-    });
-    
-    setImages((previousImages) => previousImages.concat(selectedFilesArray));
-    setSelectedImages((previousImages) => previousImages.concat(imagesArray));
+      return URL.createObjectURL(file)
+    })
+
+    setImages((previousImages) => previousImages.concat(selectedFilesArray))
+    setSelectedImages((previousImages) => previousImages.concat(imagesArray))
 
     // FOR BUG IN CHROME
-    event.target.value = "";
-  };
+    event.target.value = ''
+  }
 
-  function deleteHandler(image) {
-    setSelectedImages(selectedImages.filter((e) => e !== image));
-    URL.revokeObjectURL(image);
+  function deleteHandler (image) {
+    setSelectedImages(selectedImages.filter((e) => e !== image))
+    URL.revokeObjectURL(image)
   }
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    const formData = new FormData();
+    event.preventDefault()
+    const formData = new FormData()
 
-    formData.append("count", selectedImages.length);
+    formData.append('count', selectedImages.length)
 
     images.forEach((image, index) => {
-      formData.append(`images-${index}`, image);
-    });
+      formData.append(`images-${index}`, image)
+    })
 
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
+    for (const pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1])
     }
-    
+
     axios
-      .post(path.url + "api/item/createImage", formData, {
+      .post(path.url + 'api/item/createImage', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-        },
+          'Content-Type': 'multipart/form-data'
+        }
       })
       .then((response) => {
-        console.log(response);
+        console.log(response)
       })
       .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+        console.error('Error:', error)
+      })
+  }
 
   return (
     <section>
@@ -103,24 +103,26 @@ export default function ImageUploader() {
       </form>
       <br />
       {selectedImages.length > 0 &&
-        (selectedImages.length > 10 ? (
+        (selectedImages.length > 10
+          ? (
           <p className="error">
-            You can't upload more than 10 images! <br />
+            You can&apos;t upload more than 10 images! <br />
             <span>
-              please delete <b> {selectedImages.length - 10} </b> of them{" "}
+              please delete <b> {selectedImages.length - 10} </b> of them{' '}
             </span>
           </p>
-        ) : (
+            )
+          : (
           <button
             className="upload-btn"
             onClick={() => {
-              console.log(selectedImages);
+              console.log(selectedImages)
             }}
           >
             UPLOAD {selectedImages.length} IMAGE
-            {selectedImages.length === 1 ? "" : "S"}
+            {selectedImages.length === 1 ? '' : 'S'}
           </button>
-        ))}
+            ))}
       <div className="images flex gap-2">
         {selectedImages &&
           selectedImages.map((image, index) => {
@@ -139,9 +141,9 @@ export default function ImageUploader() {
                 </button>
                 {/* <p>{index + 1}</p> */}
               </div>
-            );
+            )
           })}
       </div>
     </section>
-  );
+  )
 };

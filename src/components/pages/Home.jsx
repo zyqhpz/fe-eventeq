@@ -1,26 +1,26 @@
-import Footer from "../ui/Footer";
-import Navbar from "../ui/Navbar";
-import ItemCard from "../ui/ItemCard";
+import Footer from '../ui/Footer'
+import Navbar from '../ui/Navbar'
+import ItemCard from '../ui/ItemCard'
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
-import path from "../utils/path";
+import path from '../utils/path'
 
-function Home() {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+function Home () {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-      axios
-      .get(path.url + "api/itemWithUser")
+    axios
+      .get(path.url + 'api/itemWithUser')
       .then((res) => {
-        setItems(res.data);
-        setLoading(false);
+        setItems(res.data)
+        setLoading(false)
       })
-      .catch((err) => {
-      });
-  }, []);
+      .catch(() => {
+      })
+  }, [])
 
   return (
     <div className="Home min-h-screen flex flex-col w-screen">
@@ -53,7 +53,7 @@ function Home() {
       </div>
       <Footer />
     </div>
-  );
+  )
 }
 
-export default Home;
+export default Home
