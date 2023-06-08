@@ -6,8 +6,9 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 import ItemBookingCard from '../ui/ItemBookingCard'
 
+import Datepicker from 'react-tailwindcss-datepicker'
+
 import path from '../utils/path'
-import { parse } from 'postcss'
 
 export default function BookingItem () {
   const { ownerId } = useParams()
@@ -111,6 +112,16 @@ export default function BookingItem () {
     setGrandTotal(grandTotal)
   }, [bookingItems])
 
+  const [value, setValue] = useState({
+    startDate: new Date(),
+    endDate: new Date().setMonth(11)
+  })
+
+  const handleValueChange = (newValue) => {
+    console.log('newValue:', newValue)
+    setValue(newValue)
+  }
+
   return (
     <div className="p-8 flex flex-col w-screen">
       <ul className="menu menu-horizontal bg-orange-500 text-white hover:bg-base-200 hover:text-black rounded-box w-24">
@@ -170,7 +181,10 @@ export default function BookingItem () {
           </div>
           <h1 className="text-2xl font-bold">Booking Summary</h1>
           <div className="relative overflow-x-auto w-full">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="bookingSummaryTable">
+            <table
+              className="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+              id="bookingSummaryTable"
+            >
               <thead className="text-md text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-6 py-3">
@@ -190,7 +204,9 @@ export default function BookingItem () {
               <tbody>
                 {bookingItems.length === 0 ? (
                   <tr>
-                    <td className="px-6 py-4" colSpan={4}>No item selected</td>
+                    <td className="px-6 py-4" colSpan={4}>
+                      No item selected
+                    </td>
                   </tr>
                 ) : (
                   bookingItems.map((item) => (
@@ -233,6 +249,26 @@ export default function BookingItem () {
               </tfoot>
             </table>
           </div>
+          <Datepicker
+            startFrom={new Date()}
+            primaryColor={'orange'}
+            value={value}
+            onChange={handleValueChange}
+            showShortcuts={true}
+            separator="to"
+            displayFormat={'DD/MM/YYYY'}
+            configs={{
+              shortcuts: {
+                next7Days: {
+                  text: 'Next 7 days',
+                  period: {
+                    start: new Date(),
+                    end: new Date().setDate(new Date().getDate() + 7)
+                  }
+                }
+              }
+            }}
+          />
         </div>
       </div>
     </div>
