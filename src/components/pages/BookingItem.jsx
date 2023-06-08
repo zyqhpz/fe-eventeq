@@ -18,10 +18,11 @@ export default function BookingItem () {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [bookingItems, setBookingItems] = useState([])
-
-  const [currentQuantity, setCurrentQuantity] = useState(0)
-
   const [quantity, setQuantity] = useState(0)
+
+  const [subTotal, setSubTotal] = useState(0)
+  const [serviceFee, setServiceFee] = useState(0) // 7% of subTotal
+  const [grandTotal, setGrandTotal] = useState(0) // subTotal + serviceFee
 
   const backPath = '/listing/item/' + tempItemId
 
@@ -29,26 +30,12 @@ export default function BookingItem () {
     localStorage.removeItem('tempItemId')
   }
 
-  // const handleQuantityChange = (updatedQuantity, itemID) => {
-  //   setQuantity(updatedQuantity)
-  //   if (currentQuantity < updatedQuantity) {
-  //     handleAddBooking()
-  //   } else {
-  //     removeBookingItem(itemID)
-  //   }
-  //   setCurrentQuantity(updatedQuantity)
-  // }
-
-  const handleAddQuantity = (updatedQuantity, itemID) => {
-    setQuantity(updatedQuantity)
-    setCurrentQuantity(updatedQuantity)
-    handleAddBooking(itemID)
+  const handleAddQuantity = (updatedItemQuantity, itemID) => {
+    handleAddBooking(updatedItemQuantity, itemID)
   }
 
-  const handleMinusQuantity = (updatedQuantity, itemID) => {
-    removeBookingItem(itemID)
-    setQuantity(updatedQuantity)
-    setCurrentQuantity(updatedQuantity)
+  const handleMinusQuantity = (updatedItemQuantity, itemID) => {
+    removeBookingItem(updatedItemQuantity, itemID)
   }
 
   useEffect(() => {
@@ -71,20 +58,17 @@ export default function BookingItem () {
       })
   }, [])
 
-  const handleAddBooking = (itemID) => {
+  const handleAddBooking = (itemQuantity, itemID) => {
     // get item details
     const itemSelected = items.filter((item) => item.ID === itemID)
-
     const bookingItem = {
       ID: itemSelected[0].ID,
       Name: itemSelected[0].Name,
       Price: itemSelected[0].Price,
-      Quantity: quantity
+      Quantity: itemQuantity
     }
-
     // check if item already exist in bookingItems
     const itemExist = bookingItems.find((item) => item.ID === bookingItem.ID)
-
     if (itemExist) {
       const newBookingItems = bookingItems.map((item) =>
         item.ID === bookingItem.ID
@@ -95,20 +79,37 @@ export default function BookingItem () {
     } else {
       setBookingItems([...bookingItems, bookingItem])
     }
+    setQuantity(quantity + 1)
   }
 
-  const removeBookingItem = (id) => {
+  const removeBookingItem = (itemQuantity, itemID) => {
     // if item quantity is 0, remove item from bookingItems, else update quantity
-    if (quantity === 0) {
-      const newBookingItems = bookingItems.filter((item) => item.ID !== id)
+    if (itemQuantity === 0) {
+      const newBookingItems = bookingItems.filter((item) => item.ID !== itemID)
       setBookingItems(newBookingItems)
     } else {
       const newBookingItems = bookingItems.map((item) =>
-        item.ID === id ? { ...item, Quantity: quantity } : item
+        item.ID === itemID ? { ...item, Quantity: itemQuantity } : item
       )
       setBookingItems(newBookingItems)
     }
+    setQuantity(quantity - 1)
   }
+
+  useEffect(() => {
+    // calculate subtotal
+    const subTotal = bookingItems.reduce(
+      (acc, item) => acc + item.Price * item.Quantity,
+      0
+    )
+    setSubTotal(subTotal)
+    // calculate service fee (7%) and round to 2 decimal places
+    const serviceFee = Math.round((subTotal * 7) / 100 * 100) / 100
+    setServiceFee(serviceFee)
+    // calculate grand total
+    const grandTotal = subTotal + serviceFee
+    setGrandTotal(grandTotal)
+  }, [bookingItems])
 
   return (
     <div className="p-8 flex flex-col w-screen">
@@ -147,7 +148,6 @@ export default function BookingItem () {
                     <ItemBookingCard
                       key={item.ID}
                       item={item}
-                      // handleQuantityChange={handleQuantityChange}
                       handleAddQuantity={handleAddQuantity}
                       handleMinusQuantity={handleMinusQuantity}
                     />
@@ -170,71 +170,65 @@ export default function BookingItem () {
           </div>
           <h1 className="text-2xl font-bold">Booking Summary</h1>
           <div className="relative overflow-x-auto w-full">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="bookingSummaryTable">
               <thead className="text-md text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-6 py-3">
                     Item
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Price per day (RM)
+                    Price per day
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Quantity
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Total (RM)
+                    Total
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-white border-b">
-                  {bookingItems.length === 0 ? (
-                    <tr>
-                      <td className="px-6 py-4">No item selected</td>
-                    </tr>
-                  ) : (
-                    bookingItems.map((item) => (
-                      <tr
+                {bookingItems.length === 0 ? (
+                  <tr>
+                    <td className="px-6 py-4" colSpan={4}>No item selected</td>
+                  </tr>
+                ) : (
+                  bookingItems.map((item) => (
+                    <tr className="bg-white border-b" key={item.ID}>
+                      <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                        key={item.ID}
                       >
-                        <th className="px-6 py-4">{item.Name}</th>
-                        <td className="px-6 py-4">{item.Price}</td>
-                        <td className="px-6 py-4">{item.Quantity}</td>
-                        <td className="px-6 py-4">
-                          {item.Price * item.Quantity}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tr>
+                        {item.Name}
+                      </th>
+                      <td className="px-6 py-4">RM {item.Price}</td>
+                      <td className="px-6 py-4">{item.Quantity}</td>
+                      <td className="px-6 py-4">
+                        RM {item.Price * item.Quantity}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
               <tfoot>
                 <tr className="font-semibold text-gray-900 bg-gray-50">
-                  <th scope="row" className="px-6 py-3 text-md">
+                  <th scope="row" colSpan={3} className="px-6 py-3 text-md">
                     Subtotal
                   </th>
-                  <td className="px-6 py-3"></td>
-                  <td className="px-6 py-3"></td>
-                  <td className="px-6 py-3">21,000</td>
+                  <td className="px-6 py-3">RM {subTotal}</td>
                 </tr>
                 <tr className="font-semibold text-gray-900 bg-gray-50">
-                  <th scope="row" className="px-6 py-3 text-md">
-                    Service Fee
+                  <th scope="row" colSpan={3} className="px-6 py-3 text-md">
+                    Service Fee (7%)
                   </th>
-                  <td className="px-6 py-3"></td>
-                  <td className="px-6 py-3"></td>
-                  <td className="px-6 py-3">21,000</td>
+                  <td className="px-6 py-3">RM {serviceFee}</td>
                 </tr>
                 <tr className="font-semibold text-gray-900 bg-gray-50">
-                  <th scope="row" className="px-6 py-3 text-md">
-                    Total
+                  <th scope="row" colSpan={2} className="px-6 py-3 text-md">
+                    Grand Total
                   </th>
-                  <td className="px-6 py-3"></td>
                   <td className="px-6 py-3">{quantity}</td>
-                  <td className="px-6 py-3">21,000</td>
+                  <td className="px-6 py-3">RM {grandTotal}</td>
                 </tr>
               </tfoot>
             </table>
