@@ -4,16 +4,20 @@ import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 
 import path from '../utils/path'
 
-export default function ItemBookingCard ({ item }) {
+export default function ItemBookingCard ({ item, handleAddQuantity, handleMinusQuantity }) {
   const [count, setCount] = useState(0)
 
   function increment () {
     if (count === item.Quantity) return
+    // handleQuantityChange(count + 1, item.ID)
+    handleAddQuantity(count + 1, item.ID)
     setCount(count + 1)
   }
 
   function decrement () {
     if (count === 0) return
+    // handleQuantityChange(count - 1, item.ID)
+    handleMinusQuantity(count - 1, item.ID)
     setCount(count - 1)
   }
 
@@ -33,7 +37,9 @@ export default function ItemBookingCard ({ item }) {
             {item.Name}
           </h3>
           <p className="text-gray-700 text-lg">{item.Description}</p>
-          <p className="text-gray-500"><strong>RM</strong> {item.Price} /day</p>
+          <p className="text-gray-500">
+            <strong>RM</strong> {item.Price} /day
+          </p>
         </div>
       </div>
       {/* RIGHT SIDE */}
