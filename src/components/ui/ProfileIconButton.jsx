@@ -33,6 +33,7 @@ export default function Example () {
           setIsAuthenticated(true)
           setUser(data.user)
           setName(data.user.FirstName + ' ' + data.user.LastName)
+          localStorage.setItem('userId', data.user.ID)
         } else if (data.status === 'failed') {
           setUser(null)
           setIsAuthenticated(false)
