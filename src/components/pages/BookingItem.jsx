@@ -10,6 +10,8 @@ import Datepicker from 'react-tailwindcss-datepicker'
 
 import path from '../utils/path'
 
+import { useToast } from '@chakra-ui/react'
+
 export default function BookingItem () {
   const { ownerId } = useParams()
   const userId = localStorage.getItem('userId')
@@ -24,6 +26,8 @@ export default function BookingItem () {
   const [subTotal, setSubTotal] = useState(0)
   const [serviceFee, setServiceFee] = useState(0) // 7% of subTotal
   const [grandTotal, setGrandTotal] = useState(0) // subTotal + serviceFee
+
+  const [bookingButtonIsDisabled, setBookingButtonIsDisabled] = useState(true)
 
   const backPath = '/listing/item/' + tempItemId
 
@@ -54,7 +58,8 @@ export default function BookingItem () {
       .then((res) => res.json())
       .then((data) => {
         setUser(data)
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err)
       })
   }, [])
@@ -105,21 +110,93 @@ export default function BookingItem () {
     )
     setSubTotal(subTotal)
     // calculate service fee (7%) and round to 2 decimal places
-    const serviceFee = Math.round((subTotal * 7) / 100 * 100) / 100
+    const serviceFee = Math.round(((subTotal * 7) / 100) * 100) / 100
     setServiceFee(serviceFee)
     // calculate grand total
     const grandTotal = subTotal + serviceFee
     setGrandTotal(grandTotal)
   }, [bookingItems])
 
-  const [value, setValue] = useState({
+  useEffect(() => {
+    if (bookingItems.length === 0) {
+      setBookingButtonIsDisabled(true)
+    } else {
+      setBookingButtonIsDisabled(false)
+    }
+  }, [bookingItems])
+
+  // date picker state
+  const [dateValue, setDateValue] = useState({
     startDate: new Date(),
-    endDate: new Date().setMonth(11)
+    endDate: new Date().setDate(new Date().getDate() + 1)
   })
 
-  const handleValueChange = (newValue) => {
-    console.log('newValue:', newValue)
-    setValue(newValue)
+  // new Date() format to DD/MM/YYYY
+
+  const handleDateValueChange = (newValue) => {
+    setDateValue(newValue)
+  }
+
+  // Error feedback if booking failed
+  const toast = useToast()
+  const ErrorBooking = () => {
+    return toast({
+      title: 'Booking failed.',
+      description: 'Please check your booking details.',
+      status: 'error',
+      position: 'top-right',
+      duration: 9000,
+      isClosable: true
+    })
+  }
+
+  const SuccessBooking = () => {
+    return toast({
+      title: 'Booking successful.',
+      description: 'Please review your booking in your profile.',
+      status: 'success',
+      position: 'top-right',
+      duration: 9000,
+      isClosable: true
+    })
+  }
+
+  const handleSubmit = () => {
+    // set dates to ISO format for database
+    dateValue.startDate = dateValue.startDate
+      ? dateValue.startDate.toLocaleDateString('en-GB')
+      : null
+    dateValue.endDate = dateValue.endDate
+      ? new Date(dateValue.endDate).toLocaleDateString('en-GB')
+      : null
+
+    const booking = {
+      UserID: userId,
+      OwnerID: ownerId,
+      StartDate: dateValue.startDate,
+      EndDate: dateValue.endDate,
+      Items: bookingItems
+    }
+
+    if (booking.StartDate === null || booking.EndDate === null) {
+      ErrorBooking()
+    } else {
+      fetch(path.url + 'api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(booking)
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === 'success') {
+            SuccessBooking()
+          } else {
+            ErrorBooking()
+          }
+        })
+    }
   }
 
   return (
@@ -179,8 +256,8 @@ export default function BookingItem () {
               {/* {user.FirstName + ' ' + user.LastName} */}
             </h1>
           </div>
-          <h1 className="text-2xl font-bold">Booking Summary</h1>
-          <div className="relative overflow-x-auto w-full">
+          <div className="flex flex-col gap-2 relative overflow-x-auto w-full">
+            <h1 className="text-2xl font-bold">Booking Summary</h1>
             <table
               className="w-full text-sm text-left text-gray-500 dark:text-gray-400"
               id="bookingSummaryTable"
@@ -249,26 +326,47 @@ export default function BookingItem () {
               </tfoot>
             </table>
           </div>
-          <Datepicker
-            startFrom={new Date()}
-            primaryColor={'orange'}
-            value={value}
-            onChange={handleValueChange}
-            showShortcuts={true}
-            separator="to"
-            displayFormat={'DD/MM/YYYY'}
-            configs={{
-              shortcuts: {
-                next7Days: {
-                  text: 'Next 7 days',
-                  period: {
-                    start: new Date(),
-                    end: new Date().setDate(new Date().getDate() + 7)
+          <div className="flex flex-col gap-2 mt-4 w-1/2">
+            <div>
+              <h1 className="text-lg font-bold">Booking Period</h1>
+            </div>
+            <label className="flex flex-row ml-4 gap-10">
+              <span className="text-gray-700">Start Date</span>
+              <span className="text-gray-700">End Date</span>
+            </label>
+            <Datepicker
+              startFrom={new Date()}
+              primaryColor={'orange'}
+              value={dateValue}
+              onChange={handleDateValueChange}
+              showShortcuts={true}
+              separator="to"
+              displayFormat={'DD/MM/YYYY'}
+              configs={{
+                shortcuts: {
+                  next7Days: {
+                    text: 'Next 7 days',
+                    period: {
+                      start: new Date(),
+                      end: new Date().setDate(new Date().getDate() + 7)
+                    }
                   }
                 }
-              }
-            }}
-          />
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-2 mt-4">
+            {/* <div>
+              <h1 className='text-lg font-bold'>Payment Method</h1>
+            </div> */}
+            <button
+              className="btn bg-orange-500 hover:bg-orange-600 text-white"
+              disabled={bookingButtonIsDisabled}
+              onClick={handleSubmit}
+            >
+              Book Now
+            </button>
+          </div>
         </div>
       </div>
     </div>
