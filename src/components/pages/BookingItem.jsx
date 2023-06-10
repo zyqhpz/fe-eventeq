@@ -68,17 +68,17 @@ export default function BookingItem () {
     // get item details
     const itemSelected = items.filter((item) => item.ID === itemID)
     const bookingItem = {
-      ID: itemSelected[0].ID,
-      Name: itemSelected[0].Name,
-      Price: itemSelected[0].Price,
-      Quantity: itemQuantity
+      id: itemSelected[0].ID,
+      name: itemSelected[0].Name,
+      price: itemSelected[0].Price,
+      quantity: itemQuantity
     }
     // check if item already exist in bookingItems
-    const itemExist = bookingItems.find((item) => item.ID === bookingItem.ID)
+    const itemExist = bookingItems.find((item) => item.id === bookingItem.id)
     if (itemExist) {
       const newBookingItems = bookingItems.map((item) =>
-        item.ID === bookingItem.ID
-          ? { ...item, Quantity: bookingItem.Quantity }
+        item.id === bookingItem.id
+          ? { ...item, quantity: bookingItem.quantity }
           : item
       )
       setBookingItems(newBookingItems)
@@ -91,11 +91,11 @@ export default function BookingItem () {
   const removeBookingItem = (itemQuantity, itemID) => {
     // if item quantity is 0, remove item from bookingItems, else update quantity
     if (itemQuantity === 0) {
-      const newBookingItems = bookingItems.filter((item) => item.ID !== itemID)
+      const newBookingItems = bookingItems.filter((item) => item.id !== itemID)
       setBookingItems(newBookingItems)
     } else {
       const newBookingItems = bookingItems.map((item) =>
-        item.ID === itemID ? { ...item, Quantity: itemQuantity } : item
+        item.id === itemID ? { ...item, quantity: itemQuantity } : item
       )
       setBookingItems(newBookingItems)
     }
@@ -105,7 +105,7 @@ export default function BookingItem () {
   useEffect(() => {
     // calculate subtotal
     const subTotal = bookingItems.reduce(
-      (acc, item) => acc + item.Price * item.Quantity,
+      (acc, item) => acc + item.price * item.quantity,
       0
     )
     setSubTotal(subTotal)
@@ -117,6 +117,7 @@ export default function BookingItem () {
     setGrandTotal(grandTotal)
   }, [bookingItems])
 
+  // disable booking button if no item is selected
   useEffect(() => {
     if (bookingItems.length === 0) {
       setBookingButtonIsDisabled(true)
@@ -127,11 +128,9 @@ export default function BookingItem () {
 
   // date picker state
   const [dateValue, setDateValue] = useState({
-    startDate: new Date(),
-    endDate: new Date().setDate(new Date().getDate() + 1)
+    startDate: null,
+    endDate: null
   })
-
-  // new Date() format to DD/MM/YYYY
 
   const handleDateValueChange = (newValue) => {
     setDateValue(newValue)
@@ -139,10 +138,10 @@ export default function BookingItem () {
 
   // Error feedback if booking failed
   const toast = useToast()
-  const ErrorBooking = () => {
+  const ErrorBooking = (message) => {
     return toast({
       title: 'Booking failed.',
-      description: 'Please check your booking details.',
+      description: message,
       status: 'error',
       position: 'top-right',
       duration: 9000,
@@ -164,38 +163,47 @@ export default function BookingItem () {
   const handleSubmit = () => {
     // set dates to ISO format for database
     dateValue.startDate = dateValue.startDate
-      ? dateValue.startDate.toLocaleDateString('en-GB')
+      ? new Date(dateValue.startDate).toLocaleDateString('en-GB')
       : null
     dateValue.endDate = dateValue.endDate
       ? new Date(dateValue.endDate).toLocaleDateString('en-GB')
       : null
 
+    console.log(dateValue)
+
     const booking = {
-      UserID: userId,
-      OwnerID: ownerId,
-      StartDate: dateValue.startDate,
-      EndDate: dateValue.endDate,
-      Items: bookingItems
+      user_id: userId,
+      owner_id: ownerId,
+      start_date: dateValue.startDate,
+      end_date: dateValue.endDate,
+      items: bookingItems,
+      sub_total: subTotal,
+      service_fee: serviceFee,
+      grand_total: grandTotal
     }
 
-    if (booking.StartDate === null || booking.EndDate === null) {
-      ErrorBooking()
+    if (booking.start_date === null || booking.end_date === null) {
+      ErrorBooking('Please select a booking period.')
     } else {
-      fetch(path.url + 'api/booking', {
+      fetch(path.url + 'api/booking/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(booking)
       })
-        .then((res) => res.json())
+        .then((res) => res.json(), console.log(booking))
         .then((data) => {
           if (data.status === 'success') {
             SuccessBooking()
           } else {
-            ErrorBooking()
+            ErrorBooking(data.message)
           }
         })
+        .catch((err) => {
+          console.log(err)
+        }
+        )
     }
   }
 
@@ -228,7 +236,7 @@ export default function BookingItem () {
                     {owner.FirstName + ' ' + owner.LastName}
                   </span>
                 </h1>
-                {/* This is BookingItem page for owner {ownerId} and user {userId} */}
+                This is BookingItem page for owner {ownerId} and user {userId}
               </div>
               <div className="flex flex-wrap">
                 <div className="flex flex-col w-11/12 p-4 gap-2">
@@ -287,17 +295,17 @@ export default function BookingItem () {
                   </tr>
                 ) : (
                   bookingItems.map((item) => (
-                    <tr className="bg-white border-b" key={item.ID}>
+                    <tr className="bg-white border-b" key={item.id}>
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
                       >
-                        {item.Name}
+                        {item.name}
                       </th>
-                      <td className="px-6 py-4">RM {item.Price}</td>
-                      <td className="px-6 py-4">{item.Quantity}</td>
+                      <td className="px-6 py-4">RM {item.price}</td>
+                      <td className="px-6 py-4">{item.quantity}</td>
                       <td className="px-6 py-4">
-                        RM {item.Price * item.Quantity}
+                        RM {item.price * item.quantity}
                       </td>
                     </tr>
                   ))
@@ -344,6 +352,13 @@ export default function BookingItem () {
               displayFormat={'DD/MM/YYYY'}
               configs={{
                 shortcuts: {
+                  next3Days: {
+                    text: 'Next 3 days',
+                    period: {
+                      start: new Date(),
+                      end: new Date().setDate(new Date().getDate() + 3)
+                    }
+                  },
                   next7Days: {
                     text: 'Next 7 days',
                     period: {
