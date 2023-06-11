@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-import ItemBookingCard from '../../ui/ItemBookingCard'
+import ItemBookingCard from '../../ui/booking/ItemBookingCard'
 
 import Datepicker from 'react-tailwindcss-datepicker'
 

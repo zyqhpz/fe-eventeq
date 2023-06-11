@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 
-import path from '../utils/path'
+import path from '../../utils/path'
 
 export default function ItemBookingCard ({ item, handleAddQuantity, handleMinusQuantity }) {
   const [count, setCount] = useState(0)
