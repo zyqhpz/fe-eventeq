@@ -4,11 +4,11 @@ import { Link, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-import ItemBookingCard from '../ui/ItemBookingCard'
+import ItemBookingCard from '../../ui/ItemBookingCard'
 
 import Datepicker from 'react-tailwindcss-datepicker'
 
-import path from '../utils/path'
+import path from '../../utils/path'
 
 import { useToast } from '@chakra-ui/react'
 

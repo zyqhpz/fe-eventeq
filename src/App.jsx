@@ -8,7 +8,8 @@ import NewItem from './components/pages/NewItem'
 import DisplayImage from './components/pages/DisplayImage'
 
 import ItemDetails from './components/pages/ItemDetails'
-import BookingItem from './components/pages/BookingItem'
+import BookingItem from './components/pages/booking/BookingItem'
+import Bookings from './components/pages/booking/Bookings'
 
 import ManageItem from './components/pages/item/ManageItem'
 
@@ -32,6 +33,7 @@ function App () {
 
         {/* Booking Item */}
         <Route path="/booking/:ownerId" element={<BookingItem />} />
+        <Route path="/listing/booking/" element={<Bookings />} />
 
         {/* Event */}
         <Route path="/listing/event/:id" element={<DisplayImage />} />

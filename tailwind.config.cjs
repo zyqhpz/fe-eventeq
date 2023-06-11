@@ -4,6 +4,7 @@ module.exports = {
     './index.html',
     './src/**/*.{html,js,ts,jsx,tsx}',
     'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
+    './node_modules/flowbite/**/*.js',
     './node_modules/tailwind-datepicker-react/dist/**/*.js',
     './node_modules/react-tailwindcss-datepicker/dist/index.esm.js'
   ],
