@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function BookingUpcomingDetailCard ({ booking }) {
+export default function BookingActiveDetailCard ({ booking }) {
   let count = 0
 
   const createdDate = new Date(booking.CreatedAt)
@@ -26,9 +26,7 @@ export default function BookingUpcomingDetailCard ({ booking }) {
   // Set the date we're counting down to
   const targetDate = new Date(bookingStartDate) // Specify your target date here
 
-  const [remainingTime, setRemainingTime] = useState(
-    calculateRemainingTime()
-  )
+  const [remainingTime, setRemainingTime] = useState(calculateRemainingTime())
 
   useEffect(() => {
     const interval = setInterval(() => {

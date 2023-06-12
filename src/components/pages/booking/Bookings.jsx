@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, lazy } from 'react'
 
 import { useParams, Link } from 'react-router-dom'
 
@@ -6,7 +6,8 @@ import path from '../../utils/path'
 
 import Navbar from '../../ui/Navbar'
 
-import BookingDetailCard from '../../ui/booking/BookingUpcomingDetailCard'
+import BookingUpcomingDetailCard from '../../ui/booking/BookingUpcomingDetailCard'
+import BookingActiveDetailCard from '../../ui/booking/BookingActiveDetailCard'
 
 export default function BookingItem () {
   const [openTab, setOpenTab] = useState(1)
@@ -17,27 +18,32 @@ export default function BookingItem () {
 
   const [loading, setLoading] = useState(true)
 
+  const userId = localStorage.getItem('userId')
+
   if (openTab === 1) {
     document.title = 'Upcoming Booking'
   } else if (openTab === 2) {
     document.title = 'Active Booking'
+    loadActiveBooking()
   } else if (openTab === 3) {
     document.title = 'Ended Booking'
   }
 
+  function loadActiveBooking () {
+    if (activeBooking.length === 0) {
+      fetch(path.url + 'api/booking/' + userId + '/active/listing')
+        .then((res) => res.json())
+        .then((data) => {
+          setActiveBooking(data)
+        })
+    }
+  }
+
   useEffect(() => {
-    fetch(path.url + 'api/booking/6419d02a915009536af83de6/listing')
+    fetch(path.url + 'api/booking/' + userId + '/upcoming/listing')
       .then((res) => res.json())
       .then((data) => {
-        data.forEach(element => {
-          if (element.Status === 0) {
-            setUpcomingBooking(upcomingBooking => [...upcomingBooking, element])
-          } else if (element.Status === 1) {
-            setActiveBooking(activeBooking => [...activeBooking, element])
-          } else if (element.Status === 2) {
-            setEndedBooking(endedBooking => [...endedBooking, element])
-          }
-        })
+        setUpcomingBooking(data)
         setLoading(false)
       })
   }, [])
@@ -119,46 +125,85 @@ export default function BookingItem () {
                       className={openTab === 1 ? 'block' : 'hidden'}
                       id="link1"
                     >
-                        {/* Upcoming booking */}
-                      <div>
-                        <div className="flex flex-col gap-2">
-                            {upcomingBooking.map((booking) => (
-                                    <BookingDetailCard booking={booking} key={booking.ID}/>
-                              // <div className="w-full lg:w-6/12 xl:w-4/12 px-4" key={booking.ID}>
-                              //     {/* {booking.ID} */}
-                              // </div>
-                            ))}
-                            </div>
+                      {/* Upcoming booking */}
+                      <div className="flex flex-col gap-2">
+                        {upcomingBooking.length === 0 && !loading ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <p className="text-2xl font-bold">
+                              No upcoming booking
+                            </p>
+                            <Link
+                              to="/"
+                              className="text-orange-500 hover:text-orange-600"
+                            >
+                              Book now!
+                            </Link>
+                          </div>
+                        ) : (
+                          upcomingBooking.map((booking) => (
+                            <BookingUpcomingDetailCard
+                              booking={booking}
+                              key={booking.ID}
+                            />
+                          ))
+                        )}
                       </div>
                     </div>
                     <div
                       className={openTab === 2 ? 'block' : 'hidden'}
                       id="link2"
                     >
-                        {/* Active booking */}
-                      <p>
-                        Completely synergize resource taxing relationships via
-                        premier niche markets. Professionally cultivate
-                        one-to-one customer service with robust ideas.
-                        <br />
-                        <br />
-                        Dynamically innovate resource-leveling customer service
-                        for state of the art customer service.
-                      </p>
+                      {/* Active booking */}
+                      <div className="flex flex-col gap-2">
+                        {activeBooking.length === 0 && !loading ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <p className="text-2xl font-bold">
+                              No active booking
+                            </p>
+                            <Link
+                              to="/"
+                              className="text-orange-500 hover:text-orange-600"
+                            >
+                              Book now!
+                            </Link>
+                          </div>
+                        ) : (
+                          activeBooking.map((booking) => (
+                            <BookingActiveDetailCard
+                              booking={booking}
+                              key={booking.ID}
+                            />
+                          ))
+                        )}
+                      </div>
                     </div>
                     <div
                       className={openTab === 3 ? 'block' : 'hidden'}
                       id="link3"
                     >
-                        {/* Ended booking */}
-                      <p>
-                        Efficiently unleash cross-media information without
-                        cross-media value. Quickly maximize timely deliverables
-                        for real-time schemas.
-                        <br />
-                        <br /> Dramatically maintain clicks-and-mortar solutions
-                        without functional solutions.
-                      </p>
+                      {/* Ended booking */}
+                      <div className="flex flex-col gap-2">
+                        {endedBooking.length === 0 && !loading ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <p className="text-2xl font-bold">
+                              No booking history
+                            </p>
+                            <Link
+                              to="/"
+                              className="text-orange-500 hover:text-orange-600"
+                            >
+                              Book now!
+                            </Link>
+                          </div>
+                        ) : (
+                          endedBooking.map((booking) => (
+                            <BookingUpcomingDetailCard
+                              booking={booking}
+                              key={booking.ID}
+                            />
+                          ))
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
