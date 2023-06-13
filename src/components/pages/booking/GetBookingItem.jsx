@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 import QRcode from 'qrcode.react'
+import { Html5QrcodeScanner } from 'html5-qrcode'
 
 import path from '../../utils/path'
 
@@ -34,21 +35,77 @@ export default function GetItem () {
       .catch((err) => console.log(err))
   }, [])
 
-  const handleScanningItem = (item) => {
-    const scanned = item.Scanned + 1
-    const remaining = item.Quantity - scanned
+  const [itemQR, setItemQR] = useState(null)
+  const qrcodeRegionId = 'html5qr-code-full-region'
 
-    if (remaining >= 0) {
-      item.Scanned = scanned
-      item.RemainingToScan = remaining
+  // Creates the configuration object for Html5QrcodeScanner.
+  const createConfig = (props) => {
+    const config = {}
+    if (props.fps) {
+      config.fps = props.fps
+    }
+    if (props.qrbox) {
+      config.qrbox = props.qrbox
+    }
+    if (props.aspectRatio) {
+      config.aspectRatio = props.aspectRatio
+    }
+    if (props.disableFlip !== undefined) {
+      config.disableFlip = props.disableFlip
+    }
+    return config
+  }
+
+  const Html5QrcodePlugin = (props) => {
+    useEffect(() => {
+      // when component mounts
+      const config = createConfig(props)
+      const verbose = props.verbose === true
+
+      const html5QrcodeScanner = new Html5QrcodeScanner(
+        qrcodeRegionId,
+        config,
+        verbose
+      )
+      html5QrcodeScanner.render(
+        props.qrCodeSuccessCallback,
+        props.qrCodeErrorCallback
+      )
+
+      // cleanup function when component will unmount
+      return () => {
+        html5QrcodeScanner.clear().catch((error) => {
+          console.error('Failed to clear html5QrcodeScanner. ', error)
+        })
+      }
+    }, [])
+
+    return <div id={qrcodeRegionId} />
+  }
+
+  const onNewQRScanResult = (decodedText, decodedResult) => {
+    // handle decoded results here
+    if (decodedText === itemQR.ItemID) {
+      console.log('QR code match')
+      window.my_modal_1.close()
+
+      const scanned = itemQR.Scanned + 1
+      const remaining = itemQR.Quantity - scanned
+
+      if (remaining >= 0) {
+        itemQR.Scanned = scanned
+        itemQR.RemainingToScan = remaining
+      }
+
+      if (scanned >= itemQR.Quantity) {
+        itemQR.Status = 'Ready'
+      }
+
+      setItems([...items])
+      setItemQR(null)
     }
 
-    if (scanned >= item.Quantity) {
-      item.Status = 'Ready'
-    }
-
-    setItems([...items])
-    console.log(items)
+    console.log(`Scan result = ${decodedText}`, decodedResult)
   }
 
   return (
@@ -121,7 +178,7 @@ export default function GetItem () {
                                 />
                                 <QRcode
                                   id="myqr"
-                                  value={item.ID}
+                                  value={item.ItemID}
                                   size={320}
                                   includeMargin={true}
                                 />
@@ -147,10 +204,13 @@ export default function GetItem () {
                                 <span></span>
                               ) : (
                                 <button
-                                  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-xl"
-                                  onClick={() => handleScanningItem(item)}
+                                  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-xl uppercase"
+                                  onClick={() => {
+                                    setItemQR(item)
+                                    window.my_modal_1.showModal()
+                                  }}
                                 >
-                                  Click To Scan
+                                  open QR scanner
                                 </button>
                               )}
                             </div>
@@ -189,6 +249,39 @@ export default function GetItem () {
           <div className="flex flex-col gap-2 relative overflow-x-auto w-full">
             <h1 className="text-2xl font-bold">Booking Time Remaining</h1>
           </div>
+
+          {/* Modal */}
+          <dialog id="my_modal_1" className="modal">
+            <form method="dialog" className="modal-box">
+              <h3 className="font-bold text-lg">Scan Item&apos;s QR code</h3>
+              <p className="py-4">
+                {/* Press ESC key or click the button below to close */}
+                <div className="w-full h-full">
+                  <span>QR Scanner</span>
+                  <center>
+                    <div style={{ marginTop: 10 }}>
+                      {/* <QRreader
+                        delay={300}
+                        onError={handleQRError}
+                        onScan={handleQRScan}
+                        style={{ height: 320, width: 320 }}
+                      /> */}
+                      <Html5QrcodePlugin
+                        fps={10}
+                        qrbox={250}
+                        disableFlip={false}
+                        qrCodeSuccessCallback={onNewQRScanResult}
+                      />
+                    </div>
+                  </center>
+                </div>
+              </p>
+              <div className="modal-action">
+                {/* if there is a button in form, it will close the modal */}
+                <button className="btn">Close</button>
+              </div>
+            </form>
+          </dialog>
         </div>
       </div>
     </div>
