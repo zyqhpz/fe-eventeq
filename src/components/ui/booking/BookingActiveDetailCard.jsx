@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
 
+import { Link } from 'react-router-dom'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import GetItem from './GetItem'
+
 export default function BookingActiveDetailCard ({ booking }) {
   let count = 0
 
@@ -12,19 +18,19 @@ export default function BookingActiveDetailCard ({ booking }) {
   })
 
   // convert date string DD/MM/YYYY to Date object
-  const bookingStartDate = new Date()
-  const dateParts = booking.StartDate.split('/') // Assuming booking.StartDate is in the format "DD/MM/YYYY"
+  const bookingEndDate = new Date()
+  const dateParts = booking.EndDate.split('/') // Assuming booking.EndDate is in the format "DD/MM/YYYY"
 
   // Create a new Date object with the extracted date components
-  bookingStartDate.setDate(parseInt(dateParts[0], 10))
-  bookingStartDate.setMonth(parseInt(dateParts[1], 10) - 1) // Months in JavaScript are zero-based
-  bookingStartDate.setFullYear(parseInt(dateParts[2], 10))
+  bookingEndDate.setDate(parseInt(dateParts[0], 10) + 1)
+  bookingEndDate.setMonth(parseInt(dateParts[1], 10) - 1) // Months in JavaScript are zero-based
+  bookingEndDate.setFullYear(parseInt(dateParts[2], 10))
 
   // set HH:MM:SS to 00:00:00
-  bookingStartDate.setHours(0, 0, 0, 0)
+  bookingEndDate.setHours(0, 0, 0, 0)
 
   // Set the date we're counting down to
-  const targetDate = new Date(bookingStartDate) // Specify your target date here
+  const targetDate = new Date(bookingEndDate) // Specify your target date here
 
   const [remainingTime, setRemainingTime] = useState(calculateRemainingTime())
 
@@ -109,8 +115,8 @@ export default function BookingActiveDetailCard ({ booking }) {
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1 p-4">
-              <h5 className="text-gray-500 uppercase font-bold text-xs">
-                Upcoming
+              <h5 className="text-orange-500 uppercase font-bold text-xs">
+                Active
               </h5>
               <div className="flex flex-row items-center justify-between">
                 <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
@@ -172,10 +178,25 @@ export default function BookingActiveDetailCard ({ booking }) {
               </div>
             </div>
           </div>
-          <p className="text-sm text-gray-500 mt-4 flex flex-col">
+          <p className="mt-4 flex flex-row justify-between items-end">
             <span className="font-semibold text-sm text-gray-800">
               Created On: {createdDateStr}
             </span>
+            <Link
+              className="mr-4 flex flex-row items-center"
+              to={{
+                pathname: '/listing/booking/active/' + booking.ID,
+                state: {
+                  data: booking,
+                  string: 'hello'
+                }
+              }}
+            >
+              <span className="font-bold text-lg bg-orange-500 px-6 py-2 text-white">
+                Get Item Now
+                <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+              </span>
+            </Link>
           </p>
         </div>
       </div>

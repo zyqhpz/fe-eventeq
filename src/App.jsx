@@ -10,6 +10,7 @@ import DisplayImage from './components/pages/DisplayImage'
 import ItemDetails from './components/pages/ItemDetails'
 import BookingItem from './components/pages/booking/BookingItem'
 import Bookings from './components/pages/booking/Bookings'
+import GetItem from './components/ui/booking/GetItem'
 
 import ManageItem from './components/pages/item/ManageItem'
 
@@ -34,6 +35,7 @@ function App () {
         {/* Booking Item */}
         <Route path="/booking/:ownerId" element={<BookingItem />} />
         <Route path="/listing/booking/" element={<Bookings />} />
+        <Route path="/listing/booking/active/:id" element={<GetItem />} />
 
         {/* Event */}
         <Route path="/listing/event/:id" element={<DisplayImage />} />
