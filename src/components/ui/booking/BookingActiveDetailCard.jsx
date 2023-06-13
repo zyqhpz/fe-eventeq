@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import GetItem from './GetItem'
 
 export default function BookingActiveDetailCard ({ booking }) {
   let count = 0

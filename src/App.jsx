@@ -10,7 +10,7 @@ import DisplayImage from './components/pages/DisplayImage'
 import ItemDetails from './components/pages/ItemDetails'
 import BookingItem from './components/pages/booking/BookingItem'
 import Bookings from './components/pages/booking/Bookings'
-import GetItem from './components/ui/booking/GetItem'
+import GetItem from './components/pages/booking/GetBookingItem'
 
 import ManageItem from './components/pages/item/ManageItem'
 
