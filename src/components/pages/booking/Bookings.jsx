@@ -20,6 +20,11 @@ export default function BookingItem () {
 
   const userId = localStorage.getItem('userId')
 
+  // check userId is exist
+  if (!userId) {
+    window.location.href = '/'
+  }
+
   if (openTab === 1) {
     document.title = 'Upcoming Booking'
   } else if (openTab === 2) {
