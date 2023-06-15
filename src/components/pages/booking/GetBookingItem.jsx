@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react'
 
 import { Link, useLocation, useParams } from 'react-router-dom'
 
+import BookingCountdown from '../../ui/booking/BookingCountdown'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 import QRcode from 'qrcode.react'
-import { Html5QrcodeScanner } from 'html5-qrcode'
-
 import QrReader from 'react-qr-scanner'
 
 import path from '../../utils/path'
+
+import { useToast } from '@chakra-ui/react'
 
 export default function GetItem () {
   const { id } = useParams()
@@ -38,85 +40,14 @@ export default function GetItem () {
   }, [])
 
   const [itemQR, setItemQR] = useState(null)
-  const qrcodeRegionId = 'html5qr-code-full-region'
-
-  // Creates the configuration object for Html5QrcodeScanner.
-  const createConfig = (props) => {
-    const config = {}
-    if (props.fps) {
-      config.fps = props.fps
-    }
-    if (props.qrbox) {
-      config.qrbox = props.qrbox
-    }
-    if (props.aspectRatio) {
-      config.aspectRatio = props.aspectRatio
-    }
-    if (props.disableFlip !== undefined) {
-      config.disableFlip = props.disableFlip
-    }
-    return config
-  }
-
-  const Html5QrcodePlugin = (props) => {
-    useEffect(() => {
-      // when component mounts
-      const config = createConfig(props)
-      const verbose = props.verbose === true
-
-      const html5QrcodeScanner = new Html5QrcodeScanner(
-        qrcodeRegionId,
-        config,
-        verbose
-      )
-      html5QrcodeScanner.render(
-        props.qrCodeSuccessCallback,
-        props.qrCodeErrorCallback
-      )
-
-      // cleanup function when component will unmount
-      return () => {
-        html5QrcodeScanner.clear().catch((error) => {
-          console.error('Failed to clear html5QrcodeScanner. ', error)
-        })
-      }
-    }, [])
-
-    return <div id={qrcodeRegionId} />
-  }
-
-  const onNewQRScanResult = (decodedText, decodedResult) => {
-    // handle decoded results here
-    if (decodedText === itemQR.ItemID) {
-      console.log('QR code match')
-      window.my_modal_1.close()
-
-      const scanned = itemQR.Scanned + 1
-      const remaining = itemQR.Quantity - scanned
-
-      if (remaining >= 0) {
-        itemQR.Scanned = scanned
-        itemQR.RemainingToScan = remaining
-      }
-
-      if (scanned >= itemQR.Quantity) {
-        itemQR.Status = 'Ready'
-      }
-
-      setItems([...items])
-      setItemQR(null)
-    }
-
-    console.log(`Scan result = ${decodedText}`, decodedResult)
-  }
-
   const [openQRScanner, setOpenQRScanner] = useState(false)
   const [QRerror, setQRerror] = useState(false)
+
+  const [allItemsReady, setAllItemsReady] = useState(false)
 
   const handleQRScan = (data) => {
     if (data) {
       if (data.text === itemQR.ItemID) {
-        console.log('QR code match')
         window.my_modal_1.close()
         setOpenQRScanner(false)
 
@@ -130,20 +61,58 @@ export default function GetItem () {
 
         if (scanned >= itemQR.Quantity) {
           itemQR.Status = 'Ready'
+
+          // check if all items are ready
+          let ready = 0
+          items.forEach((item) => {
+            if (item.Status === 'Ready') {
+              ready++
+            }
+          })
+
+          if (ready === items.length) {
+            setAllItemsReady(true)
+          }
         }
 
         setItems([...items])
         setItemQR(null)
+      } else {
+        window.my_modal_1.close()
+        setOpenQRScanner(false)
+        WrongQRCode('Wrong QR code detected')
       }
     } else {
       setQRerror(true)
-      // console.log('No QR code detected')
-      // window.my_modal_1.close()
     }
+  }
+
+  // Error feedback if QR code is not match
+  const toast = useToast()
+  const WrongQRCode = (message) => {
+    return toast({
+      title: 'QR Code Error.',
+      description: message,
+      status: 'error',
+      position: 'top-right',
+      duration: 6000,
+      isClosable: true
+    })
   }
 
   const handleQRError = (err) => {
     console.error(err)
+  }
+
+  const SuccessUpdate = (message) => {
+    return toast({
+      title: 'Item Scanned.',
+      description: message,
+      status: 'success',
+      position: 'top-right',
+      duration: 3000,
+      isClosable: true
+    })
   }
 
   return (
@@ -161,12 +130,12 @@ export default function GetItem () {
         </li>
       </ul>
       {/* Main page */}
-      <div className="mt-4 flex flex-row w-full">
-        {/* Left side */}
-        <div className="w-2/3">
-          {loading ? (
-            <div>Loading...</div>
-          ) : (
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="mt-4 flex flex-row w-full">
+          {/* Left side */}
+          <div className="w-2/3">
             <div className="w-full">
               <h1 className="text-2xl font-bold">
                 List of Booked Items{' '}
@@ -214,20 +183,19 @@ export default function GetItem () {
                                     item.Images[0]
                                   }
                                 />
-                                <QRcode
-                                  id="myqr"
-                                  value={item.ItemID}
-                                  size={320}
-                                  includeMargin={true}
-                                />
                               </div>
-                              <div>
+                              <div className="flex flex-col">
                                 <p className="font-bold">
                                   {item.Name}&nbsp;&nbsp;
                                   <span className="font-normal text-sm">
                                     x{item.Quantity}
                                   </span>
                                 </p>
+                                <QRcode
+                                  value={item.ItemID}
+                                  size={240}
+                                  includeMargin={true}
+                                />
                               </div>
                             </div>
                           </td>
@@ -272,72 +240,144 @@ export default function GetItem () {
                 </div>
               </div>
             </div>
-          )}
-        </div>
-        {/* right side */}
-        <div className="w-1/2 pr-3">
-          <div className="flex flex-row items-center justify-end gap-2">
-            <img
-              className="mask mask-squircle h-10 w-10 object-cover"
-              src="https://images.unsplash.com/photo-1457449940276-e8deed18bfff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-            />
-            <h1 className="text-lg font-regular">
-              {/* {user.FirstName + ' ' + user.LastName} */}
-            </h1>
           </div>
-          <div className="flex flex-col gap-2 relative overflow-x-auto w-full">
-            <h1 className="text-2xl font-bold">Booking Time Remaining</h1>
-          </div>
-
-          {/* Modal */}
-          <dialog id="my_modal_1" className="modal">
-            <form method="dialog" className="modal-box">
-              <h3 className="font-bold text-lg">Scan Item&apos;s QR code</h3>
-              <p className="py-4">
-                {/* Press ESC key or click the button below to close */}
-                <div className="w-full h-full">
-                  <span>QR Scanner</span>
-                  <center>
-                    <div style={{ marginTop: 10 }}>
-                      {
-                        openQRScanner ? (
-                          <QrReader
-                        delay={300}
-                        onError={handleQRError}
-                        onScan={handleQRScan}
-                        style={{ height: 320, width: 320 }}
-                      />) : (<span></span>
-                        )
-                      }
-
-                      {/* <Html5QrcodePlugin
-                        fps={10}
-                        qrbox={250}
-                        disableFlip={false}
-                        qrCodeSuccessCallback={onNewQRScanResult}
-                      /> */}
-                    </div>
-                  </center>
-                  {
-                    QRerror ? (
-                      <div className="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-                      <svg aria-hidden="true" className="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
-                      <span className="sr-only">Info</span>
-                      <div>
-                        <span className="font-medium">Error Alert!</span> Try again. Make sure you are scanning the correct QR code.
-                      </div>
-                    </div>) : (<span></span>)
-                  }
-                </div>
-              </p>
-              <div className="modal-action">
-                {/* if there is a button in form, it will close the modal */}
-                <button className="btn">Close</button>
+          {/* right side */}
+          <div className="w-1/2 pr-3">
+            <div className="flex flex-row items-center justify-end gap-2">
+              <img
+                className="mask mask-squircle h-10 w-10 object-cover"
+                src="https://images.unsplash.com/photo-1457449940276-e8deed18bfff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              />
+              <h1 className="text-lg font-regular">
+                {/* {user.FirstName + ' ' + user.LastName} */}
+              </h1>
+            </div>
+            <div className="flex flex-col gap-2 relative overflow-x-auto w-full">
+              <h1 className="text-2xl font-bold">Booking Time Remaining</h1>
+              <div className="flex flex-row">
+                <BookingCountdown EndDate={booking.EndDate} />
               </div>
-            </form>
-          </dialog>
+              <div className="flex flex-col gap-2">
+                <button
+                  className={
+                    allItemsReady
+                      ? 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3'
+                      : 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3 opacity-50 cursor-not-allowed'
+                  }
+                  onClick={() => {
+                    if (allItemsReady) {
+                      fetch(
+                        `${path.url}api/booking/active/${id}/retrieve`,
+                        {
+                          method: 'PUT',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({
+                            Booking: booking
+                          })
+                        }
+                      )
+                        .then((res) => res.json())
+                        .then((data) => {
+                          SuccessUpdate('Item retrieved successfully')
+
+                          // put delay to allow success message to show
+                          setTimeout(() => {
+                            window.location.href = '/listing/booking'
+                          }, 3000)
+                        })
+                        .catch((err) => console.log(err))
+                    }
+                  }
+                  }
+                >
+                  Confirm Item Retrieval
+                </button>
+                {/* <h1 className="text-2xl font-bold">Booking Summary</h1>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-row justify-between">
+                  <p className="font-semibold">Subtotal</p>
+                  <p className="font-semibold">
+                    RM {booking ? booking.SubTotal : '0.00'}
+                  </p>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <p className="font-semibold">Service Fee</p>
+                  <p className="font-semibold">
+                    RM {booking ? booking.ServiceFee : '0.00'}
+                  </p>
+                </div>
+                  <div className="flex flex-row justify-between">
+                    <p className="font-semibold">Grand Total</p>
+                    <p className="font-semibold">
+                      RM {booking ? booking.GrandTotal : '0.00'}
+                    </p>
+                </div>
+              </div> */}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Modal */}
+      <dialog id="my_modal_1" className="modal">
+        <form method="dialog" className="modal-box">
+          <h3 className="font-bold text-lg">Scan Item&apos;s QR code</h3>
+          <p className="py-4">
+            {/* Press ESC key or click the button below to close */}
+            <div className="w-full h-full">
+              <span>QR Scanner</span>
+              <center>
+                <div style={{ marginTop: 10 }}>
+                  {openQRScanner ? (
+                    <QrReader
+                      delay={300}
+                      onError={handleQRError}
+                      onScan={handleQRScan}
+                      style={{ height: 320, width: 320 }}
+                    />
+                  ) : (
+                    <span></span>
+                  )}
+                </div>
+              </center>
+              {QRerror ? (
+                <div
+                  className="flex p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+                  role="alert"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="flex-shrink-0 inline w-5 h-5 mr-3"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span className="sr-only">Info</span>
+                  <div>
+                    <span className="font-medium">Scanning..</span> Point the
+                    camera at the QR code.
+                  </div>
+                </div>
+              ) : (
+                <span></span>
+              )}
+            </div>
+          </p>
+          <div className="modal-action">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn">Close</button>
+          </div>
+        </form>
+      </dialog>
     </div>
   )
 }

@@ -196,6 +196,11 @@ export default function BookingItem () {
         .then((data) => {
           if (data.status === 'success') {
             SuccessBooking()
+
+            // set delay to allow toast to show before redirecting
+            setTimeout(() => {
+              window.location.href = '/listing/booking'
+            }, 3000)
           } else {
             ErrorBooking(data.message)
           }
