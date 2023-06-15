@@ -54,7 +54,7 @@ export default function BookingItem () {
   }, [])
 
   return (
-    <div className="h-screen flex flex-col w-screen">
+    <div className="h-screen flex flex-col w-screen overflow-auto">
       <Navbar />
       <div className="bg-gray-100 h-full max-w-full">
         <div>

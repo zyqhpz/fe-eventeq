@@ -274,18 +274,22 @@ export default function GetItem () {
                             'Content-Type': 'application/json'
                           },
                           body: JSON.stringify({
-                            Booking: booking
+                            bookingId: id
                           })
                         }
                       )
                         .then((res) => res.json())
                         .then((data) => {
-                          SuccessUpdate('Item retrieved successfully')
+                          if (data.status === 'success') {
+                            SuccessUpdate('Item retrieved successfully')
 
-                          // put delay to allow success message to show
-                          setTimeout(() => {
-                            window.location.href = '/listing/booking'
-                          }, 3000)
+                            // put delay to allow success message to show
+                            setTimeout(() => {
+                              window.location.href = '/listing/booking'
+                            }, 3000)
+                          } else {
+                            alert('Error: ' + data.message)
+                          }
                         })
                         .catch((err) => console.log(err))
                     }
