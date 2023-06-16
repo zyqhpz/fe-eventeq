@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react'
 
-import { Link } from 'react-router-dom'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
-
-import BookingCountdown from './BookingCountdown'
-
 export default function BookingEndedDetailCard ({ booking }) {
   let count = 0
 
@@ -43,14 +36,28 @@ export default function BookingEndedDetailCard ({ booking }) {
       : `(${duration.days} day)`
   }
 
+  const ReturnDate = (date) => {
+    const returnDate = new Date(date)
+    const returnDateStr = returnDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric'
+    })
+
+    return returnDateStr
+  }
+
   return (
     <div className="w-full p-4">
       <div className="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg">
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1 p-4">
-              <h5 className="text-orange-500 uppercase font-bold text-xs">
-                Active
+              <h5 className="text-blue-500 uppercase font-bold text-xs">
+                Ended
               </h5>
               <div className="flex flex-row items-center justify-between">
                 <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
@@ -60,7 +67,12 @@ export default function BookingEndedDetailCard ({ booking }) {
                     {DurationCalculator(booking.StartDate, booking.EndDate)}
                   </p>
                 </span>
-                <BookingCountdown EndDate={booking.EndDate} />
+                <div>
+                  <span>Item Returned On: </span>
+                  <span className="font-semibold">
+                    {ReturnDate(booking.UpdatedAt)}
+                  </span>
+                </div>
               </div>
               <div className="flex flex-row items-center justify-between">
                 <div className="flex flex-col">
@@ -98,31 +110,6 @@ export default function BookingEndedDetailCard ({ booking }) {
             <span className="font-semibold text-sm text-gray-800">
               Created On: {createdDateStr}
             </span>
-            {booking.Status === 2 ? (
-              <Link
-                className="mr-4 flex flex-row items-center"
-                to={{
-                  pathname: '/listing/booking/active/' + booking.ID + '/return'
-                }}
-              >
-                <span className="font-bold text-lg bg-orange-500 px-6 py-2 text-white">
-                  Return Item Now
-                  <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-                </span>
-              </Link>
-            ) : (
-              <Link
-                className="mr-4 flex flex-row items-center"
-                to={{
-                  pathname: '/listing/booking/active/' + booking.ID
-                }}
-              >
-                <span className="font-bold text-lg bg-orange-500 px-6 py-2 text-white">
-                  Get Item Now
-                  <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-                </span>
-              </Link>
-            )}
           </p>
         </div>
       </div>

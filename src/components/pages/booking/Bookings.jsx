@@ -8,6 +8,7 @@ import Navbar from '../../ui/Navbar'
 
 import BookingUpcomingDetailCard from '../../ui/booking/BookingUpcomingDetailCard'
 import BookingActiveDetailCard from '../../ui/booking/BookingActiveDetailCard'
+import BookingEndedDetailCard from '../../ui/booking/BookingEndedDetailCard'
 
 export default function BookingItem () {
   const [openTab, setOpenTab] = useState(1)
@@ -219,7 +220,7 @@ export default function BookingItem () {
                           </div>
                         ) : (
                           endedBooking.map((booking) => (
-                            <BookingUpcomingDetailCard
+                            <BookingEndedDetailCard
                               booking={booking}
                               key={booking.ID}
                             />
