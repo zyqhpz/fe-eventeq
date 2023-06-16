@@ -7,7 +7,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 import BookingCountdown from './BookingCountdown'
 
-export default function BookingActiveDetailCard ({ booking }) {
+export default function BookingEndedDetailCard ({ booking }) {
   let count = 0
 
   const createdDate = new Date(booking.CreatedAt)

@@ -20,6 +20,17 @@ export default function BookingItem () {
 
   const userId = localStorage.getItem('userId')
 
+  useEffect(() => {
+    fetch(path.url + 'api/booking/' + userId + '/upcoming/listing')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data !== null) {
+          setUpcomingBooking(data)
+        }
+        setLoading(false)
+      })
+  }, [])
+
   // check userId is exist
   if (!userId) {
     window.location.href = '/'
@@ -32,6 +43,7 @@ export default function BookingItem () {
     loadActiveBooking()
   } else if (openTab === 3) {
     document.title = 'Ended Booking'
+    loadEndedBooking()
   }
 
   function loadActiveBooking () {
@@ -39,19 +51,24 @@ export default function BookingItem () {
       fetch(path.url + 'api/booking/' + userId + '/active/listing')
         .then((res) => res.json())
         .then((data) => {
-          setActiveBooking(data)
+          if (data !== null) {
+            setActiveBooking(data)
+          }
         })
     }
   }
 
-  useEffect(() => {
-    fetch(path.url + 'api/booking/' + userId + '/upcoming/listing')
-      .then((res) => res.json())
-      .then((data) => {
-        setUpcomingBooking(data)
-        setLoading(false)
-      })
-  }, [])
+  function loadEndedBooking () {
+    if (endedBooking.length === 0) {
+      fetch(path.url + 'api/booking/' + userId + '/ended/listing')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data !== null) {
+            setEndedBooking(data)
+          }
+        })
+    }
+  }
 
   return (
     <div className="h-screen flex flex-col w-screen overflow-auto">
