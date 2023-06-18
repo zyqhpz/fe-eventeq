@@ -135,7 +135,7 @@ export default function Navbar () {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div
                 className={
-                  isAuthenticated ? 'flex gap-2 space-y-2 py-6' : 'hidden'
+                  isAuthenticated ? 'flex flex-col gap-2 space-y-2 py-6' : 'hidden'
                 }
               >
                 <a

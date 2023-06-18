@@ -27,7 +27,7 @@ function Home () {
       <Navbar />
       <div className="bg-gray-100 h-screen">
         {/* div for items list */}
-        <div className="flex flex-col items-center justify-center px-12 lg:px-32 py-12">
+        <div className="flex flex-col items-center justify-center px-2 md:px-12 lg:px-32 py-12">
           {loading ? (
             <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
               {[...Array(10)].map((x, i) => (
@@ -43,7 +43,7 @@ function Home () {
             </div>
           ) : (
             // For loop of items
-            <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
               {items.map((item) => (
                 <ItemCard item={item} key={item.ID} className="m-2" />
               ))}
