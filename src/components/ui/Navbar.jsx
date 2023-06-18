@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import {
   ArrowPathIcon,
@@ -11,21 +11,13 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 
+import { useNavigate } from 'react-router-dom'
+
 import EventEQLogo from './../../assets/EventEQ.png'
 import SearchBar from './SearchBar'
 import ProfileIconButton from './ProfileIconButton'
 
-const products = [
-  { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
-  { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
-  { name: 'Security', description: 'Your customers’ data will be safe and secure', href: '#', icon: FingerPrintIcon },
-  { name: 'Integrations', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
-  { name: 'Automations', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon }
-]
-const callsToAction = [
-  { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-  { name: 'Contact sales', href: '#', icon: PhoneIcon }
-]
+import path from '../utils/path'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -33,6 +25,52 @@ function classNames (...classes) {
 
 export default function Navbar () {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState(null)
+  const [name, setName] = useState('')
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(path.url + 'api/user/auth', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      const data = await response.json()
+
+      if (data.status === 'success') {
+        setIsAuthenticated(true)
+        setUser(data.user)
+        setName(data.user.FirstName + ' ' + data.user.LastName)
+        localStorage.setItem('userId', data.user.ID)
+      } else if (data.status === 'failed') {
+        setUser(null)
+        setIsAuthenticated(false)
+      }
+    })()
+  }, [])
+
+  const logout = () => {
+    fetch(path.url + 'api/user/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then((response) => {
+      if (response.status === 200) {
+        setIsAuthenticated(false)
+        setUser(null)
+        setName('')
+        localStorage.removeItem('userId')
+        navigate('/')
+      }
+    })
+  }
 
   return (
     <header className="bg-white w-full">
@@ -63,7 +101,7 @@ export default function Navbar () {
           <SearchBar />
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <ProfileIconButton/>
+          <ProfileIconButton />
         </div>
       </nav>
       <hr />
@@ -76,7 +114,7 @@ export default function Navbar () {
         <div className="fixed inset-0 z-10" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
+            <a href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">EventEQ</span>
               <img
                 className="h-8 w-auto"
@@ -95,61 +133,61 @@ export default function Navbar () {
           </div>
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                <Disclosure as="div" className="-mx-3">
-                  {({ open }) => (
-                    <>
-                      <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 hover:bg-gray-50 hover:text-orange-500">
-                        Product
-                        <ChevronDownIcon
-                          className={classNames(
-                            open ? 'rotate-180' : '',
-                            'h-5 w-5 flex-none'
-                          )}
-                          aria-hidden="true"
-                        />
-                      </Disclosure.Button>
-                      <Disclosure.Panel className="mt-2 space-y-2">
-                        {[...products, ...callsToAction].map((item) => (
-                          <Disclosure.Button
-                            key={item.name}
-                            as="a"
-                            href={item.href}
-                            className="block rounded-lg  py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
-                          >
-                            {item.name}
-                          </Disclosure.Button>
-                        ))}
-                      </Disclosure.Panel>
-                    </>
-                  )}
-                </Disclosure>
+              <div
+                className={
+                  isAuthenticated ? 'flex gap-2 space-y-2 py-6' : 'hidden'
+                }
+              >
                 <a
-                  href="#"
+                  href="/user/manage/item"
                   className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
                 >
-                  Features
+                  Manage Items
+                </a>
+                <a
+                  href="/message"
+                  className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
+                >
+                  Message
+                </a>
+                <a
+                  href="/listing/booking"
+                  className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
+                >
+                  Booking
                 </a>
                 <a
                   href="#"
                   className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
                 >
-                  Marketplace
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
-                >
-                  Company
+                  Account settings
                 </a>
               </div>
               <div className="py-6">
-                <a
-                  href="/login"
-                  className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
-                >
-                  Log in
-                </a>
+                {isAuthenticated ? (
+                  <a
+                    href="#"
+                    onClick={logout}
+                    className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
+                  >
+                    Log out
+                  </a>
+                ) : (
+                  <Fragment>
+                    <a
+                      href="/login"
+                      className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
+                    >
+                      Log in
+                    </a>
+                    <a
+                      href="/register"
+                      className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
+                    >
+                      Register
+                    </a>
+                  </Fragment>
+                )}
               </div>
             </div>
           </div>
