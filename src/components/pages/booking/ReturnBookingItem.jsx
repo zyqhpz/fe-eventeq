@@ -316,6 +316,10 @@ export default function ReturnItem () {
                       onError={handleQRError}
                       onScan={handleQRScan}
                       style={{ height: 320, width: 320 }}
+                      constraints={{
+                        audio: false,
+                        video: { facingMode: 'environment' }
+                      }}
                     />
                   ) : (
                     <span></span>
