@@ -59,22 +59,30 @@ export default function BookingCountdown ({ EndDate }) {
   }
 
   return (
-    <div className="flex flex-row gap-4 m-4">
-      <div className="flex flex-col items-center">
-        <p className="font-bold">{remainingTime.days}</p>
-        <p className="font-regular text-md">Days</p>
+    <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
+      <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+        <span className="countdown font-mono text-5xl">
+          <span style={{ '--value': remainingTime.days }}></span>
+        </span>
+        days
       </div>
-      <div className="flex flex-col items-center">
-        <p className="font-bold">{remainingTime.hours}</p>
-        <p className="font-regular text-md">Hours</p>
+      <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+        <span className="countdown font-mono text-5xl">
+          <span style={{ '--value': remainingTime.hours }}></span>
+        </span>
+        hours
       </div>
-      <div className="flex flex-col items-center">
-        <p className="font-bold">{remainingTime.minutes}</p>
-        <p className="font-regular text-md">Minutes</p>
+      <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+        <span className="countdown font-mono text-5xl">
+          <span style={{ '--value': remainingTime.minutes }}></span>
+        </span>
+        min
       </div>
-      <div className="flex flex-col items-center">
-        <p className="font-bold">{remainingTime.seconds}</p>
-        <p className="font-regular text-md">Seconds</p>
+      <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+        <span className="countdown font-mono text-5xl">
+          <span style={{ '--value': remainingTime.seconds }}></span>
+        </span>
+        sec
       </div>
     </div>
   )
