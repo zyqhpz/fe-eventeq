@@ -341,8 +341,10 @@ export default function GetItem () {
                       onError={handleQRError}
                       onScan={handleQRScan}
                       style={{ height: 320, width: 320 }}
-                      constraints={{ facingMode: 'environment' }}
-                    />
+                      constraints={{
+                        audio: false,
+                        video: { facingMode: 'environment' }
+                      }} />
                   ) : (
                     <span></span>
                   )}
