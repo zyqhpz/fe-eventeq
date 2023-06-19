@@ -1,12 +1,7 @@
 import { Fragment, useState, useEffect } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import {
-  ArrowPathIcon,
   Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
@@ -19,39 +14,37 @@ import ProfileIconButton from './ProfileIconButton'
 
 import path from '../utils/path'
 
-function classNames (...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
 export default function Navbar () {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
 
+  const userId = localStorage.getItem('userId')
+
   useEffect(() => {
-    (async () => {
-      const response = await fetch(path.url + 'api/user/auth', {
+    if (userId == null) {
+      setIsAuthenticated(false)
+    } else {
+      setIsAuthenticated(true)
+
+      fetch(path.url + 'api/user/id/' + userId, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         },
         credentials: 'include'
+      }).then((response) => {
+        if (response.status === 200) {
+          response.json().then((data) => {
+            setName(data.FirstName + ' ' + data.LastName)
+            setLoading(false)
+          })
+        }
       })
-      const data = await response.json()
-
-      if (data.status === 'success') {
-        setIsAuthenticated(true)
-        setUser(data.user)
-        setName(data.user.FirstName + ' ' + data.user.LastName)
-        localStorage.setItem('userId', data.user.ID)
-      } else if (data.status === 'failed') {
-        setUser(null)
-        setIsAuthenticated(false)
-      }
-    })()
+    }
   }, [])
 
   const logout = () => {
@@ -64,8 +57,6 @@ export default function Navbar () {
     }).then((response) => {
       if (response.status === 200) {
         setIsAuthenticated(false)
-        setUser(null)
-        setName('')
         localStorage.removeItem('userId')
         navigate('/')
       }
@@ -135,9 +126,12 @@ export default function Navbar () {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div
                 className={
-                  isAuthenticated ? 'flex flex-col gap-2 space-y-2 py-6' : 'hidden'
+                  isAuthenticated
+                    ? 'flex flex-col gap-2 space-y-2 py-6'
+                    : 'hidden'
                 }
               >
+                <span className="space-y-2 py-6 font-bold">Welcome, {name}</span>
                 <a
                   href="/user/manage/item"
                   className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"

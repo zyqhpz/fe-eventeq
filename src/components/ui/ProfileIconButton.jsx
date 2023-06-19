@@ -15,31 +15,36 @@ export default function Example () {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
 
+  const userId = localStorage.getItem('userId')
+
   useEffect(() => {
-    (
-      async () => {
-        const response = await fetch(path.url + 'api/user/auth', {
+    if (userId == null) {
+      setIsAuthenticated(false)
+    } else {
+      setIsAuthenticated(true)
+
+      if (user == null) {
+        fetch(path.url + 'api/user/id/' + userId, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           },
           credentials: 'include'
+        }).then((response) => {
+          if (response.status === 200) {
+            response.json().then((data) => {
+              setUser(data)
+              setName(data.FirstName + ' ' + data.LastName)
+              setLoading(false)
+            })
+          }
         })
-        const data = await response.json()
-
-        if (data.status === 'success') {
-          setIsAuthenticated(true)
-          setUser(data.user)
-          setName(data.user.FirstName + ' ' + data.user.LastName)
-          localStorage.setItem('userId', data.user.ID)
-        } else if (data.status === 'failed') {
-          setUser(null)
-          setIsAuthenticated(false)
-        }
       }
-    )()
+    }
   }, [])
 
   const logout = () => {
@@ -65,7 +70,10 @@ export default function Example () {
       <div>
         <Menu.Button className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
           <FontAwesomeIcon icon={faCircleUser} className="w-4 h-4" />
-          {name || ''}
+          {loading ? (
+            <p className="text-gray-900"></p>
+          ) : (
+            name || '')}
           <ChevronDownIcon
             className="-mr-1 h-5 w-5 text-gray-400"
             aria-hidden="true"
