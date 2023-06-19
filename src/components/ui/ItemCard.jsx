@@ -19,7 +19,7 @@ export default function ItemCard ({ item }) {
       <div className="group relative">
         <img
           src={imagePath}
-          className="rounded-md h-28 w-44 md:h-44 md:w-52 object-cover"
+          className="rounded-md h-28 w-44 md:h-44 md:w-52 object-fit"
         />
         <h3 className="mt-1 md:mt-3 text-base md:text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
           {item.Name}
