@@ -33,6 +33,7 @@ export default function Example () {
           setIsAuthenticated(true)
           setUser(data.user)
           setName(data.user.FirstName + ' ' + data.user.LastName)
+          localStorage.setItem('userId', data.user.ID)
         } else if (data.status === 'failed') {
           setUser(null)
           setIsAuthenticated(false)
@@ -83,32 +84,6 @@ export default function Example () {
       >
         <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-4 py-2 text-sm'
-                  )}
-                >
-                  Account settings
-                </a>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-4 py-2 text-sm'
-                  )}
-                >
-                  Support
-                </a>
-              )}
-            </Menu.Item>
             <Menu.Item className={isAuthenticated ? 'hidden' : 'block'}>
               {({ active }) => (
                 <Link
@@ -165,6 +140,33 @@ export default function Example () {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
                   </span>
                 </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item className={isAuthenticated ? 'flex gap-2' : 'hidden'}>
+              {({ active }) => (
+                <Link
+                  to="/listing/booking"
+                  state={user}
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'block w-full px-4 py-2 text-left text-sm'
+                  )}
+                >
+                  Booking
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item className={isAuthenticated ? 'block' : 'hidden'}>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'block px-4 py-2 text-sm'
+                  )}
+                >
+                  Account settings
+                </a>
               )}
             </Menu.Item>
             <Menu.Item className={isAuthenticated ? 'block' : 'hidden'}>

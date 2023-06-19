@@ -14,8 +14,7 @@ export default function ItemDetails () {
   const [item, setItem] = useState(null)
   const [loading, setLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
-  // const [userId, setUserId] = useState(null);
-
+  const [formattedDate, setFormattedDate] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const userId = localStorage.getItem('userId')
@@ -32,7 +31,14 @@ export default function ItemDetails () {
     axios
       .get(path.url + 'api/item/' + id)
       .then((response) => {
+        console.log(response.data)
         setItem(response.data)
+        const formattedDate = new Date(response.data.CreatedAt).toLocaleDateString('en-MY', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+        setFormattedDate(formattedDate)
         setLoading(false)
         localStorage.setItem('tempItemId', response.data.ID)
         if (response.data.OwnedBy.ID === userId) {
@@ -41,14 +47,6 @@ export default function ItemDetails () {
       })
       .catch((error) => console.error(error))
   }, [])
-
-  // var formattedDate = new Date(item.CreatedAt).toLocaleDateString("en-MY", {
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  // });
-
-  // var imagePath = "http://localhost:8080/api/item/image/" + item.Image;
 
   return (
     <div className="flex flex-col min-h-screen w-screen overflow-hidden">
@@ -87,7 +85,7 @@ export default function ItemDetails () {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                       </svg> */}
                         {/* <h1 className="text-black font-regular text-xl">{item.OwnedBy.Rating}</h1> */}
-                        <p>Posted Date: DD/MM/YYYY</p>
+                        <p>Posted Date: {formattedDate}</p>
                       </div>
                     </div>
                   </div>

@@ -1,16 +1,4 @@
 import React from 'react'
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Image,
-  Stack,
-  Heading,
-  Text,
-  Divider,
-  ButtonGroup,
-  Button
-} from '@chakra-ui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons'
@@ -25,31 +13,33 @@ export default function ItemCard ({ item }) {
   return (
     <a
       key={item.ID}
-      className="flex max-w-xl flex-col items-start justify-between p-3 lg:p-5 space-y-6 transition duration-200 ease-in-out transform bg-white rounded-lg shadow-xl hover:scale-105 hover:shadow-2xl"
+      className="flex flex-col max-w-xl items-start justify-between h-44 w-48 md:h-auto md:w-auto p-2 md:p-5 md:space-y-6 transition duration-200 ease-in-out transform bg-white rounded-lg shadow-xl hover:scale-105 hover:shadow-2xl"
       href={detailsPath}
     >
       <div className="group relative">
-        <img src={imagePath} className="rounded-md object-cover h-44 w-52" />
-        <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+        <img
+          src={imagePath}
+          className="rounded-md h-28 w-44 md:h-44 md:w-52 object-cover"
+        />
+        <h3 className="mt-1 md:mt-3 text-base md:text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
           {item.Name}
         </h3>
       </div>
-      <div className="flex w-full items-center justify-between">
+      {/* detailed part */}
+      <div className="flex w-full items-center justify-between text-xs md:text-base">
         <div className="flex gap-x-2">
-          {item.OwnedBy.IsImageAvatarSet
-            ? (
+          {item.OwnedBy.IsImageAvatarSet ? (
             <img
               src={path.url + 'api/user/image/' + item.OwnedBy.UserImageAvatar}
               alt=""
-              className="h-7 w-7 rounded-full bg-gray-50"
+              className="h-4 w-4 md:h-7 m:w-7 rounded-full bg-gray-50"
             />
-              )
-            : (
+          ) : (
             <FontAwesomeIcon
               icon={faCircleUser}
-              className="h-7 w-7 text-gray-500"
+              className="h-4 w-4 md:h-7 m:w-7 text-gray-500"
             />
-              )}
+          )}
           <p className="font-semibold text-gray-900">
             {item.OwnedBy.FirstName} {item.OwnedBy.LastName}
           </p>
