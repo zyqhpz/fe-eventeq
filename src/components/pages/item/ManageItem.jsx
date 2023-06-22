@@ -13,21 +13,22 @@ import path from '../../utils/path'
 import LoadingButton from '../../ui/button/LoadingButton'
 
 export default function ManageItem (props) {
-  const state = useLocation().state
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
 
-  // useEffect(() => {
-  //     axios
-  //       .get(path.url + "api/item/user/" + state.ID)
-  //       .then((res) => {
-  //         setItems(res.data.map((
-  //             {Name, Description}
-  //         ) => ({Name, Description})))
-  //         setLoading(false);
-  //       })
-  //       .catch((err) => {});
-  // }, [])
+  const userId = localStorage.getItem('userId')
+
+  useEffect(() => {
+    axios
+      .get(path.url + 'api/item/user/' + userId)
+      .then((res) => {
+        setItems(res.data.map((
+          { Name, Description, Price, Quantity }
+        ) => ({ Name, Description, Price, Quantity })))
+        setLoading(false)
+      })
+      .catch(() => {})
+  }, [])
 
   const data = useMemo(() => items, [items])
 
@@ -40,6 +41,14 @@ export default function ManageItem (props) {
       {
         Header: 'Item Description',
         accessor: 'Description'
+      },
+      {
+        Header: 'Price',
+        accessor: 'Price'
+      },
+      {
+        Header: 'Quantity',
+        accessor: 'Quantity'
       }
     ],
     []
@@ -57,21 +66,23 @@ export default function ManageItem (props) {
               <LoadingButton />
             ) : (
               <div>
-                {/* <table
+                <table
                   {...getTableProps()}
-                  className="w-9/12 text-sm text-left text-gray-500 mx-16 border-gray-700"
+                  className="w-full mx-auto text-left text-gray-500 border-gray-700"
                 >
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     {headerGroups.map((headerGroup) => (
-                      <tr {...headerGroup.getHeaderGroupProps()}>
+                      <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.Cell}>
                         {headerGroup.headers.map((column) => (
                           <th
                             {...column.getHeaderProps()}
                             style={{
-                              fontWeight: "bold",
+                              fontWeight: 'bold'
                             }}
+                            className='px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider'
+                            key={column.Cell}
                           >
-                            {column.render("Header")}
+                            {column.render('Header')}
                           </th>
                         ))}
                       </tr>
@@ -79,24 +90,27 @@ export default function ManageItem (props) {
                   </thead>
                   <tbody {...getTableBodyProps()}>
                     {rows.map((row) => {
-                      prepareRow(row);
+                      prepareRow(row)
                       return (
                         <tr
                           {...row.getRowProps()}
                           className="bg-white border-b border-gray-200 hover:bg-gray-100"
+                          key={row.cells}
                         >
                           {row.cells.map((cell) => {
                             return (
-                              <td {...cell.getCellProps()}>
-                                {cell.render("Cell")}
+                              <td {...cell.getCellProps()}
+                              className='px-6 py-2 whitespace-nowrap'
+                              key={cell.column}>
+                                {cell.render('Cell')}
                               </td>
-                            );
+                            )
                           })}
                         </tr>
-                      );
+                      )
                     })}
                   </tbody>
-                </table> */}
+                </table>
                 <NewItem />
                 {/* <ImageUploader /> */}
               </div>
