@@ -10,6 +10,13 @@ export default function ItemCard ({ item }) {
 
   const detailsPath = '/listing/item/' + item.ID
 
+  const MAX_NAME_LENGTH = 20 // Set the maximum length of characters to show
+
+  const truncatedName =
+      item.Name.length > MAX_NAME_LENGTH
+        ? item.Name.substring(0, MAX_NAME_LENGTH) + '...'
+        : item.Name
+
   return (
     <a
       key={item.ID}
@@ -22,7 +29,7 @@ export default function ItemCard ({ item }) {
           className="rounded-md h-28 w-44 md:h-44 md:w-52 object-fit"
         />
         <h3 className="mt-1 md:mt-3 text-base md:text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-          {item.Name}
+          {truncatedName}
         </h3>
       </div>
       {/* detailed part */}
