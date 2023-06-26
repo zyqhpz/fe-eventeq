@@ -3,14 +3,26 @@ import Navbar from '../ui/Navbar'
 import EventEQLogo from '../../assets/EventEQ.png'
 
 import axios from 'axios'
-
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import { useToast, Alert, AlertIcon } from '@chakra-ui/react'
 
 import Footer from '../ui/Footer'
 
+import path from '../utils/path'
+import { data } from 'autoprefixer'
+
 export default function SignUp () {
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [isPasswordMatch, setIsPasswordMatch] = useState(true)
+  const [isAvailableToSubmit, setIsAvailableToSubmit] = useState(false)
+  const navigate = useNavigate()
+
   const register = (firstName, lastName, email, password) => {
     return axios.post(
       'http://localhost:8080/api/user/register',
@@ -30,10 +42,10 @@ export default function SignUp () {
 
   // Error feedback for login failure
   const toast = useToast()
-  const RegisterError = () => {
+  const RegisterError = (message) => {
     return toast({
-      title: 'Login failed.',
-      description: 'Email has been taken.',
+      title: 'Register failed.',
+      description: message,
       status: 'error',
       position: 'top-right',
       duration: 5000,
@@ -41,20 +53,48 @@ export default function SignUp () {
     })
   }
 
-  const handleSubmit = (event) => {
+  const Success = (message) => {
+    return toast({
+      title: 'Register success.',
+      description: message,
+      status: 'success',
+      position: 'top-right',
+      duration: 5000,
+      isClosable: true
+    })
+  }
+
+  const handleSubmit = async (event) => {
     event.preventDefault() // prevent the default form submission behavior
 
-    register(firstName, lastName, email, password)
-      .then((response) => {
-        if (response.data.status === 'success') {
-          window.location.href = '/'
-        } else {
-          RegisterError()
-        }
-      })
-      .catch((error) => {
-        console.error('Register error:', error.response.data)
-      })
+    const user = {
+      firstName,
+      lastName,
+      email,
+      password
+    }
+
+    const response = await fetch(path.url + 'api/user/register', {
+      method: 'POST',
+      body: JSON.stringify(user),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const data = await response.json()
+
+    if (data.status === 'success') {
+      localStorage.setItem('userId', data.userId)
+      Success('You will be redirect to the main page')
+      setTimeout(function () {
+        navigate('/')
+      }, 2000)
+    } else if (data.status === 'failed email') {
+      RegisterError('Email has been taken.')
+    } else {
+      RegisterError('Please fill in all the required fields correctly.')
+    }
   }
 
   // function to check if password and confirm password match
@@ -62,11 +102,13 @@ export default function SignUp () {
     setConfirmPassword(e.target.value)
     if (password !== e.target.value) {
       setIsPasswordMatch(false)
+      setIsAvailableToSubmit(false)
       return false
     } else {
       // console.log("password match")
       setIsPasswordMatch(true)
       setConfirmPassword(e.target.value)
+      setIsAvailableToSubmit(true)
       return true
     }
   }
@@ -87,14 +129,6 @@ export default function SignUp () {
       setIsAvailableToSubmit(false)
     }
   }
-
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [isPasswordMatch, setIsPasswordMatch] = useState(true)
-  const [isAvailableToSubmit, setIsAvailableToSubmit] = useState(false)
 
   return (
     <div className="min-h-screen flex flex-col">

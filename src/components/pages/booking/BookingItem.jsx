@@ -255,7 +255,7 @@ export default function BookingItem () {
                   </span>
                 </h1>
                 <span className="hidden md:block">
-                  This is BookingItem page for owner {ownerId} and user {userId}
+                  {/* This is BookingItem page for owner {ownerId} and user {userId} */}
                 </span>
               </div>
               <div className="flex flex-wrap">
