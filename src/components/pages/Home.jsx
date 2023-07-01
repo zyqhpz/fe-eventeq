@@ -13,13 +13,12 @@ function Home () {
 
   useEffect(() => {
     axios
-      .get(path.url + 'api/itemWithUser')
+      .get(path.url + 'api/itemsActiveWithUser')
       .then((res) => {
         setItems(res.data)
         setLoading(false)
       })
-      .catch(() => {
-      })
+      .catch(() => {})
   }, [])
 
   return (
