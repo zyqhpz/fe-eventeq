@@ -307,6 +307,9 @@ export default function ManageItem () {
                     <th scope="col" className="px-2 md:px-6 py-3">
                       Quantity
                     </th>
+                    <th scope="col" className="px-2 md:px-6 py-3">
+                      Status
+                    </th>
                     <th scope="col" className="px-2 md:px-6 py-3"></th>
                   </tr>
                 </thead>
@@ -334,6 +337,19 @@ export default function ManageItem () {
                         </td>
                         <td className="px-2 md:px-6 py-4">RM {item.Price}</td>
                         <td className="px-2 md:px-6 py-4">{item.Quantity}</td>
+                        <td className="px-2 md:px-6 py-4">
+                          {
+                            item.Status === 0 ? (
+                              <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                                Inactive
+                              </span>
+                            ) : (
+                              <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                                Active
+                              </span>
+                            )
+                          }
+                        </td>
                         <td className="px-2 md:px-6 py-4">
                           <button
                             className="text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -535,11 +551,7 @@ export default function ManageItem () {
                   </span>
                 </p>
               ) : (
-                <button
-                  className="upload-btn"
-                  onClick={() => {
-                  }}
-                >
+                <button className="upload-btn" onClick={() => {}}>
                   UPLOAD {selectedImages.length} IMAGE
                   {selectedImages.length === 1 ? '' : 'S'}
                 </button>
@@ -774,11 +786,7 @@ export default function ManageItem () {
                   </span>
                 </p>
               ) : (
-                <button
-                  className="upload-btn"
-                  onClick={() => {
-                  }}
-                >
+                <button className="upload-btn" onClick={() => {}}>
                   UPLOAD {selectedImages.length} IMAGE
                   {selectedImages.length === 1 ? '' : 'S'}
                 </button>
