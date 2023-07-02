@@ -9,6 +9,7 @@ import Navbar from '../../ui/Navbar'
 import BookingUpcomingDetailCard from '../../ui/booking/BookingUpcomingDetailCard'
 import BookingActiveDetailCard from '../../ui/booking/BookingActiveDetailCard'
 import BookingEndedDetailCard from '../../ui/booking/BookingEndedDetailCard'
+import InBookingDetailCard from '../../ui/booking/InBookingDetailCard'
 
 export default function BookingItem () {
   const [openTab, setOpenTab] = useState(1)
@@ -16,6 +17,7 @@ export default function BookingItem () {
   const [upcomingBooking, setUpcomingBooking] = useState([])
   const [activeBooking, setActiveBooking] = useState([])
   const [endedBooking, setEndedBooking] = useState([])
+  const [itemInBooking, setItemInBooking] = useState([])
 
   const [loading, setLoading] = useState(true)
 
@@ -37,7 +39,12 @@ export default function BookingItem () {
     window.location.href = '/'
   }
 
-  if (openTab === 1) {
+  if (openTab === 0) {
+    document.title = 'Item In Booking'
+    loadItemInBooking()
+  } else if (openTab === 1) {
+    document.title = 'Upcoming Booking'
+  } else if (openTab === 1) {
     document.title = 'Upcoming Booking'
   } else if (openTab === 2) {
     document.title = 'Active Booking'
@@ -66,6 +73,18 @@ export default function BookingItem () {
         .then((data) => {
           if (data !== null) {
             setEndedBooking(data)
+          }
+        })
+    }
+  }
+
+  function loadItemInBooking () {
+    if (itemInBooking.length === 0) {
+      fetch(path.url + 'api/booking/' + userId + '/inBooking/listing')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data !== null) {
+            setItemInBooking(data)
           }
         })
     }
@@ -138,6 +157,25 @@ export default function BookingItem () {
                     role="tablist"
                   >
                     Ended
+                  </a>
+                </li>
+                <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+                  <a
+                    className={
+                      'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+                      (openTab === 0
+                        ? 'text-white bg-orange-500'
+                        : 'text-orange-500 bg-white')
+                    }
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setOpenTab(0)
+                    }}
+                    data-toggle="tab"
+                    href="#link0"
+                    role="tablist"
+                  >
+                    Item In Booking
                   </a>
                 </li>
               </ul>
@@ -224,6 +262,33 @@ export default function BookingItem () {
                               booking={booking}
                               key={booking.ID}
                             />
+                          ))
+                        )}
+                      </div>
+                    </div>
+                    <div
+                      className={openTab === 0 ? 'block' : 'hidden'}
+                      id="link0"
+                    >
+                      {/* Item in booking */}
+                      <div className="flex flex-col gap-2">
+                        {itemInBooking.length === 0 && !loading ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <p className="text-2xl font-bold">
+                              No item in booking
+                            </p>
+                            <Link
+                              to="/user/manage/item"
+                              className="text-orange-500 hover:text-orange-600"
+                            >
+                              Add item now!
+                            </Link>
+                          </div>
+                        ) : (
+                          itemInBooking.map((booking) => (
+                            <InBookingDetailCard
+                              booking={booking}
+                              key={booking.ID} />
                           ))
                         )}
                       </div>
