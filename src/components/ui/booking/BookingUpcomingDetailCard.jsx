@@ -6,6 +6,10 @@ import BookingCountdown from './BookingCountdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendarXmark } from '@fortawesome/free-solid-svg-icons'
 
+import { useToast } from '@chakra-ui/react'
+
+import path from '../../utils/path'
+
 export default function BookingUpcomingDetailCard ({ booking }) {
   let count = 0
 
@@ -16,6 +20,39 @@ export default function BookingUpcomingDetailCard ({ booking }) {
     month: 'long',
     day: 'numeric'
   })
+
+  const toast = useToast()
+
+  // Success feedback for item insertion
+  const CancelSuccess = () => {
+    return toast({
+      title: 'Booking Cancelled',
+      description: 'Your booking has been cancelled.',
+      status: 'success',
+      position: 'top-right',
+      duration: 9000,
+      isClosable: true
+    })
+  }
+
+  const handleConfirmation = () => {
+    fetch(path.url + 'api/booking/cancel/' + booking.ID, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then((response) => {
+      if (response.status === 200) {
+        window.confirmationModal.close()
+        CancelSuccess()
+        // set interval to 2 seconds
+        setInterval(() => {
+          window.location.reload()
+        }, 1000)
+      }
+    })
+  }
 
   const DurationCalculator = (start, end) => {
     const startDateString = start
@@ -100,7 +137,7 @@ export default function BookingUpcomingDetailCard ({ booking }) {
             <button
               className="mr-4 flex flex-row items-center"
               onClick={() => {
-                console.log('Cancel Booking')
+                window.confirmationModal.showModal()
               }}
             >
               <span className="font-bold text-lg bg-red-500 px-6 py-2 text-white">
@@ -111,6 +148,28 @@ export default function BookingUpcomingDetailCard ({ booking }) {
           </p>
         </div>
       </div>
+      <dialog
+        id="confirmationModal"
+        className="modal modal-bottom sm:modal-middle"
+      >
+        <form method="dialog" className="modal-box">
+          <h3 className="font-bold text-lg">Cancel Booking</h3>
+          <p className="py-4">
+            Are you sure you want to cancel this booking?
+          </p>
+          <div className="modal-action">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn">Close</button>
+            <button
+              className="btn bg-orange-400"
+              onClick={handleConfirmation}
+            >
+              Confirm
+            </button>
+
+          </div>
+        </form>
+      </dialog>
     </div>
   )
 }
