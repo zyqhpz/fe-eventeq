@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 import BookingCountdown from './BookingCountdown'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCalendarXmark } from '@fortawesome/free-solid-svg-icons'
 
 export default function BookingUpcomingDetailCard ({ booking }) {
   let count = 0
@@ -44,9 +48,9 @@ export default function BookingUpcomingDetailCard ({ booking }) {
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1 p-4">
-              <h5 className="text-gray-500 uppercase font-bold text-xs">
+              <span className="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
                 Upcoming
-              </h5>
+              </span>
               <div className="flex flex-row items-center justify-between">
                 <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
                   Booking Date: {booking.StartDate} - {booking.EndDate}
@@ -89,10 +93,21 @@ export default function BookingUpcomingDetailCard ({ booking }) {
               </div>
             </div>
           </div>
-          <p className="text-sm text-gray-500 mt-4 flex flex-col">
+          <p className="mt-4 flex flex-row justify-between items-end">
             <span className="font-semibold text-sm text-gray-800">
               Created On: {createdDateStr}
             </span>
+            <button
+              className="mr-4 flex flex-row items-center"
+              onClick={() => {
+                console.log('Cancel Booking')
+              }}
+            >
+              <span className="font-bold text-lg bg-red-500 px-6 py-2 text-white">
+                <FontAwesomeIcon icon={faCalendarXmark} className="mr-2" />
+                Cancel Booking
+              </span>
+            </button>
           </p>
         </div>
       </div>

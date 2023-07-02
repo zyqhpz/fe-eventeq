@@ -45,15 +45,18 @@ export default function BookingActiveDetailCard ({ booking }) {
 
   return (
     <div className="w-full p-4">
-      <div className={'relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 shadow-lg ' + (booking.Status === 2 ? 'bg-orange-200' : 'bg-white')}>
+      <div
+        className={
+          'relative flex flex-col min-w-0 break-words rounded mb-6 xl:mb-0 shadow-lg ' +
+          (booking.Status === 2 ? 'bg-orange-200' : 'bg-white')
+        }
+      >
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1 p-4">
-              <h5 className="text-orange-500 uppercase font-bold text-xs">
-                {
-                  booking.Status === 2 ? 'Active Booking' : 'Get Item'
-                }
-              </h5>
+              <span className="bg-orange-100 text-orange-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                {booking.Status === 2 ? 'Active Booking' : 'Get Item'}
+              </span>
               <div className="flex flex-row items-center justify-between">
                 <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
                   Booking Date: {booking.StartDate} - {booking.EndDate}

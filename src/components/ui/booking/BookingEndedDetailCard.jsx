@@ -56,9 +56,15 @@ export default function BookingEndedDetailCard ({ booking }) {
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1 p-4">
-              <h5 className="text-blue-500 uppercase font-bold text-xs">
-                Ended
-              </h5>
+              {booking.Status === 3 ? (
+                <span className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                  Ended
+                </span>
+              ) : (
+                <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                  Cancelled
+                </span>
+              )}
               <div className="flex flex-row items-center justify-between">
                 <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
                   Booking Date: {booking.StartDate} - {booking.EndDate}
@@ -68,10 +74,25 @@ export default function BookingEndedDetailCard ({ booking }) {
                   </p>
                 </span>
                 <div>
-                  <span>Item Returned On: </span>
-                  <span className="font-semibold">
-                    {ReturnDate(booking.UpdatedAt)}
-                  </span>
+                  {booking.Status === 3 ? (
+                    <div>
+                      <span>Item Returned On: </span>
+                      <span className="font-semibold">
+                        {ReturnDate(booking.UpdatedAt)}
+                      </span>
+                    </div>
+                  ) : booking.Status === 4 ? (
+                    <div>
+                      <span>Cancelled On: </span>
+                      <span className="font-semibold">
+                        {ReturnDate(booking.UpdatedAt)}
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className="font-semibold">Item Not Retrieved</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex flex-row items-center justify-between">
