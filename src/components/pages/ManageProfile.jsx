@@ -5,17 +5,10 @@ import Navbar from '../ui/Navbar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons'
 
+import path from '../utils/path'
+import axios from 'axios'
+
 export default function ManageProfile () {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [noPhone, setNoPhone] = useState('')
-  const [location, setLocation] = useState('')
-  const [profilePic, setProfilePic] = useState(null)
-  const [profilePicIsSet, setProfilePicIsSet] = useState(false)
-
-  const [loading, setLoading] = useState(true)
-
   const jsonData = {
     Johor: [
       'Johor Bahru',
@@ -219,8 +212,20 @@ export default function ManageProfile () {
     'Wilayah Persekutuan': ['Kuala Lumpur', 'Labuan', 'Putrajaya']
   }
 
+  const [user, setUser] = useState(null)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [noPhone, setNoPhone] = useState('')
+  const [location, setLocation] = useState('')
+  const [profilePic, setProfilePic] = useState(null)
+  const [profilePicIsSet, setProfilePicIsSet] = useState(false)
+
+  const [loading, setLoading] = useState(true)
+
   const [selectedState, setSelectedState] = useState('')
   const [selectedDistrict, setSelectedDistrict] = useState('')
+
   const states = Object.keys(jsonData)
 
   const handleStateChange = (e) => {
@@ -232,15 +237,77 @@ export default function ManageProfile () {
     setSelectedDistrict(e.target.value)
   }
 
+  const userId = localStorage.getItem('userId')
+
+  useEffect(() => {
+    fetch(path.url + 'api/user/id/' + userId)
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data)
+        setFirstName(data.FirstName)
+        setLastName(data.LastName)
+        setEmail(data.Email)
+        setNoPhone(data.PhoneNumber)
+        setLocation(data.Location)
+        setSelectedState(data.Location.State)
+        setSelectedDistrict(data.Location.City)
+        setProfilePic(data.UserImageAvatar)
+
+        setProfilePicIsSet(data.IsImageAvatarSet)
+
+        if (data.IsImageAvatarSet) {
+        //   setProfilePic(path.url + 'api/user/image/' + data.UserImageAvatar)
+          setProfilePic(data.UserImageAvatar)
+        }
+        setLoading(false)
+      }
+      )
+      .catch((err) => console.log(err))
+  }, [])
+
+  function handleSave () {
+    event.preventDefault()
+    const formData = new FormData()
+    formData.append('userID', userId)
+    formData.append('firstName', firstName)
+    formData.append('lastName', lastName)
+    formData.append('email', email)
+    formData.append('noPhone', noPhone)
+    formData.append('state', selectedState)
+    formData.append('district', selectedDistrict)
+    formData.append('profilePic', profilePic)
+
+    axios
+      .put(path.url + 'api/item/update/' + userId, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then((response) => {
+        if (response.data.status === 'success') {
+          window.editItemModal.close()
+          //   UpdateSuccess()
+          // set interval to 2 seconds
+        //   setInterval(() => {
+        //     // window.location.reload()
+        //   }, 2000)
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+    setLoading(false)
+  }
+
   return (
     <div>
       <Navbar />
       <div className="bg-gray-100 w-screen h-screen overflow-auto">
         <div className="flex flex-col p-4 w-full h-full md:h-auto items-center min-w-none py-10 gap-4">
           <h1 className="text-lg md:text-2xl font-bold">Manage Profile</h1>
-          <div className="relative p-4 bg-white rounded-lg shadow sm:p-5 w-1/2">
+          <div className="relative p-4 bg-white rounded-lg shadow sm:p-5 md:w-1/2">
             <form action="#">
-              <div className="grid gap-4 mb-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label
                     htmlFor="first-name"
@@ -391,6 +458,14 @@ export default function ManageProfile () {
                     )}
                   </div>
                 </div>
+              </div>
+              <div className="flex justify-end mt-8">
+                <button
+                  className="text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  onClick={handleSave}
+                >
+                  Save
+                </button>
               </div>
             </form>
           </div>
