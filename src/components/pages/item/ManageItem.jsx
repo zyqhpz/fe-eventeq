@@ -8,6 +8,8 @@ import ProcessingButton from '../../ui/button/ProcessingButton'
 
 import { React, useEffect, useState, useMemo } from 'react'
 
+import QRcode from 'qrcode.react'
+
 import { useToast } from '@chakra-ui/react'
 
 import axios from 'axios'
@@ -27,6 +29,10 @@ export default function ManageItem () {
   const [selectedImages, setSelectedImages] = useState([])
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
+
+  // view QR
+  const [viewQRItemName, setViewQRItemName] = useState('')
+  const [viewQRItemID, setViewQRItemID] = useState('')
 
   const userId = localStorage.getItem('userId')
 
@@ -268,6 +274,12 @@ export default function ManageItem () {
     setImages([])
   }
 
+  function viewQR (item) {
+    window.modalQR.showModal()
+    setViewQRItemName(item.Name)
+    setViewQRItemID(item.ID)
+  }
+
   return (
     <div className="ManageItem">
       <Navbar />
@@ -338,17 +350,15 @@ export default function ManageItem () {
                         <td className="px-2 md:px-6 py-4">RM {item.Price}</td>
                         <td className="px-2 md:px-6 py-4">{item.Quantity}</td>
                         <td className="px-2 md:px-6 py-4">
-                          {
-                            item.Status === 0 ? (
-                              <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                                Inactive
-                              </span>
-                            ) : (
-                              <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                                Active
-                              </span>
-                            )
-                          }
+                          {item.Status === 0 ? (
+                            <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                              Inactive
+                            </span>
+                          ) : (
+                            <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                              Active
+                            </span>
+                          )}
                         </td>
                         <td className="px-2 md:px-6 py-4">
                           <button
@@ -358,6 +368,14 @@ export default function ManageItem () {
                             }}
                           >
                             Edit
+                          </button>
+                          <button
+                            className="text-white bg-blue-400 hover:bg-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-2"
+                            onClick={() => {
+                              viewQR(item)
+                            }}
+                          >
+                            View QR Code
                           </button>
                         </td>
                       </tr>
@@ -813,6 +831,20 @@ export default function ManageItem () {
             </div>
           </div>
         </div>
+      </dialog>
+      <dialog id="modalQR" className="modal">
+        <form method="dialog" className="modal-box md:w-1/4 max-w-5xl">
+          <h3 className="font-bold text-lg">QR Code</h3>
+          <p className="py-4">
+            QR code for <span className="font-bold">{viewQRItemName}</span>
+          </p>
+          <div className="flex justify-center">
+            <QRcode value={viewQRItemID} size={240} includeMargin={true} />
+          </div>
+          <div className="modal-action">
+            <button className="btn">Close</button>
+          </div>
+        </form>
       </dialog>
     </div>
   )
