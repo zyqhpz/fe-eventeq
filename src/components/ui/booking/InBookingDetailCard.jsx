@@ -21,6 +21,7 @@ import QRcode from 'qrcode.react'
 
 import BookingCountdown from './BookingCountdown'
 import BookingOverdueCountdown from './BookingOverdueCountdown'
+import BookingEndedDetailCard from './BookingEndedDetailCard'
 
 export default function InBookingDetailCard ({ booking }) {
   const [isOverdue, setIsOverdue] = useState(false)
@@ -357,11 +358,16 @@ export default function InBookingDetailCard ({ booking }) {
                   <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
                 </span>
               </button>
-              {/* <Button onClick={onOpen}>Open Modal</Button> */}
             </p>
           </div>
         </div>
       </div>
+    )
+  }
+
+  const StatusElse = () => {
+    return (
+        <BookingEndedDetailCard booking={booking} />
     )
   }
 
@@ -402,7 +408,7 @@ export default function InBookingDetailCard ({ booking }) {
             </Modal>
         </>
       ) : (
-        <StatusZero />
+        <StatusElse />
       )}
     </div>
   )
