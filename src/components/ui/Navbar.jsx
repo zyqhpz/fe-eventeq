@@ -9,7 +9,6 @@ import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/
 import { useNavigate } from 'react-router-dom'
 
 import EventEQLogo from './../../assets/EventEQ.png'
-import SearchBar from './SearchBar'
 import ProfileIconButton from './ProfileIconButton'
 
 import path from '../utils/path'
@@ -88,9 +87,6 @@ export default function Navbar () {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12">
-          <SearchBar />
-        </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <ProfileIconButton />
         </div>
@@ -151,7 +147,7 @@ export default function Navbar () {
                   Booking
                 </a>
                 <a
-                  href="#"
+                  href="/user/manage/profile"
                   className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
                 >
                   Account settings

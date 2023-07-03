@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 import BookingCountdown from './BookingCountdown'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCalendarXmark } from '@fortawesome/free-solid-svg-icons'
+
+import { useToast } from '@chakra-ui/react'
+
+import path from '../../utils/path'
 
 export default function BookingUpcomingDetailCard ({ booking }) {
   let count = 0
@@ -12,6 +20,39 @@ export default function BookingUpcomingDetailCard ({ booking }) {
     month: 'long',
     day: 'numeric'
   })
+
+  const toast = useToast()
+
+  // Success feedback for item insertion
+  const CancelSuccess = () => {
+    return toast({
+      title: 'Booking Cancelled',
+      description: 'Your booking has been cancelled.',
+      status: 'success',
+      position: 'top-right',
+      duration: 9000,
+      isClosable: true
+    })
+  }
+
+  const handleConfirmation = () => {
+    fetch(path.url + 'api/booking/cancel/' + booking.ID, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then((response) => {
+      if (response.status === 200) {
+        window.confirmationModal.close()
+        CancelSuccess()
+        // set interval to 2 seconds
+        setInterval(() => {
+          window.location.reload()
+        }, 1000)
+      }
+    })
+  }
 
   const DurationCalculator = (start, end) => {
     const startDateString = start
@@ -44,9 +85,9 @@ export default function BookingUpcomingDetailCard ({ booking }) {
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1 p-4">
-              <h5 className="text-gray-500 uppercase font-bold text-xs">
+              <span className="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
                 Upcoming
-              </h5>
+              </span>
               <div className="flex flex-row items-center justify-between">
                 <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
                   Booking Date: {booking.StartDate} - {booking.EndDate}
@@ -89,13 +130,46 @@ export default function BookingUpcomingDetailCard ({ booking }) {
               </div>
             </div>
           </div>
-          <p className="text-sm text-gray-500 mt-4 flex flex-col">
+          <p className="mt-4 flex flex-row justify-between items-end">
             <span className="font-semibold text-sm text-gray-800">
               Created On: {createdDateStr}
             </span>
+            <button
+              className="mr-4 flex flex-row items-center"
+              onClick={() => {
+                window.confirmationModal.showModal()
+              }}
+            >
+              <span className="font-bold text-lg bg-red-500 px-6 py-2 text-white">
+                <FontAwesomeIcon icon={faCalendarXmark} className="mr-2" />
+                Cancel Booking
+              </span>
+            </button>
           </p>
         </div>
       </div>
+      <dialog
+        id="confirmationModal"
+        className="modal modal-bottom sm:modal-middle"
+      >
+        <form method="dialog" className="modal-box">
+          <h3 className="font-bold text-lg">Cancel Booking</h3>
+          <p className="py-4">
+            Are you sure you want to cancel this booking?
+          </p>
+          <div className="modal-action">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn">Close</button>
+            <button
+              className="btn bg-orange-400"
+              onClick={handleConfirmation}
+            >
+              Confirm
+            </button>
+
+          </div>
+        </form>
+      </dialog>
     </div>
   )
 }

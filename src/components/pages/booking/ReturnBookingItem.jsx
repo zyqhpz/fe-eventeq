@@ -44,11 +44,19 @@ export default function ReturnItem () {
   const [QRerror, setQRerror] = useState(false)
 
   const [allItemsReady, setAllItemsReady] = useState(false)
+  const [finalScan, setFinalScan] = useState(false)
 
   const handleQRScan = (data) => {
     if (data) {
-      if (data.text === itemQR.ItemID) {
-        window.my_modal_1.close()
+      if (data.text === booking.ID) {
+        window.modalQR.close()
+        setOpenQRScanner(false)
+
+        if (allItemsReady) {
+          setFinalScan(true)
+        }
+      } else if (data.text === itemQR.ItemID) {
+        window.modalQR.close()
         setOpenQRScanner(false)
 
         const scanned = itemQR.Scanned + 1
@@ -78,7 +86,7 @@ export default function ReturnItem () {
         setItems([...items])
         setItemQR(null)
       } else {
-        window.my_modal_1.close()
+        window.modalQR.close()
         setOpenQRScanner(false)
         WrongQRCode('Wrong QR code detected')
       }
@@ -122,7 +130,6 @@ export default function ReturnItem () {
           <Link
             to={'/listing/booking/'}
             className="btn btn-ghost btn-sm rounded-btn"
-            onClick={() => {}}
           >
             <FontAwesomeIcon icon={faArrowLeft} />
             Back
@@ -214,7 +221,7 @@ export default function ReturnItem () {
                                   onClick={() => {
                                     setItemQR(item)
                                     setOpenQRScanner(true)
-                                    window.my_modal_1.showModal()
+                                    window.modalQR.showModal()
                                   }}
                                 >
                                   open QR scanner
@@ -258,14 +265,37 @@ export default function ReturnItem () {
                 <BookingCountdown EndDate={booking.EndDate} />
               </div>
               <div className="flex flex-col gap-2">
+                {allItemsReady ? (
+                  finalScan ? (
+                    <span className="text-sm font-semibold">
+                      *Ready to confirm return
+                    </span>
+                  ) : (
+                    <button
+                      className="btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3"
+                      onClick={() => {
+                        setOpenQRScanner(true)
+                        window.modalQR.showModal()
+                      }}
+                    >
+                      Scan Final QR Code
+                    </button>
+                  )
+                ) : (
+                  <div className="flex flex-row gap-2">
+                    <span className="text-sm font-semibold">
+                      *Please scan all items before confirming return
+                    </span>
+                  </div>
+                )}
                 <button
                   className={
-                    allItemsReady
+                    finalScan
                       ? 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3'
                       : 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3 opacity-50 cursor-not-allowed'
                   }
                   onClick={() => {
-                    if (allItemsReady) {
+                    if (finalScan) {
                       fetch(`${path.url}api/booking/active/${id}/return`, {
                         method: 'PUT',
                         headers: {
@@ -301,7 +331,7 @@ export default function ReturnItem () {
       )}
 
       {/* Modal */}
-      <dialog id="my_modal_1" className="modal">
+      <dialog id="modalQR" className="modal">
         <form method="dialog" className="modal-box">
           <h3 className="font-bold text-lg">Scan Item&apos;s QR code</h3>
           <p className="py-4">

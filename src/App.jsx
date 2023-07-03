@@ -2,6 +2,7 @@ import SignIn from './components/pages/SignIn'
 import Home from './components/pages/Home'
 import NotFound from './components/pages/NotFound'
 import SignUp from './components/pages/SignUp'
+import ManageProfile from './components/pages/ManageProfile'
 
 import { Route, Routes } from 'react-router-dom'
 import NewItem from './components/pages/NewItem'
@@ -21,11 +22,12 @@ function App () {
   return (
     <div className="App">
       <Routes>
+        <Route path="*" element={<NotFound />} />
+
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
-        <Route path="*" element={<NotFound />} />
-        <Route path="/user/manage/profile" />
+        <Route path="/user/manage/profile" element={<ManageProfile />} />
 
         {/* item */}
         <Route path="/user/manage/item" element={<ManageItem />} />

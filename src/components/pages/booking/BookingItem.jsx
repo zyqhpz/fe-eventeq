@@ -284,7 +284,7 @@ export default function BookingItem () {
               {/* {user.FirstName + ' ' + user.LastName} */}
             </h1>
           </div>
-          <div className="flex flex-col-reverse md:flex-col gap-2 relative overflow-x-auto w-full">
+          <div className="flex flex-col-reverse md:flex-col gap-2 relative w-full">
             <div className='mt-4 md:mt-0'>
               <h1 className="text-lg md:text-2xl font-bold">Booking Summary</h1>
               <table
