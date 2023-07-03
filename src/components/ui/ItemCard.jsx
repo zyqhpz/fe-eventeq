@@ -20,7 +20,7 @@ export default function ItemCard ({ item }) {
   return (
     <a
       key={item.ID}
-      className="flex flex-col max-w-xl items-start justify-between h-44 w-48 md:h-auto md:w-auto p-2 md:p-5 md:space-y-6 transition duration-200 ease-in-out transform bg-white rounded-lg shadow-xl hover:scale-105 hover:shadow-2xl"
+      className="flex flex-col max-w-xl items-start justify-between h-52 w-48 md:h-auto md:w-auto p-2 md:p-5 md:space-y-6 transition duration-200 ease-in-out transform bg-white rounded-lg shadow-xl hover:scale-105 hover:shadow-2xl"
       href={detailsPath}
     >
       <div className="group relative">
@@ -34,22 +34,31 @@ export default function ItemCard ({ item }) {
       </div>
       {/* detailed part */}
       <div className="flex w-full items-center justify-between text-xs md:text-base">
-        <div className="flex gap-x-2">
-          {item.OwnedBy.IsImageAvatarSet ? (
-            <img
-              src={path.url + 'api/user/image/' + item.OwnedBy.UserImageAvatar}
-              alt=""
-              className="h-4 w-4 md:h-7 m:w-7 rounded-full bg-gray-50"
-            />
-          ) : (
-            <FontAwesomeIcon
-              icon={faCircleUser}
-              className="h-4 w-4 md:h-7 m:w-7 text-gray-500"
-            />
-          )}
-          <p className="font-semibold text-gray-900">
-            {item.OwnedBy.FirstName} {item.OwnedBy.LastName}
-          </p>
+        <div className="flex flex-col">
+          <div className="flex gap-x-2">
+            {item.OwnedBy.IsImageAvatarSet ? (
+              <img
+                src={
+                  path.url + 'api/user/image/' + item.OwnedBy.UserImageAvatar
+                }
+                alt=""
+                className="h-4 w-4 md:h-7 m:w-7 rounded-full bg-gray-50"
+              />
+            ) : (
+              <FontAwesomeIcon
+                icon={faCircleUser}
+                className="h-4 w-4 md:h-7 m:w-7 text-gray-500"
+              />
+            )}
+            <p className="font-semibold text-gray-900">
+              {item.OwnedBy.FirstName} {item.OwnedBy.LastName}
+            </p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs">
+              {item.OwnedBy.Location.State} - {item.OwnedBy.Location.City}
+            </p>
+          </div>
         </div>
         <p className="text-gray-500">RM {item.Price} /day</p>
       </div>
