@@ -36,14 +36,12 @@ export default function ItemCard ({ item }) {
       <div className="flex w-full items-center justify-between text-xs md:text-base">
         <div className="flex flex-col">
           <div className="flex gap-x-2">
-            {item.OwnedBy.IsImageAvatarSet ? (
+            {item.OwnedBy.IsAvatarImageSet ? (
               <img
-                src={
-                  path.url + 'api/user/image/' + item.OwnedBy.UserImageAvatar
-                }
+                src={path.url + 'api/item/image/' + item.OwnedBy.ProfileImage}
                 alt=""
-                className="h-4 w-4 md:h-7 m:w-7 rounded-full bg-gray-50"
-              />
+                className="h-4 w-4 md:h-7 md:w-7 rounded-full object-cover"
+                />
             ) : (
               <FontAwesomeIcon
                 icon={faCircleUser}
@@ -56,7 +54,7 @@ export default function ItemCard ({ item }) {
           </div>
           <div>
             <p className="text-gray-500 text-xs">
-              {item.OwnedBy.Location.State} - {item.OwnedBy.Location.City}
+              {item.OwnedBy.Location.State} - {item.OwnedBy.Location.District}
             </p>
           </div>
         </div>
