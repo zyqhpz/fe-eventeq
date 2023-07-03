@@ -5,6 +5,8 @@ import Navbar from '../ui/Navbar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons'
 
+import { useToast } from '@chakra-ui/react'
+
 import path from '../utils/path'
 import axios from 'axios'
 
@@ -212,14 +214,17 @@ export default function ManageProfile () {
     'Wilayah Persekutuan': ['Kuala Lumpur', 'Labuan', 'Putrajaya']
   }
 
-  const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(null)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [noPhone, setNoPhone] = useState('')
   const [location, setLocation] = useState('')
   const [profilePic, setProfilePic] = useState(null)
+  const [profilePicURL, setProfilePicURL] = useState('')
   const [profilePicIsSet, setProfilePicIsSet] = useState(false)
+
+  const [profilePicChanged, setProfilePicChanged] = useState(false)
 
   const [loading, setLoading] = useState(true)
 
@@ -237,27 +242,43 @@ export default function ManageProfile () {
     setSelectedDistrict(e.target.value)
   }
 
+  const toast = useToast()
+
+  // Success feedback for updating user
+  const UpdateSuccess = () => {
+    return toast({
+      title: 'Update Success',
+      description: 'Your profile has been updated successfully.',
+      status: 'success',
+      position: 'top-right',
+      duration: 9000,
+      isClosable: true
+    })
+  }
+
   const userId = localStorage.getItem('userId')
 
   useEffect(() => {
     fetch(path.url + 'api/user/id/' + userId)
       .then((res) => res.json())
       .then((data) => {
-        setUser(data)
+        // setUser(data)
         setFirstName(data.FirstName)
         setLastName(data.LastName)
         setEmail(data.Email)
-        setNoPhone(data.PhoneNumber)
+        setNoPhone(data.NoPhone)
         setLocation(data.Location)
         setSelectedState(data.Location.State)
-        setSelectedDistrict(data.Location.City)
-        setProfilePic(data.UserImageAvatar)
+        setSelectedDistrict(data.Location.District)
+        setProfilePicIsSet(data.IsAvatarImageSet)
 
-        setProfilePicIsSet(data.IsImageAvatarSet)
+        console.log(data)
 
-        if (data.IsImageAvatarSet) {
-        //   setProfilePic(path.url + 'api/user/image/' + data.UserImageAvatar)
-          setProfilePic(data.UserImageAvatar)
+        if (data.IsAvatarImageSet) {
+          setProfilePic(data.ProfileImage)
+
+          const imagePath = path.url + 'api/item/image/' + data.ProfileImage
+          setProfilePicURL(imagePath)
         }
         setLoading(false)
       }
@@ -265,32 +286,55 @@ export default function ManageProfile () {
       .catch((err) => console.log(err))
   }, [])
 
+  const onSelectFile = (event) => {
+    const selectedFile = event.target.files[0]
+
+    setProfilePic(selectedFile)
+
+    const image = URL.createObjectURL(selectedFile)
+    setProfilePicURL(image)
+
+    setProfilePicIsSet(true)
+    setProfilePicChanged(true)
+
+    // Set the value of the file input to trigger validation
+    const fileInput = document.getElementById('profile-pic')
+    if (fileInput) {
+      fileInput.value = event.target.value
+    }
+
+    // FOR BUG IN CHROME
+    event.target.value = ''
+  }
+
   function handleSave () {
     event.preventDefault()
     const formData = new FormData()
-    formData.append('userID', userId)
     formData.append('firstName', firstName)
     formData.append('lastName', lastName)
     formData.append('email', email)
     formData.append('noPhone', noPhone)
     formData.append('state', selectedState)
     formData.append('district', selectedDistrict)
-    formData.append('profilePic', profilePic)
+
+    formData.append('profileImageChanged', profilePicChanged)
+    if (profilePicChanged) {
+      formData.append('profileImage', profilePic)
+    }
 
     axios
-      .put(path.url + 'api/item/update/' + userId, formData, {
+      .put(path.url + 'api/user/update/' + userId, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        withCredentials: true
       })
       .then((response) => {
         if (response.data.status === 'success') {
-          window.editItemModal.close()
-          //   UpdateSuccess()
-          // set interval to 2 seconds
-        //   setInterval(() => {
-        //     // window.location.reload()
-        //   }, 2000)
+          UpdateSuccess()
+          setTimeout(() => {
+            window.location.reload()
+          }, 2000)
         }
       })
       .catch((error) => {
@@ -299,6 +343,42 @@ export default function ManageProfile () {
     setLoading(false)
   }
 
+  // const compressImage = (file) => {
+  //   return new Promise((resolve) => {
+  //     const reader = new FileReader()
+  //     reader.readAsDataURL(file)
+  //     reader.onload = (event) => {
+  //       const img = new Image()
+  //       img.src = event.target.result
+  //       img.onload = () => {
+  //         const canvas = document.createElement('canvas')
+  //         const ctx = canvas.getContext('2d')
+  //         const MAX_WIDTH = 800
+  //         let width = img.width
+  //         let height = img.height
+  //         if (width > MAX_WIDTH) {
+  //           height *= MAX_WIDTH / width
+  //           width = MAX_WIDTH
+  //         }
+  //         canvas.width = width
+  //         canvas.height = height
+  //         ctx.drawImage(img, 0, 0, width, height)
+  //         canvas.toBlob(
+  //           (blob) => {
+  //             const compressedFile = new File([blob], file.name, {
+  //               type: file.type,
+  //               lastModified: Date.now()
+  //             })
+  //             resolve(compressedFile)
+  //           },
+  //           file.type,
+  //           0.7
+  //         )
+  //       }
+  //     }
+  //   })
+  // }
+
   return (
     <div>
       <Navbar />
@@ -306,7 +386,7 @@ export default function ManageProfile () {
         <div className="flex flex-col p-4 w-full h-full md:h-auto items-center min-w-none py-10 gap-4">
           <h1 className="text-lg md:text-2xl font-bold">Manage Profile</h1>
           <div className="relative p-4 bg-white rounded-lg shadow sm:p-5 md:w-1/2">
-            <form action="#">
+            <form onSubmit={handleSave}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label
@@ -439,16 +519,14 @@ export default function ManageProfile () {
                       id="profile-pic"
                       name="profile-pic"
                       type="file"
+                      accept="image/png,image/jpeg,image/webp,image/avif"
                       className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                      placeholder="Type your profile picture"
-                      required
-                      value={profilePic}
-                      onChange={(e) => setProfilePic(e.target.value)}
+                      onChange={onSelectFile}
                     />
                     {profilePicIsSet ? (
                       <img
                         className="mask mask-squircle h-10 w-10 object-cover"
-                        src="https://images.unsplash.com/photo-1457449940276-e8deed18bfff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                        src={profilePicURL}
                       />
                     ) : (
                       <FontAwesomeIcon
@@ -462,7 +540,7 @@ export default function ManageProfile () {
               <div className="flex justify-end mt-8">
                 <button
                   className="text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                  onClick={handleSave}
+                  type="submit"
                 >
                   Save
                 </button>
