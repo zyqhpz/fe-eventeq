@@ -340,14 +340,14 @@ export default function ManageItem () {
                       >
                         <th
                           scope="row"
-                          className="px-2 md:px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                          className="px-2 md:px-6 py-4 font-medium text-gray-900 w-1/5"
                         >
                           {item.Name}
                         </th>
-                        <td className="px-2 md:px-6 py-4">
+                        <td className="px-2 md:px-6 py-4 w-1/4">
                           {item.Description}
                         </td>
-                        <td className="px-2 md:px-6 py-4">RM {item.Price}</td>
+                        <td className="px-2 md:px-6 py-4 w-1/12">RM {item.Price}</td>
                         <td className="px-2 md:px-6 py-4">{item.Quantity}</td>
                         <td className="px-2 md:px-6 py-4">
                           {item.Status === 0 ? (
@@ -360,7 +360,7 @@ export default function ManageItem () {
                             </span>
                           )}
                         </td>
-                        <td className="px-2 md:px-6 py-4">
+                        <td className="px-2 py-4">
                           <button
                             className="text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                             onClick={() => {
