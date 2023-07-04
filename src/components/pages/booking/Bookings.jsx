@@ -91,21 +91,21 @@ export default function BookingItem () {
   }
 
   return (
-    <div className="h-screen flex flex-col w-screen overflow-auto">
+    <div className="flex flex-col w-screen h-screen overflow-auto">
       <Navbar />
       <div className="bg-gray-100 h-full max-w-full">
-        <div>
-          <div className="flex flex-wrap px-48 p-12">
-            <h1 className="text-2xl font-bold">Booking Details</h1>
+        <div className="px-4 md:px-48 pt-12 w-full">
+          <h1 className="text-2xl font-bold">Booking Details</h1>
+          <div className="flex">
             <div className="w-full">
               <ul
-                className="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row"
+                className="flex flex-row list-none pt-3 pb-4 items-center justify-center"
                 role="tablist"
               >
                 <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
                   <a
                     className={
-                      'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+                      'text-xs font-bold uppercase px-3 md:px-5 py-3 shadow-lg rounded leading-normal flex md:block items-center justify-center h-14 w-24 md:h-auto md:w-auto ' +
                       (openTab === 1
                         ? 'text-white bg-orange-500'
                         : 'text-orange-500 bg-white')
@@ -124,7 +124,7 @@ export default function BookingItem () {
                 <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
                   <a
                     className={
-                      'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+                      'text-xs font-bold uppercase px-3 md:px-5 py-3 shadow-lg rounded leading-normal flex md:block items-center justify-center h-14 w-24 md:h-auto md:w-auto ' +
                       (openTab === 2
                         ? 'text-white bg-orange-500'
                         : 'text-orange-500 bg-white')
@@ -143,7 +143,7 @@ export default function BookingItem () {
                 <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
                   <a
                     className={
-                      'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+                      'text-xs font-bold uppercase px-3 md:px-5 py-3 shadow-lg rounded leading-normal flex md:block items-center justify-center h-14 w-24 md:h-auto md:w-auto ' +
                       (openTab === 3
                         ? 'text-white bg-orange-500'
                         : 'text-orange-500 bg-white')
@@ -162,7 +162,7 @@ export default function BookingItem () {
                 <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
                   <a
                     className={
-                      'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+                      'text-xs font-bold uppercase px-3 md:px-5 py-3 shadow-lg rounded leading-normal flex md:block items-center justify-center h-14 w-24 md:h-auto md:w-auto ' +
                       (openTab === 0
                         ? 'text-white bg-orange-500'
                         : 'text-orange-500 bg-white')
@@ -288,7 +288,8 @@ export default function BookingItem () {
                           itemInBooking.map((booking) => (
                             <InBookingDetailCard
                               booking={booking}
-                              key={booking.ID} />
+                              key={booking.ID}
+                            />
                           ))
                         )}
                       </div>
