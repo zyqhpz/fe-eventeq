@@ -15,6 +15,8 @@ import Bookings from './components/pages/booking/Bookings'
 import GetItem from './components/pages/booking/GetBookingItem'
 import ReturnItem from './components/pages/booking/ReturnBookingItem'
 
+import ManageEvent from './components/pages/event/ManageEvent'
+
 import ChatPage from './components/pages/chat/ChatPage'
 
 function App () {
@@ -44,6 +46,7 @@ function App () {
 
         {/* Event */}
         <Route path="/listing/event/:id" element={<DisplayImage />} />
+        <Route path="/user/manage/event" element={<ManageEvent />} />
 
         {/* Chat */}
         <Route path="/message/" element={<ChatPage />} />
