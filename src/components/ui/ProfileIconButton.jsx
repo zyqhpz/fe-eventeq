@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -142,7 +143,21 @@ export default function Example () {
                     'block w-full px-4 py-2 text-left text-sm'
                   )}
                 >
-                  Manage items
+                  Manage Items
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item className={isAuthenticated ? 'block' : 'hidden'}>
+              {({ active }) => (
+                <Link
+                  to="/user/manage/event"
+                  state={user}
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'block w-full px-4 py-2 text-left text-sm'
+                  )}
+                >
+                  Manage Events
                 </Link>
               )}
             </Menu.Item>
@@ -187,10 +202,11 @@ export default function Example () {
                     'block px-4 py-2 text-sm'
                   )}
                 >
-                  Account settings
+                  Profile
                 </a>
               )}
             </Menu.Item>
+            <hr/>
             <Menu.Item className={isAuthenticated ? 'block' : 'hidden'}>
               {({ active }) => (
                 <button

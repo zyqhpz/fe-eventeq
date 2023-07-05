@@ -135,6 +135,12 @@ export default function Navbar () {
                   Manage Items
                 </a>
                 <a
+                  href="/user/manage/event"
+                  className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
+                >
+                  Manage Events
+                </a>
+                <a
                   href="/message"
                   className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
                 >
@@ -150,7 +156,7 @@ export default function Navbar () {
                   href="/user/manage/profile"
                   className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 hover:text-orange-500"
                 >
-                  Account settings
+                  Profile
                 </a>
               </div>
               <div className="py-6">
