@@ -219,7 +219,11 @@ export default function ManageItem () {
     axios
       .get(path.url + 'api/item/user/' + userId)
       .then((res) => {
-        setItems(res.data)
+        if (res.data === null) {
+          setItems([])
+        } else {
+          setItems(res.data)
+        }
         setLoading(false)
       })
       .catch(() => {})
