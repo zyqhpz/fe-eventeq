@@ -8,6 +8,8 @@ import ProcessingButton from '../../ui/button/ProcessingButton'
 
 import { React, useEffect, useState, useMemo } from 'react'
 
+import Datepicker from 'react-tailwindcss-datepicker'
+
 import { useToast } from '@chakra-ui/react'
 
 import axios from 'axios'
@@ -20,17 +22,28 @@ export default function ManageEvent () {
   const [events, setEvents] = useState([])
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [status, setStatus] = useState(0)
-  const [state, setState] = useState('')
-  const [district, setDistrict] = useState('')
+  const [status, setStatus] = useState(null)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+
+  const [selectedState, setSelectedState] = useState('')
+  const [selectedDistrict, setSelectedDistrict] = useState('')
+
+  const jsonData = statesDistricts
+  const states = Object.keys(jsonData)
+
+  const handleStateChange = (e) => {
+    setSelectedState(e.target.value)
+    setSelectedDistrict('')
+  }
+
+  const handleDistrictChange = (e) => {
+    setSelectedDistrict(e.target.value)
+  }
 
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const toast = useToast()
-
-  const jsonData = statesDistricts
 
   const userId = localStorage.getItem('userId')
 
@@ -60,8 +73,8 @@ export default function ManageEvent () {
   // Success feedback for item insertion
   const InsertSuccess = () => {
     return toast({
-      title: 'Item added.',
-      description: 'Item has been added successfully.',
+      title: 'Event added.',
+      description: 'Event has been added successfully.',
       status: 'success',
       position: 'top-right',
       duration: 9000,
@@ -72,8 +85,8 @@ export default function ManageEvent () {
   // Success feedback for item insertion
   const UpdateSuccess = () => {
     return toast({
-      title: 'Item updated.',
-      description: 'Item has been updated successfully.',
+      title: 'Event updated.',
+      description: 'Event has been updated successfully.',
       status: 'success',
       position: 'top-right',
       duration: 9000,
@@ -81,50 +94,38 @@ export default function ManageEvent () {
     })
   }
 
-  // const handleSubmit = async (event) => {
-  //   setLoading(true)
-  //   event.preventDefault()
-  //   const formData = new FormData()
-  //   formData.append('userID', userId)
-  //   formData.append('name', name)
-  //   formData.append('description', description)
-  //   formData.append('category', category)
-  //   formData.append('price', price)
-  //   formData.append('quantity', quantity)
-  //   formData.append('imagesCount', selectedImages.length)
-  //   images.forEach(async (image, index) => {
-  //     const compressedImage = await compressImage(image)
-  //     formData.append(`images-${index}`, compressedImage)
-  //   })
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const formData = new FormData()
+    formData.append('userID', userId)
+    formData.append('name', name)
+    formData.append('description', description)
+    formData.append('status', status)
+    formData.append('state', selectedState)
+    formData.append('district', selectedDistrict)
+    formData.append('startDate', startDate)
+    formData.append('endDate', endDate)
 
-  //   // set interval to 2 seconds
-  //   const interval = setInterval(() => {
-  //     if (selectedImages.length === images.length) {
-  //       clearInterval(interval)
-
-  //       axios
-  //         .post(path.url + 'api/item/create', formData, {
-  //           headers: {
-  //             'Content-Type': 'multipart/form-data'
-  //           }
-  //         })
-  //         .then((response) => {
-  //           if (response.data.status === 'success') {
-  //             window.addNewItemModal.close()
-  //             InsertSuccess()
-  //             // set interval to 2 seconds
-  //             setInterval(() => {
-  //               window.location.reload()
-  //             }, 2000)
-  //           }
-  //         })
-  //         .catch((error) => {
-  //           console.error('Error:', error)
-  //         })
-  //       setLoading(false)
-  //     }
-  //   }, 2000)
-  // }
+    axios
+      .post(path.url + 'api/event/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then((response) => {
+        if (response.data.status === 'success') {
+          window.addNewEventModal.close()
+          InsertSuccess()
+          // set interval to 2 seconds
+          setInterval(() => {
+            window.location.reload()
+          }, 2000)
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+  }
 
   // const handleEditSubmit = async (event) => {
   //   const itemID = localStorage.getItem('itemID')
@@ -194,8 +195,8 @@ export default function ManageEvent () {
       setName('')
       setDescription('')
       setStatus(0)
-      setState('')
-      setDistrict('')
+      setSelectedState('')
+      setSelectedDistrict('')
       setStartDate('')
       setEndDate('')
       setDateValue({
@@ -252,15 +253,16 @@ export default function ManageEvent () {
           ) : (
             <div className="p-4 w-full md:w-2/3">
               <div className="flex flex-row justify-between mb-10">
-                <h1 className="text-lg md:text-2xl font-bold">Manage Item</h1>
+                <h1 className="text-lg md:text-2xl font-bold">Manage Event</h1>
                 <button
                   className="text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   onClick={() => {
-                    window.addNewItemModal.showModal()
+                    window.addNewEventModal.showModal()
                     setShowModal(true)
+                    setStatus('')
                   }}
                 >
-                  Add Item
+                  Add Event
                 </button>
               </div>
               <table
@@ -276,10 +278,13 @@ export default function ManageEvent () {
                       Description
                     </th>
                     <th scope="col" className="px-2 md:px-6 py-3">
-                      Price
+                      Location
                     </th>
                     <th scope="col" className="px-2 md:px-6 py-3">
-                      Quantity
+                      Start Date
+                    </th>
+                    <th scope="col" className="px-2 md:px-6 py-3">
+                      End Date
                     </th>
                     <th scope="col" className="px-2 md:px-6 py-3">
                       Status
@@ -295,9 +300,7 @@ export default function ManageEvent () {
                       </td>
                     </tr>
                   ) : (
-                    events.map((item) => (
-                      <></>
-                    ))
+                    events.map((item) => <></>)
                   )}
                 </tbody>
               </table>
@@ -308,7 +311,7 @@ export default function ManageEvent () {
                     <button
                       className="text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-5"
                       onClick={() => {
-                        window.addNewItemModal.showModal()
+                        window.addNewEventModal.showModal()
                         setShowModal(true)
                       }}
                     >
@@ -324,21 +327,21 @@ export default function ManageEvent () {
         </div>
       </div>
       <Footer />
-      <dialog id="addNewItemModal" className="modal">
-        <div method="dialog" className="modal-box max-w-none md:w-2/3">
+      <dialog id="addNewEventModal" className="modal">
+        <div method="dialog" className="modal-box max-w-none md:w-2/3 md:h-3/5">
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             onClick={() => {
-              window.addNewItemModal.close()
+              window.addNewEventModal.close()
               setShowModal(false)
             }}
           >
             ✕
           </button>
-          <h3 className="font-bold text-lg">Add New Item</h3>
+          <h3 className="font-bold text-lg">Add New Event</h3>
           <hr className="my-4" />
           <div>
-            {/* <div>
+            <div>
               <form onSubmit={handleSubmit} className="gap-2">
                 <div className="grid gap-4 mb-4 sm:grid-cols-2">
                   <div>
@@ -353,7 +356,7 @@ export default function ManageEvent () {
                       name="name"
                       id="name"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                      placeholder="Type item name"
+                      placeholder="Type event name"
                       autoComplete="off"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -361,70 +364,81 @@ export default function ManageEvent () {
                     />
                   </div>
                   <div>
-                    <label
-                      htmlFor="price"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Price <span className="font-light">(per day)</span>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      Date
                     </label>
-                    <div className="flex">
-                      <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
-                        RM
-                      </span>
-                      <input
-                        id="price"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg rounded-l-none focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="199"
-                        required
-                        type="number"
-                        name="price"
-                        autoComplete="off"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="quantity"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Quantity
-                    </label>
-                    <input
-                      id="quantity"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                      placeholder="Enter product quantity"
-                      required
-                      type="number"
-                      name="quantity"
-                      autoComplete="off"
-                      value={quantity}
-                      onChange={(e) => setQuantity(e.target.value)}
+                    <Datepicker
+                      startFrom={new Date()}
+                      primaryColor={'orange'}
+                      value={dateValue}
+                      onChange={handleDateValueChange}
+                      showShortcuts={false}
+                      separator="until"
+                      displayFormat={'DD/MM/YYYY'}
                     />
                   </div>
                   <div>
                     <label
-                      htmlFor="category"
+                      htmlFor="state"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Category
+                      Location
+                    </label>
+                    <div className="flex flex-row w-full gap-2">
+                      <select
+                        id="state"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-1/2 p-2.5"
+                        value={selectedState}
+                        onChange={handleStateChange}
+                      >
+                        <option hidden defaultChecked>
+                          -- Select State --
+                        </option>
+                        {states.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </select>
+
+                      {selectedState && (
+                        <select
+                          id="district"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-1/2 p-2.5"
+                          value={selectedDistrict}
+                          onChange={handleDistrictChange}
+                        >
+                          <option hidden defaultChecked>
+                            -- Select District --
+                          </option>
+                          {jsonData[selectedState].map((district) => (
+                            <option key={district} value={district}>
+                              {district}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="status"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Status
                     </label>
                     <select
-                      id="category"
-                      name="category"
+                      id="status"
+                      name="status"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
                     >
-                      <option hidden defaultChecked>
-                        Select category
+                      <option value="" hidden defaultChecked>
+                        Select status
                       </option>
-                      <option value="speaker">Speaker</option>
-                      <option value="speaker_stand">Speaker Stand</option>
-                      <option value="microphone">Microphone</option>
-                      <option value="microphone_stand">Microphone Stand</option>
-                      <option value="mixer">Mixer</option>
+                      <option value="0">Found</option>
+                      <option value="1">In search</option>
                     </select>
                   </div>
                   <div className="sm:col-span-2">
@@ -438,7 +452,7 @@ export default function ManageEvent () {
                       id="description"
                       rows="4"
                       className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Write item description here"
+                      placeholder="Write event description here"
                       name="description"
                       autoComplete="off"
                       value={description}
@@ -446,44 +460,10 @@ export default function ManageEvent () {
                     ></textarea>
                   </div>
                 </div>
-                <label
-                  htmlFor="file-upload"
-                  className="relative block w-full h-48 mt-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
-                >
-                  <div className="absolute top-0 left-0 w-full h-full opacity-0"></div>
-                  <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 hover:bg-gray-300">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-10 h-10 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
-                    <p className="mt-1 text-sm text-gray-600">
-                      Drag and drop or click to add images
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    id="file-upload"
-                    className="absolute top-0 left-0 w-full h-full opacity-0"
-                    accept="image/png,image/jpeg,image/webp"
-                    name="images"
-                    multiple
-                    onChange={onSelectFile}
-                  />
-                </label>
                 <input
                   type="submit"
                   className="bg-orange-400 hover:bg-orange-500 border-orange-800 border-2 border-opacity-30 p-4 m-auto block mt-4 rounded-lg text-white font-bold"
-                  value="Add new item"
+                  value="Add new event"
                 />
               </form>
               {loading ? (
@@ -494,7 +474,7 @@ export default function ManageEvent () {
               ) : (
                 <></>
               )}
-            </div> */}
+            </div>
             <br />
           </div>
         </div>
@@ -516,7 +496,7 @@ export default function ManageEvent () {
           <div>
             <div>
               {/* <form onSubmit={handleEditSubmit} className="gap-2"> */}
-                {/* <div className="grid gap-4 mb-4 sm:grid-cols-2">
+              {/* <div className="grid gap-4 mb-4 sm:grid-cols-2">
                   <div>
                     <label
                       htmlFor="name"
@@ -647,11 +627,11 @@ export default function ManageEvent () {
                     ></textarea>
                   </div>
                 </div> */}
-                <input
-                  type="submit"
-                  className="bg-orange-400 hover:bg-orange-500 border-orange-800 border-2 border-opacity-30 p-4 m-auto block mt-4 rounded-lg text-white font-bold"
-                  value="Update item"
-                />
+              <input
+                type="submit"
+                className="bg-orange-400 hover:bg-orange-500 border-orange-800 border-2 border-opacity-30 p-4 m-auto block mt-4 rounded-lg text-white font-bold"
+                value="Update item"
+              />
               {/* </form> */}
               {loading ? (
                 <div className="absolute inset-0 flex items-center justify-center">
