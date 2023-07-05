@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 
-import Navbar from '../ui/Navbar'
+import Navbar from '../../ui/Navbar'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons'
 
 import { useToast } from '@chakra-ui/react'
 
-import path from '../utils/path'
+import path from '../../utils/path'
 import axios from 'axios'
 
 export default function ManageProfile () {

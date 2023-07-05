@@ -3,10 +3,10 @@ import { useParams, Link } from 'react-router-dom'
 
 import axios from 'axios'
 
-import path from '../utils/path'
+import path from '../../utils/path'
 
-import Navbar from '../ui/Navbar'
-import LoadingButton from '../ui/button/LoadingButton'
+import Navbar from '../../ui/Navbar'
+import LoadingButton from '../../ui/button/LoadingButton'
 import { others } from '@chakra-ui/react'
 
 export default function ItemDetails () {
