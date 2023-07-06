@@ -88,41 +88,45 @@ export default function BookingUpcomingDetailCard ({ booking }) {
               <span className="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
                 Upcoming
               </span>
-              <div className="flex flex-row items-center justify-between">
-                <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
+              <div className="flex flex-col md:flex-row items-center justify-between">
+                <span className="hidden md:flex flex-row items-baseline font-semibold text-xl text-gray-800">
                   Booking Date: {booking.StartDate} - {booking.EndDate}
                   <p className="text-base font-regular">
                     &nbsp;
                     {DurationCalculator(booking.StartDate, booking.EndDate)}
                   </p>
                 </span>
+                <span className="md:hidden flex items-baseline font-semibold md:text-xl text-gray-800">
+                  <span className="bg-indigo-100 text-indigo-800 text-sm font-bold mt-2 mr-2 px-2 py-0.5 rounded">
+                    {booking.StartDate} - {booking.EndDate}
+                  </span>
+                </span>
                 <BookingCountdown EndDate={booking.StartDate} />
               </div>
-              <div className="flex flex-row items-center justify-between">
-                <div className="flex flex-col">
+              <div className="flex flex-col md:flex-row items-center justify-between">
+                <div className="flex flex-col bg-gray-100 rounded px-4 py-2 text-base">
                   {booking.Items.map((item) => (
                     <div className="flex flex-wrap flex-col" key={item.ItemID}>
                       <div className="relative w-full pr-4 max-w-full flex-grow flex-1">
-                        <span className="font-regular text-xl text-gray-800">
+                        <span className="font-regular md:text-xl text-gray-800">
                           Item {++count}:{' '}
                           <span className="font-semibold">{item.Name}</span>
                           <span className="text-sm pl-4">x{item.Quantity}</span>
                         </span>
                       </div>
-                      <div></div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 w-1/5 justify-end">
-                  <p className="font-regular text-md flex flex-row justify-between">
+                <div className="mt-4 flex flex-col w-full md:w-1/5 justify-end text-sm md:text-base">
+                  <p className="font-regular flex flex-row justify-between">
                     <span>Subtotal:</span>
                     <span>RM {booking.SubTotal}</span>
                   </p>
-                  <p className="font-regular text-md flex flex-row justify-between">
+                  <p className="font-regular flex flex-row justify-between">
                     <span>Service Fee:</span>
                     <span>RM {booking.ServiceFee}</span>
                   </p>
-                  <p className="font-semibold text-md flex flex-row justify-between">
+                  <p className="font-semibold flex flex-row justify-between">
                     <span>Grand Total:</span>
                     <span>RM {booking.GrandTotal}</span>
                   </p>
@@ -131,16 +135,16 @@ export default function BookingUpcomingDetailCard ({ booking }) {
             </div>
           </div>
           <p className="mt-4 flex flex-row justify-between items-end">
-            <span className="font-semibold text-sm text-gray-800">
+            <span className="font-semibold text-xs md:text-sm text-gray-800">
               Created On: {createdDateStr}
             </span>
             <button
-              className="mr-4 flex flex-row items-center"
+              className="mr-4 flex flex-row items-center font-bold text-sm md:text-lg"
               onClick={() => {
                 window.confirmationModal.showModal()
               }}
             >
-              <span className="font-bold text-lg bg-red-500 px-6 py-2 text-white">
+              <span className="bg-red-500 px-6 py-2 text-white">
                 <FontAwesomeIcon icon={faCalendarXmark} className="mr-2" />
                 Cancel Booking
               </span>
@@ -154,19 +158,13 @@ export default function BookingUpcomingDetailCard ({ booking }) {
       >
         <form method="dialog" className="modal-box">
           <h3 className="font-bold text-lg">Cancel Booking</h3>
-          <p className="py-4">
-            Are you sure you want to cancel this booking?
-          </p>
+          <p className="py-4">Are you sure you want to cancel this booking?</p>
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn">Close</button>
-            <button
-              className="btn bg-orange-400"
-              onClick={handleConfirmation}
-            >
+            <button className="btn bg-orange-400" onClick={handleConfirmation}>
               Confirm
             </button>
-
           </div>
         </form>
       </dialog>
