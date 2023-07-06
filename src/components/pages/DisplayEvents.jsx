@@ -9,6 +9,7 @@ import axios from 'axios'
 import Select from 'react-select'
 
 import path from '../utils/path'
+import EventCard from '../ui/EventCard'
 
 export default function DisplayEvents () {
   const [events, setEvents] = useState([])
@@ -96,7 +97,7 @@ export default function DisplayEvents () {
           // For loop of items
           <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
             {events.map((event) => (
-              <div key={event.ID}>hey</div>
+              <EventCard key={event.ID} event={event} />
             ))}
           </div>
         )}
