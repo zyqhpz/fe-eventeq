@@ -70,7 +70,7 @@ export default function DisplayEvents () {
             <input
               type="text"
               className="border-none rounded-l-lg pl-4 h-full w-full bg-white"
-              placeholder="What to rent?"
+              placeholder="Search event here"
               autoComplete="off"
               value={search}
               onChange={handleSearchChange}
