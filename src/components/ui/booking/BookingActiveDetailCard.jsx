@@ -88,49 +88,55 @@ export default function BookingActiveDetailCard ({ booking }) {
                     ? 'Active Booking'
                     : 'Get Item'}
               </span>
-              <div className="flex flex-row items-center justify-between">
-                <span className="flex flex-row items-baseline font-semibold text-xl text-gray-800">
+              <div className="flex flex-col md:flex-row items-center justify-between">
+                <span className="hidden md:flex flex-row items-baseline font-semibold text-xl text-gray-800">
                   Booking Date: {booking.StartDate} - {booking.EndDate}
                   <p className="text-base font-regular">
                     &nbsp;
                     {DurationCalculator(booking.StartDate, booking.EndDate)}
                   </p>
                 </span>
-                {
-                  // If booking is overdue, display overdue countdown
-                  isOverdue ? (
-                    <BookingOverdueCountdown EndDate={booking.EndDate} />
-                  ) : (
-                    // Else, display normal countdown
-                    <BookingCountdown EndDate={booking.EndDate} />
-                  )
-                }
+                <span className="md:hidden flex items-baseline font-semibold md:text-xl text-gray-800">
+                  <span className="bg-indigo-100 text-indigo-800 text-sm font-bold mt-2 mr-2 px-2 py-0.5 rounded">
+                    {booking.StartDate} - {booking.EndDate}
+                  </span>
+                </span>
+                <div>
+                  {
+                    // If booking is overdue, display overdue countdown
+                    isOverdue ? (
+                      <BookingOverdueCountdown EndDate={booking.EndDate} />
+                    ) : (
+                      // Else, display normal countdown
+                      <BookingCountdown EndDate={booking.EndDate} />
+                    )
+                  }
+                </div>
               </div>
-              <div className="flex flex-row items-center justify-between">
-                <div className="flex flex-col">
+              <div className="flex flex-col md:flex-row mt-2 md:mt-0 md:items-center md:justify-between">
+                <div className="flex flex-col bg-gray-50 rounded px-4 py-2 text-base">
                   {booking.Items.map((item) => (
                     <div className="flex flex-wrap flex-col" key={item.ItemID}>
                       <div className="relative w-full pr-4 max-w-full flex-grow flex-1">
-                        <span className="font-regular text-xl text-gray-800">
+                        <span className="font-regular md:text-xl text-gray-800">
                           Item {++count}:{' '}
                           <span className="font-semibold">{item.Name}</span>
                           <span className="text-sm pl-4">x{item.Quantity}</span>
                         </span>
                       </div>
-                      <div></div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 w-1/5 justify-end">
-                  <p className="font-regular text-md flex flex-row justify-between">
+                <div className="mt-4 flex flex-col w-full md:w-1/5 justify-end text-sm md:text-base">
+                  <p className="font-regular flex flex-row justify-between">
                     <span>Subtotal:</span>
                     <span>RM {booking.SubTotal}</span>
                   </p>
-                  <p className="font-regular text-md flex flex-row justify-between">
+                  <p className="font-regular flex flex-row justify-between">
                     <span>Service Fee:</span>
                     <span>RM {booking.ServiceFee}</span>
                   </p>
-                  <p className="font-semibold text-md flex flex-row justify-between">
+                  <p className="font-semibold flex flex-row justify-between">
                     <span>Grand Total:</span>
                     <span>RM {booking.GrandTotal}</span>
                   </p>
@@ -138,7 +144,7 @@ export default function BookingActiveDetailCard ({ booking }) {
               </div>
             </div>
           </div>
-          <p className="mt-4 flex flex-row justify-between items-end">
+          <p className="mt-4 hidden md:flex flex-row justify-between items-end">
             <span className="font-semibold text-sm text-gray-800">
               Created On: {createdDateStr}
             </span>
@@ -162,6 +168,36 @@ export default function BookingActiveDetailCard ({ booking }) {
                 }}
               >
                 <span className="font-bold text-lg bg-orange-500 px-6 py-2 text-white">
+                  Get Item Now
+                  <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+                </span>
+              </Link>
+            )}
+          </p>
+          <p className="flex md:hidden flex-col justify-between items-end gap-2">
+            <span className="font-semibold text-xs text-gray-800">
+              Created On: {createdDateStr}
+            </span>
+            {booking.Status === 2 ? (
+              <Link
+                className="mr-4 flex flex-row items-center font-bold text-sm"
+                to={{
+                  pathname: '/listing/booking/active/' + booking.ID + '/return'
+                }}
+              >
+                <span className="bg-orange-500 px-2 py-1 text-white">
+                  Return Item Now
+                  <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+                </span>
+              </Link>
+            ) : (
+              <Link
+                className="mr-4 flex flex-row items-center font-bold text-sm"
+                to={{
+                  pathname: '/listing/booking/active/' + booking.ID
+                }}
+              >
+                <span className="bg-orange-500 px-6 py-2 text-white">
                   Get Item Now
                   <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
                 </span>

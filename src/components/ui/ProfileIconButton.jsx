@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -68,17 +69,45 @@ export default function Example () {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-          <FontAwesomeIcon icon={faCircleUser} className="w-4 h-4" />
-          {loading ? (
-            <p className="text-gray-900"></p>
-          ) : (
-            name || '')}
-          <ChevronDownIcon
-            className="-mr-1 h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
-        </Menu.Button>
+        {isAuthenticated === false ? (
+          <Menu.Button className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+            <FontAwesomeIcon icon={faCircleUser} className="w-4 h-4" />
+            <span>Profile</span>
+            <ChevronDownIcon
+              className="-mr-1 h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+          </Menu.Button>
+        ) : (
+          <Menu.Button className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+            {loading ? (
+              <p className="text-gray-900"></p>
+            ) : (
+              user.IsAvatarImageSet ? (
+                <>
+                  <img
+                    src={path.url + 'api/item/image/' + user.ProfileImage}
+                    alt=""
+                    className="w-4 h-4 md:w-5 md:h-5 rounded-full object-cover"
+                  />
+                  <span>{name}</span>
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon
+                    icon={faCircleUser}
+                    className="w-4 h-4"
+                  />
+                  <span>{name}</span>
+                </>
+              )
+            )}
+            <ChevronDownIcon
+              className="-mr-1 h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+          </Menu.Button>
+        )}
       </div>
 
       <Transition
@@ -128,7 +157,21 @@ export default function Example () {
                     'block w-full px-4 py-2 text-left text-sm'
                   )}
                 >
-                  Manage items
+                  Manage Items
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item className={isAuthenticated ? 'block' : 'hidden'}>
+              {({ active }) => (
+                <Link
+                  to="/user/manage/event"
+                  state={user}
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'block w-full px-4 py-2 text-left text-sm'
+                  )}
+                >
+                  Manage Events
                 </Link>
               )}
             </Menu.Item>
@@ -173,10 +216,11 @@ export default function Example () {
                     'block px-4 py-2 text-sm'
                   )}
                 >
-                  Account settings
+                  Profile
                 </a>
               )}
             </Menu.Item>
+            <hr />
             <Menu.Item className={isAuthenticated ? 'block' : 'hidden'}>
               {({ active }) => (
                 <button

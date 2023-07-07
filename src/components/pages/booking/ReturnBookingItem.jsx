@@ -7,7 +7,8 @@ import BookingCountdown from '../../ui/booking/BookingCountdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-import QRcode from 'qrcode.react'
+import crc32 from 'crc-32'
+
 import QrReader from 'react-qr-scanner'
 
 import path from '../../utils/path'
@@ -140,23 +141,23 @@ export default function ReturnItem () {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className="mt-4 flex flex-row w-full">
+        <div className="mt-4 flex flex-col md:flex-row w-full">
           {/* Left side */}
-          <div className="w-2/3">
+          <div className="w-full md:w-2/3">
             <div className="w-full">
-              <h1 className="text-2xl font-bold">
-                List of Booked Items{' '}
+              <h1 className="flex flex-col md:flex-row text-lg md:text-2xl font-bold items-baseline md:gap-2">
+                <span>List of Booked Items</span>
                 <span className="text-sm font-normal">
-                  Booking ID: {booking.ID}
+                  Booking ID: {crc32.str(booking.ID).toString(16)}
                 </span>
               </h1>
               <div className="flex flex-wrap">
-                <div className="flex flex-col w-11/12 p-4 gap-2">
+                <div className="flex flex-col w-full md:w-11/12 md:p-4 gap-2 overflow-x-auto">
                   <table
-                    className="w-full text-sm text-left text-gray-500"
+                    className="w-full text-xs md:text-sm text-left text-gray-500"
                     id="bookingSummaryTable"
                   >
-                    <thead className="text-md text-gray-700 uppercase bg-gray-50">
+                    <thead className="text-sm md:text-md text-gray-700 uppercase bg-gray-50">
                       <tr>
                         <th scope="col" className="px-6 py-3">
                           Item
@@ -198,11 +199,6 @@ export default function ReturnItem () {
                                     x{item.Quantity}
                                   </span>
                                 </p>
-                                <QRcode
-                                  value={item.ItemID}
-                                  size={240}
-                                  includeMargin={true}
-                                />
                               </div>
                             </div>
                           </td>
@@ -249,18 +245,11 @@ export default function ReturnItem () {
             </div>
           </div>
           {/* right side */}
-          <div className="w-1/2 pr-3">
-            <div className="flex flex-row items-center justify-end gap-2">
-              <img
-                className="mask mask-squircle h-10 w-10 object-cover"
-                src="https://images.unsplash.com/photo-1457449940276-e8deed18bfff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-              />
-              <h1 className="text-lg font-regular">
-                {/* {user.FirstName + ' ' + user.LastName} */}
+          <div className="w-full md:w-1/2 pr-3">
+            <div className="flex flex-col gap-2 relative w-full">
+              <h1 className="text-lg md:text-2xl font-bold">
+                Booking Time Remaining
               </h1>
-            </div>
-            <div className="flex flex-col gap-2 relative overflow-x-auto w-full">
-              <h1 className="text-2xl font-bold">Booking Time Remaining</h1>
               <div className="flex flex-row">
                 <BookingCountdown EndDate={booking.EndDate} />
               </div>
@@ -272,7 +261,7 @@ export default function ReturnItem () {
                     </span>
                   ) : (
                     <button
-                      className="btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3"
+                      className="btn btn-ghost btn-md rounded-btn bg-orange-500 text-white md:w-1/3"
                       onClick={() => {
                         setOpenQRScanner(true)
                         window.modalQR.showModal()
@@ -291,8 +280,8 @@ export default function ReturnItem () {
                 <button
                   className={
                     finalScan
-                      ? 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3'
-                      : 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white w-1/3 opacity-50 cursor-not-allowed'
+                      ? 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white md:w-1/3'
+                      : 'btn btn-ghost btn-md rounded-btn bg-orange-500 text-white md:w-1/3 opacity-50 cursor-not-allowed'
                   }
                   onClick={() => {
                     if (finalScan) {
