@@ -6,7 +6,9 @@ import { faCircleUser } from '@fortawesome/free-solid-svg-icons'
 import path from '../utils/path'
 
 export default function EventCard ({ event }) {
-  const detailsPath = '/listing/event/' + event.ID
+  // const detailsPath = '/listing/event/' + event.ID
+
+  const detailsPath = '/message'
 
   const MAX_NAME_LENGTH = 20 // Set the maximum length of characters to show
 
@@ -48,7 +50,7 @@ export default function EventCard ({ event }) {
           </div> */}
           <div>
             <p className="text-gray-500 text-xs">
-              {/* {event.OrganisedBy.Location.State} - {event.OrganisedBy.Location.District} */}
+              {event.Location.State} - {event.Location.District}
             </p>
           </div>
         </div>
