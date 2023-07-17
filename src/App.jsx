@@ -18,6 +18,7 @@ import ReturnItem from './components/pages/booking/ReturnBookingItem'
 import ManageEvent from './components/pages/event/ManageEvent'
 
 import ChatPage from './components/pages/chat/ChatPage'
+import MessagePage from './components/pages/chat/MessagePage'
 
 function App () {
   return (
@@ -50,6 +51,7 @@ function App () {
 
         {/* Chat */}
         <Route path="/message/" element={<ChatPage />} />
+        <Route path="/messagenew/" element={<MessagePage />} />
       </Routes>
     </div>
   )

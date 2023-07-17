@@ -30,11 +30,7 @@ export default function Example () {
 
       if (user == null) {
         fetch(path.url + 'api/user/id/' + userId, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
+          method: 'GET'
         }).then((response) => {
           if (response.status === 200) {
             response.json().then((data) => {
@@ -43,6 +39,8 @@ export default function Example () {
               setLoading(false)
             })
           }
+        }).catch((error) => {
+          console.log(error)
         })
       }
     }
@@ -50,11 +48,7 @@ export default function Example () {
 
   const logout = () => {
     fetch(path.url + 'api/user/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
+      method: 'POST'
     }).then((response) => {
       if (response.status === 200) {
         setIsAuthenticated(false)

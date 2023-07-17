@@ -11,6 +11,8 @@ import axios from 'axios'
 import path from '../../utils/path'
 import LoadingButton from '../../ui/button/LoadingButton'
 
+import { io } from 'socket.io-client'
+
 export default function ChatPage () {
   const [message, setMessage] = useState([])
   const [messages, setMessages] = useState([])
@@ -39,10 +41,12 @@ export default function ChatPage () {
   const location = useLocation()
   const item = location.state?.item
 
+  const socket = useRef()
+
   useEffect(() => {
     if (userId == null) {
       setIsAuthenticated(false)
-      window.location.href = '/'
+      window.location.href = '/login'
     } else {
       setIsAuthenticated(true)
 
@@ -53,10 +57,21 @@ export default function ChatPage () {
         .then((res) => {
           setUsers(res.data)
           setLoadingUsers(false)
+
+          socket.current = io('http://localhost:5000')
+          socket.current.emit('add-user', userId)
         })
         .catch(() => {})
     }
   }, [])
+
+  // useEffect(() => {
+  //   if (socket.current) {
+  //     socket.current.on('msg-recieve', (msg) => {
+  //       setArrivalMessage({ fromSelf: false, message: msg })
+  //     })
+  //   }
+  // }, [])
 
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap space-y-4 w-full">
@@ -134,6 +149,26 @@ export default function ChatPage () {
     setMessages([...messages, newMessage])
   }
 
+  const handleSendMsg = async (msg) => {
+    // const data = await JSON.parse(
+    //   localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+    // )
+    socket.current.emit('send-msg', {
+      to: secondUser._id,
+      from: userId,
+      msg
+    })
+    await axios.post('http://localhost:5000/api/messages/addmsg', {
+      from: userId,
+      to: secondUser._id,
+      message: msg
+    })
+
+    const msgs = [...messages]
+    msgs.push({ fromSelf: true, message: msg })
+    setMessages(msgs)
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
 
@@ -148,20 +183,20 @@ export default function ChatPage () {
       message
     }
 
-    fetch(path.url + 'api/chat/messages/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // setMessages(data);
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    // fetch(path.url + 'api/chat/messages/send', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify(requestData)
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     // setMessages(data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error)
+    //   })
 
     sendMessage(message)
     setMessage('')
