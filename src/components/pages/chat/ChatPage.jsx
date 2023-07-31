@@ -13,11 +13,23 @@ import LoadingButton from '../../ui/button/LoadingButton'
 
 import { io } from 'socket.io-client'
 
+/*
+  TODO: fix
+  1. send message to unique user only (done)
+  2. get messages from unique user only (done)
+  3. store in db (done)
+  4. fix time
+  5. fix path WS
+
+*/
+
 export default function ChatPage () {
   const [message, setMessage] = useState([])
   const [messages, setMessages] = useState([])
   const [messageIsEmpty, setMessageIsEmpty] = useState(true)
   const [error, setError] = useState(false)
+
+  const [webSocket, setWebSocket] = useState(null)
 
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -50,28 +62,15 @@ export default function ChatPage () {
     } else {
       setIsAuthenticated(true)
 
-      console.log(item)
-
       axios
         .get(path.url + 'api/chat/getUsers/' + userId)
         .then((res) => {
           setUsers(res.data)
           setLoadingUsers(false)
-
-          socket.current = io('http://localhost:5000')
-          socket.current.emit('add-user', userId)
         })
         .catch(() => {})
     }
   }, [])
-
-  // useEffect(() => {
-  //   if (socket.current) {
-  //     socket.current.on('msg-recieve', (msg) => {
-  //       setArrivalMessage({ fromSelf: false, message: msg })
-  //     })
-  //   }
-  // }, [])
 
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap space-y-4 w-full">
@@ -149,26 +148,6 @@ export default function ChatPage () {
     setMessages([...messages, newMessage])
   }
 
-  const handleSendMsg = async (msg) => {
-    // const data = await JSON.parse(
-    //   localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-    // )
-    socket.current.emit('send-msg', {
-      to: secondUser._id,
-      from: userId,
-      msg
-    })
-    await axios.post('http://localhost:5000/api/messages/addmsg', {
-      from: userId,
-      to: secondUser._id,
-      message: msg
-    })
-
-    const msgs = [...messages]
-    msgs.push({ fromSelf: true, message: msg })
-    setMessages(msgs)
-  }
-
   const handleSubmit = (event) => {
     event.preventDefault()
 
@@ -177,26 +156,19 @@ export default function ChatPage () {
       return
     }
 
-    const requestData = {
+    if (!webSocket || webSocket.readyState !== WebSocket.OPEN) {
+      console.error('WebSocket is not open yet. Cannot send message.')
+      return
+    }
+
+    const data = {
       sender: userId,
       receiver: secondUser.id,
       message
     }
 
-    // fetch(path.url + 'api/chat/messages/send', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(requestData)
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     // setMessages(data);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error)
-    //   })
+    // Send message to the WebSocket server
+    webSocket.send(JSON.stringify(data))
 
     sendMessage(message)
     setMessage('')
@@ -213,6 +185,40 @@ export default function ChatPage () {
   )
 
   const getMessages = (sender, receiver) => {
+    // Establish WebSocket connection
+    const ws = new WebSocket('ws://localhost:8080/ws')
+
+    // On connection open
+    ws.onopen = () => {
+      setWebSocket(ws)
+    }
+
+    // On receiving a message from the WebSocket server
+    ws.onmessage = (event) => {
+      const received = JSON.parse(event.data)
+      if (received.receiver === userId && received.sender === receiver) {
+        const receivedMessage = received.message
+        const newMessage = {
+          ID: messagesCount++,
+          Message: receivedMessage,
+          Sender: secondUser.id,
+          Receiver: userId,
+          CreatedAt: new Date()
+        }
+        setMessages((prevMessages) => [...prevMessages, newMessage])
+      }
+    }
+
+    // On error
+    ws.onerror = (event) => {
+      console.error('WebSocket error:', event)
+    }
+
+    // On close
+    ws.onclose = () => {
+      console.log('WebSocket connection closed')
+    }
+
     const requestData = {
       sender,
       receiver
@@ -232,6 +238,16 @@ export default function ChatPage () {
       .catch((error) => {
         console.log(error)
       })
+
+    // Clean up the WebSocket connection on component unmount
+    return () => {
+      if (
+        ws.readyState === WebSocket.OPEN ||
+        ws.readyState === WebSocket.CONNECTING
+      ) {
+        ws.close()
+      }
+    }
   }
 
   const User = ({ id, FirstName, LastName }) => {
@@ -255,7 +271,6 @@ export default function ChatPage () {
           <p className="text-grey-darkest">
             {FirstName} {LastName}
           </p>
-          <p className="text-xs text-grey-darkest">12:45 pm</p>
         </div>
       </div>
     )
