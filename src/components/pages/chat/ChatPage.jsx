@@ -71,7 +71,6 @@ export default function ChatPage () {
         .catch(() => {})
     }
   }, [])
-
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap space-y-4 w-full">
       {messages &&
