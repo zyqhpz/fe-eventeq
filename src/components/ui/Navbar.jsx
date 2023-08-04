@@ -30,11 +30,7 @@ export default function Navbar () {
       setIsAuthenticated(true)
 
       fetch(path.url + 'api/user/id/' + userId, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
+        method: 'GET'
       }).then((response) => {
         if (response.status === 200) {
           response.json().then((data) => {
@@ -48,11 +44,7 @@ export default function Navbar () {
 
   const logout = () => {
     fetch(path.url + 'api/user/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
+      method: 'POST'
     }).then((response) => {
       if (response.status === 200) {
         setIsAuthenticated(false)

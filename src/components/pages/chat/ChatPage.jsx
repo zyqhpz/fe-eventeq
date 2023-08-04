@@ -11,11 +11,15 @@ import axios from 'axios'
 import path from '../../utils/path'
 import LoadingButton from '../../ui/button/LoadingButton'
 
+import { io } from 'socket.io-client'
+
 export default function ChatPage () {
   const [message, setMessage] = useState([])
   const [messages, setMessages] = useState([])
   const [messageIsEmpty, setMessageIsEmpty] = useState(true)
   const [error, setError] = useState(false)
+
+  const [webSocket, setWebSocket] = useState(null)
 
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -39,24 +43,64 @@ export default function ChatPage () {
   const location = useLocation()
   const item = location.state?.item
 
+  const socket = useRef()
+
   useEffect(() => {
     if (userId == null) {
       setIsAuthenticated(false)
-      window.location.href = '/'
+      window.location.href = '/login'
     } else {
       setIsAuthenticated(true)
-
-      console.log(item)
 
       axios
         .get(path.url + 'api/chat/getUsers/' + userId)
         .then((res) => {
           setUsers(res.data)
           setLoadingUsers(false)
+
+          // socket.current = io('http://localhost:5000')
+          // socket.current.emit('add-user', userId)
         })
         .catch(() => {})
     }
   }, [])
+
+  // useEffect(() => {
+  //   // Establish WebSocket connection
+  //   const ws = new WebSocket('ws://localhost:8080/ws')
+
+  //   // On connection open
+  //   ws.onopen = () => {
+  //     console.log('WebSocket connection established')
+  //     setWebSocket(ws)
+  //   }
+
+  //   // On receiving a message from the WebSocket server
+  //   ws.onmessage = (event) => {
+  //     const receivedMessage = event.data
+  //     setMessages((prevMessages) => [...prevMessages, receivedMessage])
+  //   }
+
+  //   // On error
+  //   ws.onerror = (event) => {
+  //     console.error('WebSocket error:', event)
+  //   }
+
+  //   // On close
+  //   ws.onclose = () => {
+  //     console.log('WebSocket connection closed')
+  //   }
+
+  //   // Clean up the WebSocket connection on component unmount
+  //   return () => {
+  //     if (
+  //       ws.readyState === WebSocket.OPEN ||
+  //       ws.readyState === WebSocket.CONNECTING
+  //     ) {
+  //       ws.close()
+  //     }
+  //   }
+  // }, [])
 
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap space-y-4 w-full">
@@ -142,26 +186,35 @@ export default function ChatPage () {
       return
     }
 
-    const requestData = {
+    if (!webSocket || webSocket.readyState !== WebSocket.OPEN) {
+      console.error('WebSocket is not open yet. Cannot send message.')
+      return
+    }
+
+    const data = {
       sender: userId,
       receiver: secondUser.id,
       message
     }
 
-    fetch(path.url + 'api/chat/messages/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // setMessages(data);
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    // Send message to the WebSocket server
+    webSocket.send(JSON.stringify(data))
+    // setInputMessage('')
+
+    // fetch(path.url + 'api/chat/messages/send', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify(requestData)
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     // setMessages(data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error)
+    //   })
 
     sendMessage(message)
     setMessage('')
@@ -178,6 +231,39 @@ export default function ChatPage () {
   )
 
   const getMessages = (sender, receiver) => {
+    // Establish WebSocket connection
+    const ws = new WebSocket('ws://localhost:8080/ws')
+
+    // On connection open
+    ws.onopen = () => {
+      console.log('WebSocket connection established')
+      setWebSocket(ws)
+    }
+
+    // On receiving a message from the WebSocket server
+    ws.onmessage = (event) => {
+      const received = JSON.parse(event.data)
+      const receivedMessage = received.message
+      const newMessage = {
+        ID: messagesCount++,
+        Message: receivedMessage,
+        Sender: secondUser.id,
+        Receiver: userId,
+        CreatedAt: new Date()
+      }
+      setMessages((prevMessages) => [...prevMessages, newMessage])
+    }
+
+    // On error
+    ws.onerror = (event) => {
+      console.error('WebSocket error:', event)
+    }
+
+    // On close
+    ws.onclose = () => {
+      console.log('WebSocket connection closed')
+    }
+
     const requestData = {
       sender,
       receiver
@@ -197,6 +283,16 @@ export default function ChatPage () {
       .catch((error) => {
         console.log(error)
       })
+
+    // Clean up the WebSocket connection on component unmount
+    return () => {
+      if (
+        ws.readyState === WebSocket.OPEN ||
+        ws.readyState === WebSocket.CONNECTING
+      ) {
+        ws.close()
+      }
+    }
   }
 
   const User = ({ id, FirstName, LastName }) => {
@@ -340,3 +436,89 @@ export default function ChatPage () {
     </div>
   )
 }
+
+// import React, { useState, useEffect } from 'react'
+
+// const WebSocketChat = () => {
+//   const [messages, setMessages] = useState([])
+//   const [inputMessage, setInputMessage] = useState('')
+//   const [webSocket, setWebSocket] = useState(null)
+
+//   const userId = localStorage.getItem('userId')
+
+//   useEffect(() => {
+//     // Establish WebSocket connection
+//     const ws = new WebSocket('ws://localhost:8080/ws')
+
+//     // On connection open
+//     ws.onopen = () => {
+//       console.log('WebSocket connection established')
+//       setWebSocket(ws)
+//     }
+
+//     // On receiving a message from the WebSocket server
+//     ws.onmessage = (event) => {
+//       const receivedMessage = event.data
+//       setMessages((prevMessages) => [...prevMessages, receivedMessage])
+//     }
+
+//     // On error
+//     ws.onerror = (event) => {
+//       console.error('WebSocket error:', event)
+//     }
+
+//     // On close
+//     ws.onclose = () => {
+//       console.log('WebSocket connection closed')
+//     }
+
+//     // Clean up the WebSocket connection on component unmount
+//     return () => {
+//       if (
+//         ws.readyState === WebSocket.OPEN ||
+//         ws.readyState === WebSocket.CONNECTING
+//       ) {
+//         ws.close()
+//       }
+//     }
+//   }, [])
+
+//   const handleSendMessage = () => {
+//     if (!webSocket || webSocket.readyState !== WebSocket.OPEN) {
+//       console.error('WebSocket is not open yet. Cannot send message.')
+//       return
+//     }
+
+//     if (inputMessage.trim() === '') return
+
+//     const data = {
+//       sender: userId || '1',
+//       receiver: '2',
+//       message: inputMessage
+//     }
+
+//     // Send message to the WebSocket server
+//     webSocket.send(JSON.stringify(data))
+//     setInputMessage('')
+//   }
+
+//   return (
+//     <div>
+//       <div>
+//         {messages.map((message, index) => (
+//           <p key={index}>{message}</p>
+//         ))}
+//       </div>
+//       <div>
+//         <input
+//           type="text"
+//           value={inputMessage}
+//           onChange={(e) => setInputMessage(e.target.value)}
+//         />
+//         <button onClick={handleSendMessage}>Send Message</button>
+//       </div>
+//     </div>
+//   )
+// }
+
+// export default WebSocketChat

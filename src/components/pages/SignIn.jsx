@@ -36,16 +36,22 @@ export default function SignIn () {
   const handleSubmit = async (event) => {
     event.preventDefault() // prevent the default form submission behavior
 
+    const dataJSON = {
+      email,
+      password
+    }
+
+    console.log(dataJSON)
+
     const response = await fetch(path.url + 'api/user/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        email,
-        password
-      })
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // },
+      // credentials: 'include',
+      body: JSON.stringify(dataJSON)
+    }).catch((error) => {
+      console.log(error)
     })
 
     const data = await response.json()
