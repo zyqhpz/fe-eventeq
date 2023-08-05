@@ -18,7 +18,7 @@ import { io } from 'socket.io-client'
   1. send message to unique user only (done)
   2. get messages from unique user only (done)
   3. store in db (done)
-  4. fix time
+  4. fix time (done)
   5. fix path WS
 
 */
