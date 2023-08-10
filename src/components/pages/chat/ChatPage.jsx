@@ -11,8 +11,6 @@ import axios from 'axios'
 import path from '../../utils/path'
 import LoadingButton from '../../ui/button/LoadingButton'
 
-import { io } from 'socket.io-client'
-
 /*
   TODO: fix
   1. send message to unique user only (done)
@@ -44,16 +42,11 @@ export default function ChatPage () {
   const [loadingSecondUser, setLoadingSecondUser] = useState(true)
   const [isHavingConversation, setIsHavingConversation] = useState(false)
 
-  const [isFromItemDetails, setIsFromItemDetails] = useState(false)
-
   let messagesCount = 0
 
   const userId = localStorage.getItem('userId')
 
   const location = useLocation()
-  const item = location.state?.item
-
-  const socket = useRef()
 
   useEffect(() => {
     if (userId == null) {
@@ -185,11 +178,12 @@ export default function ChatPage () {
 
   const getMessages = (sender, receiver) => {
     // Establish WebSocket connection
-    const ws = new WebSocket('ws://localhost:8080/ws')
+    const ws = new WebSocket(path.ws + 'ws')
 
     // On connection open
     ws.onopen = () => {
       setWebSocket(ws)
+      console.log('WebSocket connection established')
     }
 
     // On receiving a message from the WebSocket server
@@ -356,7 +350,7 @@ export default function ChatPage () {
                   </div>
 
                   <div className="bg-grey-lighter px-4 py-4 flex items-center">
-                    <FontAwesomeIcon icon={faImages} />
+                    {/* <FontAwesomeIcon icon={faImages} />   // TODO: Add image upload */}
                     <div className="flex-1 mx-4">
                       <input
                         className="w-full border rounded px-2 py-2"
