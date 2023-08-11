@@ -687,7 +687,7 @@ export default function ManageItem () {
           >
             ✕
           </button>
-          <h3 className="font-bold text-lg">Add New Item</h3>
+          <h3 className="font-bold text-lg">Update Item</h3>
           <hr className="my-4" />
           <div>
             <div>

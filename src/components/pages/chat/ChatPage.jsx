@@ -11,11 +11,23 @@ import axios from 'axios'
 import path from '../../utils/path'
 import LoadingButton from '../../ui/button/LoadingButton'
 
+/*
+  TODO: fix
+  1. send message to unique user only (done)
+  2. get messages from unique user only (done)
+  3. store in db (done)
+  4. fix time (done)
+  5. fix path WS
+
+*/
+
 export default function ChatPage () {
   const [message, setMessage] = useState([])
   const [messages, setMessages] = useState([])
   const [messageIsEmpty, setMessageIsEmpty] = useState(true)
   const [error, setError] = useState(false)
+
+  const [webSocket, setWebSocket] = useState(null)
 
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -30,23 +42,18 @@ export default function ChatPage () {
   const [loadingSecondUser, setLoadingSecondUser] = useState(true)
   const [isHavingConversation, setIsHavingConversation] = useState(false)
 
-  const [isFromItemDetails, setIsFromItemDetails] = useState(false)
-
   let messagesCount = 0
 
   const userId = localStorage.getItem('userId')
 
   const location = useLocation()
-  const item = location.state?.item
 
   useEffect(() => {
     if (userId == null) {
       setIsAuthenticated(false)
-      window.location.href = '/'
+      window.location.href = '/login'
     } else {
       setIsAuthenticated(true)
-
-      console.log(item)
 
       axios
         .get(path.url + 'api/chat/getUsers/' + userId)
@@ -57,7 +64,6 @@ export default function ChatPage () {
         .catch(() => {})
     }
   }, [])
-
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap space-y-4 w-full">
       {messages &&
@@ -142,26 +148,19 @@ export default function ChatPage () {
       return
     }
 
-    const requestData = {
+    if (!webSocket || webSocket.readyState !== WebSocket.OPEN) {
+      console.error('WebSocket is not open yet. Cannot send message.')
+      return
+    }
+
+    const data = {
       sender: userId,
       receiver: secondUser.id,
       message
     }
 
-    fetch(path.url + 'api/chat/messages/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // setMessages(data);
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    // Send message to the WebSocket server
+    webSocket.send(JSON.stringify(data))
 
     sendMessage(message)
     setMessage('')
@@ -178,6 +177,41 @@ export default function ChatPage () {
   )
 
   const getMessages = (sender, receiver) => {
+    // Establish WebSocket connection
+    const ws = new WebSocket(path.ws + 'ws')
+
+    // On connection open
+    ws.onopen = () => {
+      setWebSocket(ws)
+      console.log('WebSocket connection established')
+    }
+
+    // On receiving a message from the WebSocket server
+    ws.onmessage = (event) => {
+      const received = JSON.parse(event.data)
+      if (received.receiver === userId && received.sender === receiver) {
+        const receivedMessage = received.message
+        const newMessage = {
+          ID: messagesCount++,
+          Message: receivedMessage,
+          Sender: secondUser.id,
+          Receiver: userId,
+          CreatedAt: new Date()
+        }
+        setMessages((prevMessages) => [...prevMessages, newMessage])
+      }
+    }
+
+    // On error
+    ws.onerror = (event) => {
+      console.error('WebSocket error:', event)
+    }
+
+    // On close
+    ws.onclose = () => {
+      console.log('WebSocket connection closed')
+    }
+
     const requestData = {
       sender,
       receiver
@@ -197,6 +231,16 @@ export default function ChatPage () {
       .catch((error) => {
         console.log(error)
       })
+
+    // Clean up the WebSocket connection on component unmount
+    return () => {
+      if (
+        ws.readyState === WebSocket.OPEN ||
+        ws.readyState === WebSocket.CONNECTING
+      ) {
+        ws.close()
+      }
+    }
   }
 
   const User = ({ id, FirstName, LastName }) => {
@@ -220,7 +264,6 @@ export default function ChatPage () {
           <p className="text-grey-darkest">
             {FirstName} {LastName}
           </p>
-          <p className="text-xs text-grey-darkest">12:45 pm</p>
         </div>
       </div>
     )
@@ -307,7 +350,7 @@ export default function ChatPage () {
                   </div>
 
                   <div className="bg-grey-lighter px-4 py-4 flex items-center">
-                    <FontAwesomeIcon icon={faImages} />
+                    {/* <FontAwesomeIcon icon={faImages} />   // TODO: Add image upload */}
                     <div className="flex-1 mx-4">
                       <input
                         className="w-full border rounded px-2 py-2"
