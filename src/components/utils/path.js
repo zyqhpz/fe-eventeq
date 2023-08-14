@@ -10,7 +10,7 @@ const path = {
   },
   get ws () {
     return isProduction
-      ? 'ws://be-eventeq-production.up.railway.app/'
+      ? 'wss://be-eventeq-production.up.railway.app/'
       : 'ws://localhost:8080/'
   }
 }
