@@ -162,10 +162,10 @@ export default function BookingItem () {
     })
   }
 
-  const SuccessBooking = () => {
+  const SuccessBooking = (title, description) => {
     return toast({
-      title: 'Booking successful.',
-      description: 'Please review your booking in your profile.',
+      title,
+      description,
       status: 'success',
       position: 'top-right',
       duration: 9000,
@@ -205,15 +205,16 @@ export default function BookingItem () {
         },
         body: JSON.stringify(booking)
       })
-        .then((res) => res.json(), console.log(booking))
+        .then((res) => res.json())
         .then((data) => {
           if (data.status === 'success') {
-            SuccessBooking()
+            SuccessBooking('Redirect to Payment.', 'Redirecting to payment page...')
 
             // set delay to allow toast to show before redirecting
             setTimeout(() => {
-              window.location.href = '/listing/booking'
-            }, 3000)
+              // window.location.href = '/listing/booking'
+              window.location.href = 'https://dev.toyyibpay.com/' + data.bill_code
+            }, 1000)
           } else {
             ErrorBooking(data.message)
           }

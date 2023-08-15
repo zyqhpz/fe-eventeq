@@ -91,9 +91,9 @@ export default function BookingItem () {
   }
 
   return (
-    <div className="flex flex-col w-screen h-screen overflow-auto">
+    <div className="flex flex-col w-screen min-h-screen overflow-auto bg-gray-100">
       <Navbar />
-      <div className="bg-gray-100 h-full max-w-full">
+      <div className="h-full max-w-full">
         <div className="px-4 md:px-48 pt-12 w-full">
           <h1 className="text-2xl font-bold">Booking Details</h1>
           <div className="flex">
