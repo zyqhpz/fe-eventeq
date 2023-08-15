@@ -19,6 +19,8 @@ import ManageEvent from './components/pages/event/ManageEvent'
 
 import ChatPage from './components/pages/chat/ChatPage'
 
+import PaymentRedirectPage from './components/pages/payment/PaymentRedirectPage'
+
 function App () {
   return (
     <div className="App">
@@ -50,6 +52,11 @@ function App () {
 
         {/* Chat */}
         <Route path="/message/" element={<ChatPage />} />
+
+        {/* Payment */}
+        <Route
+          path="/payment/redirect" element={<PaymentRedirectPage />}
+        />
       </Routes>
     </div>
   )
