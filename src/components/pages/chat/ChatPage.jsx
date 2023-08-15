@@ -183,7 +183,6 @@ export default function ChatPage () {
     // On connection open
     ws.onopen = () => {
       setWebSocket(ws)
-      console.log('WebSocket connection established')
     }
 
     // On receiving a message from the WebSocket server
