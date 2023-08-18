@@ -4,15 +4,15 @@ const isProduction = true
 
 const path = {
   get url () {
-    // ? 'https://be-eventeq-production.up.railway.app/'
+    // ? 'http://54.254.192.61:8080/'
     return isProduction
-      ? 'http://54.254.192.61:8080/'
+      ? 'https://be-eventeq-production.up.railway.app/'
       : 'http://localhost:8080/'
   },
   get ws () {
-    // ? 'wss://be-eventeq-production.up.railway.app/'
+    // ? 'ws://54.254.192.61:8080/'
     return isProduction
-      ? 'ws://54.254.192.61:8080/'
+      ? 'wss://be-eventeq-production.up.railway.app/'
       : 'ws://localhost:8080/'
   }
 }
