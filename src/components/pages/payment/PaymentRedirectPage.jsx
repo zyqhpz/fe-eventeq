@@ -91,7 +91,7 @@ export default function PaymentRedirectPage () {
                     className="btn btn-ghost btn-sm rounded-btn py-1 px-2"
                   >
                     <FontAwesomeIcon icon={faMoneyBill1} />
-                    Pay Now
+                    Pay Again
                   </Link>
                 </ul>
               )}
