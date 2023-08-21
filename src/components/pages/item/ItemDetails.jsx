@@ -48,9 +48,9 @@ export default function ItemDetails () {
   }, [])
 
   return (
-    <div className="flex flex-col min-h-screen w-screen overflow-hidden">
+    <div className="flex flex-col w-screen min-h-screen overflow-auto bg-gray-100">
       <Navbar />
-      <div className="bg-gray-100 h-full max-w-full">
+      <div className="h-full max-w-full">
         <div className="flex flex-col items-center justify-center h-full">
           {loading ? (
             <LoadingButton />
@@ -184,10 +184,117 @@ export default function ItemDetails () {
                   </div>
                 </div>
               </div>
+              {/* Description, Rental History, Feedbacks */}
+              <div className="flex flex-col w-full bg-gray-100 shadow-xl py-3 px-5 items-center justify-center">
+                <div className="flex flex-col w-full h-full">
+                  <div className="flex flex-col w-full h-full">
+                    <button className="h-10 w-44 text-base bg-amber-500 text-gray-800 px-2 md:px-6 md:h-12 md:w-auto md:text-lg" onClick={
+                      () => {
+                        window.rentalHistoryModal =
+                          document.getElementById('rentalHistoryModal')
+                        window.rentalHistoryModal.showModal()
+                      }
+
+                    }>
+                      View Rental History
+                    </button>
+
+                    <h1 className="text-black font-semibold text-xl mt-4">
+                      Description
+                    </h1>
+                    <p className="text-black font-regular text-base md:text-lg">
+                      {item.Description}
+                    </p>
+
+                    {/* Feedbacks */}
+                    <h1 className="text-black font-semibold text-xl mt-4">
+                      Feedbacks
+                    </h1>
+                    <div className="flex flex-col w-full h-full">
+                      <div className="flex flex-col w-full h-full">
+                        {item.Feedbacks > 0 ? (
+                          item.Feedbacks.map((feedback) => {
+                            const formattedDate = new Date(
+                              feedback.CreatedAt
+                            ).toLocaleDateString('en-MY', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })
+                            return (
+                              <div
+                                className="flex flex-col w-full h-full"
+                                key={feedback.ID}
+                              >
+                                <div className="flex flex-row w-full h-full">
+                                  <div className="flex flex-col w-1/2">
+                                    <h1 className="text-black font-semibold text-base md:text-xl">
+                                      {feedback.User.FirstName}{' '}
+                                      {feedback.User.LastName}
+                                    </h1>
+                                    <p className="text-black font-regular text-sm md:text-base">
+                                      {formattedDate}
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-col w-1/2 items-end">
+                                    <p className="text-black font-regular text-base md:text-lg">
+                                      {feedback.Rating} / 5
+                                    </p>
+                                    <p className="text-black font-regular text-sm md:text-base">
+                                      {feedback.Comment}
+                                    </p>
+                                  </div>
+                                </div>
+                                <hr className="my-2" />
+                              </div>
+                            )
+                          })
+                        ) : (
+                          <p className="text-black font-regular text-base md:text-lg">
+                            No Feedbacks
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
+      <dialog
+        id="rentalHistoryModal"
+        className="modal modal-bottom sm:modal-middle"
+      >
+        <form method="dialog" className="modal-box">
+          <h3 className="font-bold text-lg">Rental History</h3>
+          {/* <p className="py-4">No Rental History</p> */}
+          <p className="py-4">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec
+            diam nec arcu tincidunt malesuada id nec nunc. Curabitur scelerisque
+            in enim pretium iaculis. Nam non sapien mollis, interdum ante
+            posuere, tempus elit. Vestibulum ullamcorper nisl vitae orci
+            convallis pharetra. Vestibulum a pulvinar ligula. Ut a enim volutpat
+            turpis consectetur imperdiet. Praesent vitae metus nibh. Fusce
+            mollis odio velit, maximus tempor tellus sollicitudin malesuada. Sed
+            non imperdiet quam. Nam accumsan augue ut congue ultricies. Integer
+            ac magna vitae augue sollicitudin rhoncus sed vel odio. Fusce nec
+            arcu neque. Duis at lacinia mi. Donec porttitor mi massa, quis
+            venenatis leo aliquet id. Pellentesque nec nibh vel nibh viverra
+            pellentesque. Donec lobortis fermentum enim. Phasellus ut nulla eu
+            ligula eleifend hendrerit. Vestibulum a lobortis magna, non egestas
+            magna. Nulla pellentesque odio vitae sapien convallis pulvinar.
+            Morbi luctus urna sed nibh iaculis faucibus sit amet vehicula nisi.
+            Fusce non lobortis erat. Etiam sit amet convallis tellus, nec
+            gravida nisi. Integer venenatis et lacus quis vulputate.
+          </p>
+          <div className="modal-action">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn">Close</button>
+          </div>
+        </form>
+      </dialog>
     </div>
   )
 }
