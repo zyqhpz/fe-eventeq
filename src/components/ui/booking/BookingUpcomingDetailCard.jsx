@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import BookingCountdown from './BookingCountdown'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCalendarXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCalendarXmark, faMoneyBill } from '@fortawesome/free-solid-svg-icons'
 
 import { useToast } from '@chakra-ui/react'
 
@@ -79,6 +79,35 @@ export default function BookingUpcomingDetailCard ({ booking }) {
       : `(${duration.days} day)`
   }
 
+  // calculate time left in hours from current time to  booking start date
+  const calculateTimeLeft = () => {
+    const startDateString = booking.StartDate
+
+    // Extract day, month, and year components from the start and end date strings
+    const [startDay, startMonth, startYear] = startDateString.split('/')
+
+    // Create Date objects by providing the components in the correct order (year, month, day)
+    const startDate = new Date(startYear, startMonth - 1, startDay)
+
+    // get current date and time in MY GMT+8
+    const date = new Date()
+    const dateMY = date.toLocaleString('en-US', {
+      timeZone: 'Asia/Kuala_Lumpur'
+    })
+
+    // Calculate the time difference in milliseconds
+    const timeDiff = startDate.getTime() - new Date(dateMY).getTime()
+
+    // Calculate the duration in days, hours, minutes, and seconds
+    const duration = {
+      hours: Math.floor(timeDiff / (1000 * 60 * 60))
+    }
+
+    return duration.hours
+  }
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
+
   return (
     <div className="w-full p-4">
       <div className="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg">
@@ -102,6 +131,7 @@ export default function BookingUpcomingDetailCard ({ booking }) {
                   </span>
                 </span>
                 <BookingCountdown EndDate={booking.StartDate} />
+                {timeLeft}
               </div>
               <div className="flex flex-col md:flex-row items-center justify-between">
                 <div className="flex flex-col bg-gray-100 rounded px-4 py-2 text-base">
@@ -134,21 +164,42 @@ export default function BookingUpcomingDetailCard ({ booking }) {
               </div>
             </div>
           </div>
-          <p className="mt-4 flex flex-row justify-between items-end">
+          <p className="mt-4 flex flex-col md:flex-row justify-between items-end gap-2 md:gap-0">
             <span className="font-semibold text-xs md:text-sm text-gray-800">
               Created On: {createdDateStr}
             </span>
-            <button
-              className="mr-4 flex flex-row items-center font-bold text-sm md:text-lg"
-              onClick={() => {
-                window.confirmationModal.showModal()
-              }}
-            >
-              <span className="bg-red-500 px-6 py-2 text-white">
-                <FontAwesomeIcon icon={faCalendarXmark} className="mr-2" />
-                Cancel Booking
-              </span>
-            </button>
+            <div className="flex flex-row">
+              {timeLeft > 3 && (
+                <button
+                  className="mr-4 flex flex-row items-center font-bold text-sm md:text-lg"
+                  onClick={() => {
+                    window.confirmationModal =
+                      document.getElementById('confirmationModal')
+                    window.confirmationModal.showModal()
+                  }}
+                >
+                  <span className="bg-red-500 px-2 md:px-6 py-1 md:py-2 text-white">
+                    <FontAwesomeIcon icon={faCalendarXmark} className="mr-2" />
+                    Cancel Booking
+                  </span>
+                </button>
+              )}
+              {booking.Status === -1 && (
+                <button
+                  className="mr-4 flex flex-row items-center font-bold text-sm md:text-lg"
+                  onClick={() => {
+                    // redirect to payment page
+                    window.location.href =
+                      'https://dev.toyyibpay.com/' + booking.BillCode
+                  }}
+                >
+                  <span className="bg-red-500 px-2 md:px-6 py-1 md:py-2 text-white">
+                    <FontAwesomeIcon icon={faMoneyBill} className="mr-2" />
+                    Pay Again
+                  </span>
+                </button>
+              )}
+            </div>
           </p>
         </div>
       </div>
