@@ -7,7 +7,11 @@ import path from '../../utils/path'
 
 import Navbar from '../../ui/Navbar'
 import LoadingButton from '../../ui/button/LoadingButton'
+
+import RentalHistoryCard from './RentalHistoryCard'
+
 import { others } from '@chakra-ui/react'
+import { data } from 'autoprefixer'
 
 export default function ItemDetails () {
   const { id } = useParams()
@@ -46,6 +50,24 @@ export default function ItemDetails () {
       })
       .catch((error) => console.error(error))
   }, [])
+
+  const data = [{
+    id: 1,
+    name: 'John Doe',
+    date: '2021-05-01',
+    quantity: 1,
+    duration: 1,
+    amount: 1000
+  },
+  {
+    id: 2,
+    name: 'John Doe',
+    date: '2021-05-01',
+    quantity: 1,
+    duration: 3,
+    amount: 322
+  }
+  ]
 
   return (
     <div className="flex flex-col w-screen min-h-screen overflow-auto bg-gray-100">
@@ -270,7 +292,13 @@ export default function ItemDetails () {
         <form method="dialog" className="modal-box">
           <h3 className="font-bold text-lg">Rental History</h3>
           {/* <p className="py-4">No Rental History</p> */}
-          <p className="py-4">
+          <div className="py-4">
+            {
+              data.map((item, index) => (
+                <RentalHistoryCard data={item} key={index} />
+              ))
+            }
+            {/* <RentalHistoryCard data={data}/> */}
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec
             diam nec arcu tincidunt malesuada id nec nunc. Curabitur scelerisque
             in enim pretium iaculis. Nam non sapien mollis, interdum ante
@@ -288,7 +316,7 @@ export default function ItemDetails () {
             Morbi luctus urna sed nibh iaculis faucibus sit amet vehicula nisi.
             Fusce non lobortis erat. Etiam sit amet convallis tellus, nec
             gravida nisi. Integer venenatis et lacus quis vulputate.
-          </p>
+          </div>
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn">Close</button>
