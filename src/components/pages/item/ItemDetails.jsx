@@ -16,6 +16,7 @@ import { data } from 'autoprefixer'
 export default function ItemDetails () {
   const { id } = useParams()
   const [item, setItem] = useState(null)
+  const [bookingHistory, setBookingHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
   const [formattedDate, setFormattedDate] = useState('')
@@ -51,22 +52,40 @@ export default function ItemDetails () {
       .catch((error) => console.error(error))
   }, [])
 
-  const data = [{
-    id: 1,
-    name: 'John Doe',
-    date: '2021-05-01',
-    quantity: 1,
-    duration: 1,
-    amount: 1000
-  },
-  {
-    id: 2,
-    name: 'John Doe',
-    date: '2021-05-01',
-    quantity: 1,
-    duration: 3,
-    amount: 322
-  }
+  useEffect(() => {
+    axios
+      .get(path.url + 'api/item/' + id + '/booking')
+      .then((response) => {
+        setBookingHistory(response.data)
+      })
+      .catch((error) => console.error(error))
+  }, [])
+
+  const data = [
+    {
+      id: 1,
+      name: 'John Doe',
+      date: '2021-05-01',
+      quantity: 1,
+      duration: 1,
+      amount: 1000
+    },
+    {
+      id: 2,
+      name: 'Jane Hana',
+      date: '2021-05-01',
+      quantity: 1,
+      duration: 3,
+      amount: 322
+    },
+    {
+      id: 3,
+      name: 'John Doe',
+      date: '2021-05-01',
+      quantity: 1,
+      duration: 3,
+      amount: 322
+    }
   ]
 
   return (
@@ -210,14 +229,14 @@ export default function ItemDetails () {
               <div className="flex flex-col w-full bg-gray-100 shadow-xl py-3 px-5 items-center justify-center">
                 <div className="flex flex-col w-full h-full">
                   <div className="flex flex-col w-full h-full">
-                    <button className="h-10 w-44 text-base bg-amber-500 text-gray-800 px-2 md:px-6 md:h-12 md:w-auto md:text-lg" onClick={
-                      () => {
+                    <button
+                      className="h-10 w-44 text-base bg-amber-500 text-gray-800 px-2 md:px-6 md:h-12 md:w-auto md:text-lg"
+                      onClick={() => {
                         window.rentalHistoryModal =
                           document.getElementById('rentalHistoryModal')
                         window.rentalHistoryModal.showModal()
-                      }
-
-                    }>
+                      }}
+                    >
                       View Rental History
                     </button>
 
@@ -291,32 +310,13 @@ export default function ItemDetails () {
       >
         <form method="dialog" className="modal-box">
           <h3 className="font-bold text-lg">Rental History</h3>
-          {/* <p className="py-4">No Rental History</p> */}
-          <div className="py-4">
-            {
-              data.map((item, index) => (
-                <RentalHistoryCard data={item} key={index} />
-              ))
-            }
-            {/* <RentalHistoryCard data={data}/> */}
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec
-            diam nec arcu tincidunt malesuada id nec nunc. Curabitur scelerisque
-            in enim pretium iaculis. Nam non sapien mollis, interdum ante
-            posuere, tempus elit. Vestibulum ullamcorper nisl vitae orci
-            convallis pharetra. Vestibulum a pulvinar ligula. Ut a enim volutpat
-            turpis consectetur imperdiet. Praesent vitae metus nibh. Fusce
-            mollis odio velit, maximus tempor tellus sollicitudin malesuada. Sed
-            non imperdiet quam. Nam accumsan augue ut congue ultricies. Integer
-            ac magna vitae augue sollicitudin rhoncus sed vel odio. Fusce nec
-            arcu neque. Duis at lacinia mi. Donec porttitor mi massa, quis
-            venenatis leo aliquet id. Pellentesque nec nibh vel nibh viverra
-            pellentesque. Donec lobortis fermentum enim. Phasellus ut nulla eu
-            ligula eleifend hendrerit. Vestibulum a lobortis magna, non egestas
-            magna. Nulla pellentesque odio vitae sapien convallis pulvinar.
-            Morbi luctus urna sed nibh iaculis faucibus sit amet vehicula nisi.
-            Fusce non lobortis erat. Etiam sit amet convallis tellus, nec
-            gravida nisi. Integer venenatis et lacus quis vulputate.
-          </div>
+          {bookingHistory.length > 0 ? (
+            <div className="py-4">
+              <RentalHistoryCard data={bookingHistory} />
+            </div>
+          ) : (
+            <p className="py-4">No Rental History</p>
+          )}
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn">Close</button>
