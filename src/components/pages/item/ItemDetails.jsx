@@ -11,7 +11,6 @@ import LoadingButton from '../../ui/button/LoadingButton'
 import RentalHistoryCard from './RentalHistoryCard'
 
 import { others } from '@chakra-ui/react'
-import { data } from 'autoprefixer'
 
 export default function ItemDetails () {
   const { id } = useParams()
@@ -185,9 +184,7 @@ export default function ItemDetails () {
                         </button>
                       ) : (
                         <div className="my-2 flex flex-col gap-2">
-                          <Link
-                            to={'/message?to_user=' + item.OwnedBy.ID}
-                          >
+                          <Link to={'/message?to_user=' + item.OwnedBy.ID}>
                             <button className="h-10 w-36 text-base bg-gray-100 border-2 border-orange-400 text-gray-800 px-2 md:px-6 md:h-12 md:w-48 md:text-lg">
                               Message Owner
                             </button>
@@ -304,16 +301,8 @@ export default function ItemDetails () {
         className="modal modal-bottom sm:modal-middle"
       >
         <form method="dialog" className="modal-box">
-          <h3 className="font-bold text-lg">Rental History</h3>
-          {bookingHistory.length > 0 ? (
-            <div className="py-4">
-              <RentalHistoryCard data={bookingHistory} />
-            </div>
-          ) : (
-            <p className="py-4">No Rental History</p>
-          )}
+          <RentalHistoryCard data={bookingHistory} />
           <div className="modal-action">
-            {/* if there is a button in form, it will close the modal */}
             <button className="btn">Close</button>
           </div>
         </form>
