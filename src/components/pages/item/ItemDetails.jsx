@@ -99,7 +99,7 @@ export default function ItemDetails () {
               className="container mx-auto -mt-38 h-screen w-screen"
               style={{ height: 'calc(100vh - 96px)' }}
             >
-              <div className="mt-24 flex flex-col w-full h-2/3 bg-gray-200 py-3 px-5 items-center justify-center">
+              <div className="mt-10 flex flex-col w-full h-auto bg-gray-200 py-3 px-5 items-center justify-center">
                 {/* Images */}
                 <div className="md:p-2 md:w-1/3 md:h-4/5">
                   <div className="carousel w-full h-full mx-auto p-2 shadow-md">
@@ -168,6 +168,16 @@ export default function ItemDetails () {
                           Posted Date: <strong>{formattedDate}</strong>
                         </p>
                       </div>
+                      <button
+                        className="h-8 w-auto text-sm bg-orange-400 text-gray-800 mt-2 px-2 md:my-4 md:px-6 md:h-10 md:w-1/2"
+                        onClick={() => {
+                          window.rentalHistoryModal =
+                            document.getElementById('rentalHistoryModal')
+                          window.rentalHistoryModal.showModal()
+                        }}
+                      >
+                        View Rental History
+                      </button>
                     </div>
                   </div>
                   <div className="flex flex-col w-1/3 items-end my-4 mx-0 md:m-auto">
@@ -221,17 +231,6 @@ export default function ItemDetails () {
               <div className="flex flex-col w-full bg-gray-100 shadow-xl py-3 px-5 items-center justify-center">
                 <div className="flex flex-col w-full h-full">
                   <div className="flex flex-col w-full h-full">
-                    <button
-                      className="h-10 w-44 text-base bg-amber-500 text-gray-800 px-2 md:px-6 md:h-12 md:w-auto md:text-lg"
-                      onClick={() => {
-                        window.rentalHistoryModal =
-                          document.getElementById('rentalHistoryModal')
-                        window.rentalHistoryModal.showModal()
-                      }}
-                    >
-                      View Rental History
-                    </button>
-
                     <h1 className="text-black font-semibold text-xl mt-4">
                       Description
                     </h1>
