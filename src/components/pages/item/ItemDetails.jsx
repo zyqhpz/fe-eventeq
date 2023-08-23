@@ -186,14 +186,9 @@ export default function ItemDetails () {
                       ) : (
                         <div className="my-2 flex flex-col gap-2">
                           <Link
-                            to={{
-                              pathname: '/message',
-                              state: {
-                                item
-                              }
-                            }}
+                            to={'/message?to_user=' + item.OwnedBy.ID}
                           >
-                            <button className="h-10 w-36 text-base bg-white border-2 border-orange-400 text-gray-800 px-2 md:px-6 md:h-12 md:w-48 md:text-lg">
+                            <button className="h-10 w-36 text-base bg-gray-100 border-2 border-orange-400 text-gray-800 px-2 md:px-6 md:h-12 md:w-48 md:text-lg">
                               Message Owner
                             </button>
                           </Link>

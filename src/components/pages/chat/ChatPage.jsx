@@ -5,21 +5,15 @@ import { useLocation } from 'react-router-dom'
 import Navbar from '../../ui/Navbar'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImages, faLocationArrow } from '@fortawesome/free-solid-svg-icons'
+import {
+  faImages,
+  faLocationArrow,
+  faCircleUser
+} from '@fortawesome/free-solid-svg-icons'
 
 import axios from 'axios'
 import path from '../../utils/path'
 import LoadingButton from '../../ui/button/LoadingButton'
-
-/*
-  TODO: fix
-  1. send message to unique user only (done)
-  2. get messages from unique user only (done)
-  3. store in db (done)
-  4. fix time (done)
-  5. fix path WS
-
-*/
 
 export default function ChatPage () {
   const [message, setMessage] = useState([])
@@ -47,6 +41,9 @@ export default function ChatPage () {
   const userId = localStorage.getItem('userId')
 
   const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+
+  const toUser = queryParams.get('to_user')
 
   useEffect(() => {
     if (userId == null) {
@@ -64,6 +61,7 @@ export default function ChatPage () {
         .catch(() => {})
     }
   }, [])
+
   const MessageList = ({ messages }) => (
     <div className="flex flex-col flex-nowrap space-y-4 w-full">
       {messages &&
@@ -167,11 +165,32 @@ export default function ChatPage () {
     setError(false)
   }
 
+  useEffect(() => {
+    if (toUser) {
+      // find user with id == toUser
+      const user = users.find((user) => {
+        return user.ID === toUser
+      })
+
+      if (user) {
+        setSecondUser({ id: user.ID, FirstName: user.FirstName, LastName: user.LastName })
+        setLoadingSecondUser(false)
+        setIsHavingConversation(true)
+        getMessages(userId, user.ID)
+      }
+    } else {
+      // clear messages
+      setMessages([])
+      setSecondUser({ id: null, FirstName: null, LastName: null })
+      setIsHavingConversation(false)
+    }
+  }, [users])
+
   const UsersList = ({ users }) => (
     <div className="flex flex-col flex-nowrap space-y-4 w-full overflow-auto">
       {users &&
-        users.map(({ ID, FirstName, LastName }) => (
-          <User key={ID} id={ID} FirstName={FirstName} LastName={LastName} />
+        users.map(({ ID, FirstName, LastName, IsAvatarImageSet, ProfileImage }) => (
+          <User key={ID} id={ID} FirstName={FirstName} LastName={LastName} IsAvatarImageSet={IsAvatarImageSet} ProfileImage={ProfileImage} />
         ))}
     </div>
   )
@@ -242,23 +261,35 @@ export default function ChatPage () {
     }
   }
 
-  const User = ({ id, FirstName, LastName }) => {
+  const User = ({ id, FirstName, LastName, IsAvatarImageSet, ProfileImage }) => {
     return (
       <div
         key={id}
-        className="px-3 flex items-center bg-grey-light cursor-pointer hover:bg-orange-100 pb-2 border-b"
+        // if id == secondUser.id then add bg-orange-100
+        className={
+          'flex flex-row items-center px-4 py-2 rounded-xl cursor-pointer hover:bg-orange-100 ' +
+          (id === secondUser.id ? 'bg-orange-300' : '')
+        }
         onClick={() => {
-          setSecondUser({ id, FirstName, LastName })
-          setLoadingSecondUser(false)
-          setIsHavingConversation(true)
-          getMessages(userId, id)
-        }
-        }
+          window.location.href = '/message?to_user=' + id
+        }}
       >
-        <img
-          className="h-12 w-12 rounded-full"
-          src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"
-        />
+        {IsAvatarImageSet ? (
+          <>
+            <img
+              src={path.url + 'api/item/image/' + ProfileImage}
+              alt=""
+              className="h-10 w-10 rounded-full object-center object-fill"
+            />
+          </>
+        ) : (
+          <>
+            <FontAwesomeIcon
+              icon={faCircleUser}
+              className="h-10 w-10 rounded-full"
+            />
+          </>
+        )}
         <div className="ml-4 w-full flex items-center justify-between border-grey-lighter py-4">
           <p className="text-grey-darkest">
             {FirstName} {LastName}
@@ -312,7 +343,7 @@ export default function ChatPage () {
                 <div className="w-2/3 border flex flex-col">
                   <div className="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
                     <div className="flex items-center">
-                      <div className="ml-4">
+                      <div className="ml-4 font-semibold">
                         <p className="text-grey-darkest">{isHavingConversation ? secondUser.FirstName + ' ' + secondUser.LastName : 'No conversation selected'}</p>
                       </div>
                     </div>
