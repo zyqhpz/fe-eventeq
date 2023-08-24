@@ -197,7 +197,7 @@ export default function BookingActiveDetailCard ({ booking }) {
                   pathname: '/listing/booking/active/' + booking.ID
                 }}
               >
-                <span className="bg-orange-500 px-6 py-2 text-white">
+                <span className="bg-orange-500 px-2 py-1 text-white">
                   Get Item Now
                   <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
                 </span>
