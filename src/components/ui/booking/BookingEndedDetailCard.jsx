@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar } from '@fortawesome/free-solid-svg-icons'
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons'
+
 export default function BookingEndedDetailCard ({ booking }) {
   let count = 0
+
+  const [haveRating, setHaveRating] = useState(false)
+
+  const stars = 3
 
   const createdDate = new Date(booking.CreatedAt)
   const createdDateStr = createdDate.toLocaleDateString('en-US', {
@@ -152,13 +160,55 @@ export default function BookingEndedDetailCard ({ booking }) {
               </div>
             </div>
           </div>
-          <p className="mt-4 flex flex-row justify-between items-end">
+          <p className="mt-4 flex flex-col md:flex-row justify-between items-end gap-2 md:gap-0">
             <span className="font-semibold text-xs text-gray-800">
               Created On: {createdDateStr}
             </span>
+            {booking.Status === 3 && haveRating ? (
+              <p className="font-regular flex flex-row justify-between text-sm items-center gap-2">
+                <span>Rating:</span>
+                <span className="text-base font-semibold">
+                  {/* stars is over 5, make it repeat the component based on the stars value */}
+                  {Array.from({ length: stars }, (_, index) => (
+                    <FontAwesomeIcon
+                      key={index}
+                      icon={faStar}
+                      className="text-amber-400"
+                    />
+                  ))}
+                  {/* stars is less than 5, make it repeat the component based on the stars value */}
+                  {Array.from({ length: 5 - stars }, (_, index) => (
+                    <FontAwesomeIcon key={index} icon={faStarRegular} />
+                  ))}
+                </span>
+              </p>
+            ) : booking.Status === 3 && !haveRating ? (
+              <button className="flex flex-row items-center font-bold text-xs md:text-sm"
+                onClick={() => {
+                  document.getElementById('giveRatingModal').showModal()
+                }
+                }
+              >
+                <span className="bg-orange-500 px-2 py-1 text-white">
+                  Give Rating
+                  <FontAwesomeIcon icon={faStar} className="ml-2" />
+                </span>
+              </button>
+            ) : null}
           </p>
         </div>
       </div>
+      <dialog
+        id="giveRatingModal"
+        className="modal modal-bottom sm:modal-middle"
+      >
+        <form method="dialog" className="modal-box">
+          <h3 className="text-lg font-semibold">Give Rating</h3>
+          <div className="modal-action">
+            <button className="btn">Close</button>
+          </div>
+        </form>
+      </dialog>
     </div>
   )
 }
