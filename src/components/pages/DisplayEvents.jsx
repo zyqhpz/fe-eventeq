@@ -18,12 +18,6 @@ export default function DisplayEvents () {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState([])
 
-  const options = [
-    { value: 'mixer', label: 'Mixer' },
-    { value: 'speaker', label: 'Speaker' },
-    { value: 'microphone', label: 'Microphone' }
-  ]
-
   useEffect(() => {
     axios
       .get(path.url + 'api/eventsActiveWithUser')
@@ -60,8 +54,8 @@ export default function DisplayEvents () {
       {/* div for items list */}
       <div className="flex flex-col items-center justify-center px-2 md:px-12 lg:px-32 py-12">
         {/* Search bar and category filter */}
-        <div className="flex justify-start w-full bg-orange-500 p-4 mb-4">
-          <h1 className="text-lg md:text-2xl font-bold">
+        <div className="flex justify-start w-full bg-orange-500 p-4 mb-4 shadow-lg">
+          <h1 className="text-lg md:text-2xl font-bold text-white">
             Events Happening Soon
           </h1>
         </div>
@@ -94,11 +88,26 @@ export default function DisplayEvents () {
             ))}
           </div>
         ) : (
-          // For loop of items
           <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
-            {events.map((event) => (
-              <EventCard key={event.ID} event={event} />
-            ))}
+            {events.map((event) => {
+              // event.StartDate is a string in DD/MM/YYYY format
+              const eventStartDate = new Date(
+                event.StartDate.substring(6, 10),
+                event.StartDate.substring(3, 5) - 1,
+                event.StartDate.substring(0, 2)
+              )
+              const currentDate = new Date()
+
+              // console.log(eventStartDate)
+              // console.log(currentDate)
+
+              // Compare event start date with the current date
+              if (eventStartDate > currentDate) {
+                return <EventCard key={event.ID} event={event} />
+              } else {
+                return null // Don't render the card if the event has passed
+              }
+            })}
           </div>
         )}
       </div>

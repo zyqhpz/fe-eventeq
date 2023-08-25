@@ -49,6 +49,9 @@ export default function EventCard ({ event }) {
             </p>
           </div> */}
           <div>
+            {event.StartDate} - {event.EndDate}
+          </div>
+          <div>
             <p className="text-gray-500 text-xs">
               {event.Location.State} - {event.Location.District}
             </p>

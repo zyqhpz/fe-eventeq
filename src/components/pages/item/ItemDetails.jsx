@@ -7,11 +7,15 @@ import path from '../../utils/path'
 
 import Navbar from '../../ui/Navbar'
 import LoadingButton from '../../ui/button/LoadingButton'
+
+import RentalHistoryCard from './RentalHistoryCard'
+
 import { others } from '@chakra-ui/react'
 
 export default function ItemDetails () {
   const { id } = useParams()
   const [item, setItem] = useState(null)
+  const [bookingHistory, setBookingHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
   const [formattedDate, setFormattedDate] = useState('')
@@ -47,10 +51,46 @@ export default function ItemDetails () {
       .catch((error) => console.error(error))
   }, [])
 
+  useEffect(() => {
+    axios
+      .get(path.url + 'api/item/' + id + '/booking')
+      .then((response) => {
+        setBookingHistory(response.data)
+      })
+      .catch((error) => console.error(error))
+  }, [])
+
+  const data = [
+    {
+      id: 1,
+      name: 'John Doe',
+      date: '2021-05-01',
+      quantity: 1,
+      duration: 1,
+      amount: 1000
+    },
+    {
+      id: 2,
+      name: 'Jane Hana',
+      date: '2021-05-01',
+      quantity: 1,
+      duration: 3,
+      amount: 322
+    },
+    {
+      id: 3,
+      name: 'John Doe',
+      date: '2021-05-01',
+      quantity: 1,
+      duration: 3,
+      amount: 322
+    }
+  ]
+
   return (
-    <div className="flex flex-col min-h-screen w-screen overflow-hidden">
+    <div className="flex flex-col w-screen min-h-screen overflow-auto bg-gray-100">
       <Navbar />
-      <div className="bg-gray-100 h-full max-w-full">
+      <div className="h-full max-w-full">
         <div className="flex flex-col items-center justify-center h-full">
           {loading ? (
             <LoadingButton />
@@ -59,7 +99,7 @@ export default function ItemDetails () {
               className="container mx-auto -mt-38 h-screen w-screen"
               style={{ height: 'calc(100vh - 96px)' }}
             >
-              <div className="mt-24 flex flex-col w-full h-2/3 bg-gray-200 py-3 px-5 items-center justify-center">
+              <div className="mt-10 flex flex-col w-full h-auto bg-gray-200 py-3 px-5 items-center justify-center">
                 {/* Images */}
                 <div className="md:p-2 md:w-1/3 md:h-4/5">
                   <div className="carousel w-full h-full mx-auto p-2 shadow-md">
@@ -128,6 +168,16 @@ export default function ItemDetails () {
                           Posted Date: <strong>{formattedDate}</strong>
                         </p>
                       </div>
+                      <button
+                        className="h-8 w-auto text-sm bg-orange-400 text-gray-800 mt-2 px-2 md:my-4 md:px-6 md:h-10 md:w-1/2"
+                        onClick={() => {
+                          window.rentalHistoryModal =
+                            document.getElementById('rentalHistoryModal')
+                          window.rentalHistoryModal.showModal()
+                        }}
+                      >
+                        View Rental History
+                      </button>
                     </div>
                   </div>
                   <div className="flex flex-col w-1/3 items-end my-4 mx-0 md:m-auto">
@@ -144,15 +194,8 @@ export default function ItemDetails () {
                         </button>
                       ) : (
                         <div className="my-2 flex flex-col gap-2">
-                          <Link
-                            to={{
-                              pathname: '/message',
-                              state: {
-                                item
-                              }
-                            }}
-                          >
-                            <button className="h-10 w-36 text-base bg-white border-2 border-orange-400 text-gray-800 px-2 md:px-6 md:h-12 md:w-48 md:text-lg">
+                          <Link to={'/message?to_user=' + item.OwnedBy.ID}>
+                            <button className="h-10 w-36 text-base bg-gray-100 border-2 border-orange-400 text-gray-800 px-2 md:px-6 md:h-12 md:w-48 md:text-lg">
                               Message Owner
                             </button>
                           </Link>
@@ -184,10 +227,85 @@ export default function ItemDetails () {
                   </div>
                 </div>
               </div>
+              {/* Description, Rental History, Feedbacks */}
+              <div className="flex flex-col w-full bg-gray-100 shadow-xl py-3 px-5 items-center justify-center">
+                <div className="flex flex-col w-full h-full">
+                  <div className="flex flex-col w-full h-full">
+                    <h1 className="text-black font-semibold text-xl mt-4">
+                      Description
+                    </h1>
+                    <p className="text-black font-regular text-base md:text-lg">
+                      {item.Description}
+                    </p>
+
+                    {/* Feedbacks */}
+                    <h1 className="text-black font-semibold text-xl mt-4">
+                      Feedbacks
+                    </h1>
+                    <div className="flex flex-col w-full h-full">
+                      <div className="flex flex-col w-full h-full">
+                        {item.Feedbacks > 0 ? (
+                          item.Feedbacks.map((feedback) => {
+                            const formattedDate = new Date(
+                              feedback.CreatedAt
+                            ).toLocaleDateString('en-MY', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })
+                            return (
+                              <div
+                                className="flex flex-col w-full h-full"
+                                key={feedback.ID}
+                              >
+                                <div className="flex flex-row w-full h-full">
+                                  <div className="flex flex-col w-1/2">
+                                    <h1 className="text-black font-semibold text-base md:text-xl">
+                                      {feedback.User.FirstName}{' '}
+                                      {feedback.User.LastName}
+                                    </h1>
+                                    <p className="text-black font-regular text-sm md:text-base">
+                                      {formattedDate}
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-col w-1/2 items-end">
+                                    <p className="text-black font-regular text-base md:text-lg">
+                                      {feedback.Rating} / 5
+                                    </p>
+                                    <p className="text-black font-regular text-sm md:text-base">
+                                      {feedback.Comment}
+                                    </p>
+                                  </div>
+                                </div>
+                                <hr className="my-2" />
+                              </div>
+                            )
+                          })
+                        ) : (
+                          <p className="text-black font-regular text-base md:text-lg">
+                            No Feedbacks
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
+      <dialog
+        id="rentalHistoryModal"
+        className="modal modal-bottom sm:modal-middle"
+      >
+        <form method="dialog" className="modal-box">
+          <RentalHistoryCard data={bookingHistory} />
+          <div className="modal-action">
+            <button className="btn">Close</button>
+          </div>
+        </form>
+      </dialog>
     </div>
   )
 }
