@@ -6,10 +6,10 @@ importScripts(
 
 const { routing, strategies } = workbox; // Destructure the workbox modules
 
-
 workbox.routing.registerRoute(
   ({ request }) => request.destination === "image",
-  new workbox.strategies.CacheFirst()
+  new workbox.strategies.NetworkFirst()
 );
+
 
 /* eslint-enable */
