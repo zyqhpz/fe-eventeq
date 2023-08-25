@@ -1,13 +1,11 @@
 // if ifProduction is true, then the path will be the production path
 // if ifProduction is false, then the path will be the development path
-const isProduction = false
+const isProduction = true
 
 const LOCAL = import.meta.env.VITE_PATH_LOCAL
 const DOCKER = import.meta.env.VITE_PATH_DOCKER
 
 // const RAILWAY = process.env.PATH_RAILWAY
-
-console.log('LOCAL: ', LOCAL)
 
 const path = {
   get url () {

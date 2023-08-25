@@ -6,6 +6,11 @@ import './index.css'
 
 import { BrowserRouter } from 'react-router-dom'
 
+import { registerSW } from 'virtual:pwa-register'
+
+// Register the service worker
+registerSW()
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <ChakraProvider>
