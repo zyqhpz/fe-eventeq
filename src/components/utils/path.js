@@ -2,18 +2,23 @@
 // if ifProduction is false, then the path will be the development path
 const isProduction = false
 
+const LOCAL = import.meta.env.VITE_PATH_LOCAL
+const DOCKER = import.meta.env.VITE_PATH_DOCKER
+
+// const RAILWAY = process.env.PATH_RAILWAY
+
+console.log('LOCAL: ', LOCAL)
+
 const path = {
   get url () {
-    // ? 'https://be-eventeq-production.up.railway.app/'
     return isProduction
-      ? 'http://54.254.192.61:8080/'
-      : 'http://localhost:8080/'
+      ? 'https://' + DOCKER
+      : 'http://' + LOCAL
   },
   get ws () {
-    // ? 'wss://be-eventeq-production.up.railway.app/'
     return isProduction
-      ? 'ws://54.254.192.61:8080/'
-      : 'ws://localhost:8080/'
+      ? 'wss://' + DOCKER
+      : 'ws://' + LOCAL
   }
 }
 
