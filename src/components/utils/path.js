@@ -7,8 +7,6 @@ const DOCKER = import.meta.env.VITE_PATH_DOCKER
 
 // const RAILWAY = process.env.PATH_RAILWAY
 
-console.log('LOCAL: ', LOCAL)
-
 const path = {
   get url () {
     return isProduction
