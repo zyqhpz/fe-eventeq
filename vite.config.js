@@ -13,7 +13,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,json,svg}'],
         globDirectory: 'public',
-        swDest: 'public/sw.js',
+        swDest: 'sw.js',
         sourcemap: false
       }
     })
