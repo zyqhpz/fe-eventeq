@@ -92,29 +92,29 @@ export default function BookingItem () {
 
   // SSE
 
-  let eventSource = null // Initialize the EventSource instance
+  // let eventSource = null // Initialize the EventSource instance
 
-  function establishEventSource () {
-    if (eventSource) {
-    // If the connection is already established, exit
-      return
-    }
+  // function establishEventSource () {
+  //   if (eventSource) {
+  //   // If the connection is already established, exit
+  //     return
+  //   }
 
-    eventSource = new EventSource(path.url + 'sse/validation')
+  //   eventSource = new EventSource(path.url + 'sse/validation')
 
-    eventSource.onmessage = (event) => {
-      console.log('Received event:', event.data)
-    }
+  //   eventSource.onmessage = (event) => {
+  //     console.log('Received event:', event.data)
+  //   }
 
-    eventSource.onerror = (error) => {
-      console.error('EventSource failed:', error)
-      eventSource.close() // Close the connection on error
-      eventSource = null // Reset the EventSource instance
-    }
-  }
+  //   eventSource.onerror = (error) => {
+  //     console.error('EventSource failed:', error)
+  //     eventSource.close() // Close the connection on error
+  //     eventSource = null // Reset the EventSource instance
+  //   }
+  // }
 
-  // Call the function to establish EventSource connection
-  establishEventSource()
+  // // Call the function to establish EventSource connection
+  // establishEventSource()
 
   return (
     <div className="flex flex-col w-screen min-h-screen overflow-auto bg-gray-100">
