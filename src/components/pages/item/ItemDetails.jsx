@@ -10,6 +10,10 @@ import LoadingButton from '../../ui/button/LoadingButton'
 
 import RentalHistoryCard from './RentalHistoryCard'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar, faCircleUser } from '@fortawesome/free-solid-svg-icons'
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons'
+
 import { others } from '@chakra-ui/react'
 
 export default function ItemDetails () {
@@ -60,32 +64,59 @@ export default function ItemDetails () {
       .catch((error) => console.error(error))
   }, [])
 
-  const data = [
-    {
-      id: 1,
-      name: 'John Doe',
-      date: '2021-05-01',
-      quantity: 1,
-      duration: 1,
-      amount: 1000
-    },
-    {
-      id: 2,
-      name: 'Jane Hana',
-      date: '2021-05-01',
-      quantity: 1,
-      duration: 3,
-      amount: 322
-    },
-    {
-      id: 3,
-      name: 'John Doe',
-      date: '2021-05-01',
-      quantity: 1,
-      duration: 3,
-      amount: 322
+  // feedbacks
+  const [feedbacks, setFeedbacks] = useState([])
+
+  useEffect(() => {
+    axios
+      .get(path.url + 'api/item/' + id + '/feedback')
+      .then((response) => {
+        setFeedbacks(response.data)
+      })
+      .catch((error) => console.error(error))
+  }, [])
+
+  const StarRating = (rating) => {
+    const getRatingLabel = () => {
+      switch (rating) {
+        case 5:
+          return <span className="text-amber-600">Amazing</span>
+        case 4:
+          return <span className="text-amber-600">Good</span>
+        case 3:
+          return 'Fair'
+        case 2:
+          return 'Poor'
+        case 1:
+          return 'Terrible'
+        default:
+          return ''
+      }
     }
-  ]
+
+    return (
+      <div>
+        <div className="flex flex-row place-items-center">
+          {[...Array(5)].map((_, index) => (
+            <span
+              key={index}
+              className={`star ${
+                index < rating
+                  ? 'text-amber-400'
+                  : 'text-gray-400 hover:text-amber-400'
+              }`}
+            >
+              <FontAwesomeIcon
+                icon={index < rating ? faStar : faStarRegular}
+                className="inline"
+              />
+            </span>
+          ))}
+          <p className="text-sm ml-4">{getRatingLabel()}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col w-screen min-h-screen overflow-auto bg-gray-100">
@@ -156,14 +187,28 @@ export default function ItemDetails () {
                       {item.Name}
                     </h1>
                     <div className="flex flex-col">
-                      <h1 className="text-black font-regular text-base md:text-xl">
-                        {item.OwnedBy.FirstName} {item.OwnedBy.LastName}
-                      </h1>
+                      <div className="flex gap-x-2 text-base md:text-xl my-2">
+                        {item.OwnedBy.IsAvatarImageSet ? (
+                          <img
+                            src={
+                              path.url +
+                              'api/item/image/' +
+                              item.OwnedBy.ProfileImage
+                            }
+                            alt=""
+                            className="h-4 w-4 md:h-7 md:w-7 rounded-full object-cover"
+                          />
+                        ) : (
+                          <FontAwesomeIcon
+                            icon={faCircleUser}
+                            className="h-4 w-4 md:h-7 m:w-7 text-gray-500"
+                          />
+                        )}
+                        <p className="font-semibold text-gray-900">
+                          {item.OwnedBy.FirstName} {item.OwnedBy.LastName}
+                        </p>
+                      </div>
                       <div className="flex flex-row items-center ml-2">
-                        {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg> */}
-                        {/* <h1 className="text-black font-regular text-xl">{item.OwnedBy.Rating}</h1> */}
                         <p className="text-sm md:text-base">
                           Posted Date: <strong>{formattedDate}</strong>
                         </p>
@@ -242,15 +287,15 @@ export default function ItemDetails () {
                     <h1 className="text-black font-semibold text-xl mt-4">
                       Feedbacks
                     </h1>
-                    <div className="flex flex-col w-full h-full">
-                      <div className="flex flex-col w-full h-full">
-                        {item.Feedbacks > 0 ? (
-                          item.Feedbacks.map((feedback) => {
+                    <div className="flex flex-col w-full h-full p-4">
+                      <div className="flex flex-col w-full h-full p-4 border-2 shadow-sm gap-2">
+                        {feedbacks && feedbacks.length > 0 ? (
+                          feedbacks.map((feedback) => {
                             const formattedDate = new Date(
                               feedback.CreatedAt
                             ).toLocaleDateString('en-MY', {
                               year: 'numeric',
-                              month: 'long',
+                              month: 'numeric',
                               day: 'numeric'
                             })
                             return (
@@ -260,20 +305,20 @@ export default function ItemDetails () {
                               >
                                 <div className="flex flex-row w-full h-full">
                                   <div className="flex flex-col w-1/2">
-                                    <h1 className="text-black font-semibold text-base md:text-xl">
+                                    {/* <h1 className="text-black font-semibold text-base md:text-xl">
                                       {feedback.User.FirstName}{' '}
                                       {feedback.User.LastName}
-                                    </h1>
+                                    </h1> */}
                                     <p className="text-black font-regular text-sm md:text-base">
                                       {formattedDate}
                                     </p>
                                   </div>
                                   <div className="flex flex-col w-1/2 items-end">
                                     <p className="text-black font-regular text-base md:text-lg">
-                                      {feedback.Rating} / 5
+                                      {StarRating(feedback.Rating)}
                                     </p>
                                     <p className="text-black font-regular text-sm md:text-base">
-                                      {feedback.Comment}
+                                      {feedback.Review}
                                     </p>
                                   </div>
                                 </div>
