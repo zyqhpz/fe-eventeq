@@ -14,8 +14,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faCircleUser } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons'
 
-import { others } from '@chakra-ui/react'
-
 export default function ItemDetails () {
   const { id } = useParams()
   const [item, setItem] = useState(null)
@@ -305,10 +303,6 @@ export default function ItemDetails () {
                               >
                                 <div className="flex flex-row w-full h-full">
                                   <div className="flex flex-col w-1/2">
-                                    {/* <h1 className="text-black font-semibold text-base md:text-xl">
-                                      {feedback.User.FirstName}{' '}
-                                      {feedback.User.LastName}
-                                    </h1> */}
                                     <p className="text-black font-regular text-sm md:text-base">
                                       {formattedDate}
                                     </p>
