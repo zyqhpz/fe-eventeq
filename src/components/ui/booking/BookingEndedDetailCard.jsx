@@ -140,7 +140,7 @@ export default function BookingEndedDetailCard ({ booking }) {
                 </span>
               ) : booking.Status === 6 ? (
                 <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                  Late Payment
+                  Unpaid
                 </span>
               ) : (
                 <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
