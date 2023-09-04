@@ -135,18 +135,41 @@ export default function BookingItem () {
   })
 
   const handleDateValueChange = (newValue) => {
-    // calculate duration
     if (newValue.startDate !== null || newValue.endDate !== null) {
-      const startDate = new Date(newValue.startDate)
-      const endDate = new Date(newValue.endDate)
+      // get current date in MY GMT+8
+      const date = new Date()
+      const dateMY = date.toLocaleString('en-US', {
+        timeZone: 'Asia/Kuala_Lumpur'
+      })
 
-      const duration = (endDate - startDate) / (1000 * 3600 * 24) + 1
-      setDuration(duration)
+      const parts = dateMY.split(', ')
+      const dateParts = parts[0].split('/')
+
+      const year = dateParts[2]
+      const month = dateParts[0].padStart(2, '0')
+      const day = dateParts[1].padStart(2, '0')
+
+      const formattedDate = `${year}-${month}-${day}`
+
+      // return error if selected date is before dateMY
+      if (new Date(newValue.startDate) <= new Date(formattedDate) || new Date(newValue.endDate) <= new Date(formattedDate)) {
+        ErrorBooking('Please select a date after today.')
+        newValue = {
+          startDate: null,
+          endDate: null
+        }
+        setDateValue(newValue)
+      } else {
+        const startDate = new Date(newValue.startDate)
+        const endDate = new Date(newValue.endDate)
+
+        const duration = (endDate - startDate) / (1000 * 3600 * 24) + 1
+        setDuration(duration)
+        setDateValue(newValue)
+      }
     } else {
       setDuration(1)
     }
-
-    setDateValue(newValue)
   }
 
   // Error feedback if booking failed
@@ -416,9 +439,6 @@ export default function BookingItem () {
             </div>
           </div>
           <div className="flex flex-col gap-2 mt-4">
-            {/* <div>
-              <h1 className='text-lg font-bold'>Payment Method</h1>
-            </div> */}
             <button
               className="btn bg-orange-500 hover:bg-orange-600 text-white"
               disabled={bookingButtonIsDisabled}

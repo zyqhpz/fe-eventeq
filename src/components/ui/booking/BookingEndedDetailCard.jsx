@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons'
 
+import path from '../../utils/path'
+
+import StarRating from './StarRating'
+
 export default function BookingEndedDetailCard ({ booking }) {
   let count = 0
-
-  const [haveRating, setHaveRating] = useState(false)
-
-  const stars = 3
 
   const createdDate = new Date(booking.CreatedAt)
   const createdDateStr = createdDate.toLocaleDateString('en-US', {
@@ -58,6 +58,76 @@ export default function BookingEndedDetailCard ({ booking }) {
     return returnDateStr
   }
 
+  // Rating state and handler
+  const [haveRating, setHaveRating] = useState(false)
+  const [selectedStars, setSelectedStars] = useState(5)
+  const [review, setReview] = useState('')
+  const [stars, setStars] = useState(0)
+  const [isReviewEmpty, setIsReviewEmpty] = useState(true)
+
+  // use UseEffect to check if the booking has rating
+  useEffect(() => {
+    if (booking.Feedback.Rating !== 0 && booking.Feedback.Review !== '') {
+      setHaveRating(true)
+      setStars(booking.Feedback.Rating)
+    }
+  }, [booking.Feedback.Rating, booking.Feedback.Review])
+
+  function handleRating (rating) {
+    setSelectedStars(rating)
+  }
+
+  function handleSubmitRating () {
+    if (review === '') {
+      // Set isReviewEmpty to true and apply red border to the textarea
+      setIsReviewEmpty(true)
+      return
+    }
+
+    // get value from input name #bookingId
+    const bookingId = document.querySelector('#bookingId').value
+
+    const rating = {
+      bookingId,
+      rating: selectedStars,
+      review
+    }
+
+    fetch(path.url + 'api/booking/giveRating', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(rating)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        if (data.status === 'success') {
+          window.location.reload()
+        }
+      })
+      .catch((err) => console.log(err))
+  }
+
+  // if review is empty, disable the submit button
+  useEffect(() => {
+    if (review === '') {
+      setIsReviewEmpty(true)
+    } else {
+      setIsReviewEmpty(false)
+    }
+  }, [review])
+
+  // useEffect to clear the review state when the modal is closed
+  useEffect(() => {
+    const modal = document.getElementById('giveRatingModal')
+    modal.addEventListener('close', () => {
+      handleRating(5)
+      setReview('')
+    })
+  }, [])
+
   return (
     <div className="w-full p-4">
       <div className="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg">
@@ -67,6 +137,10 @@ export default function BookingEndedDetailCard ({ booking }) {
               {booking.Status === 3 ? (
                 <span className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
                   Ended
+                </span>
+              ) : booking.Status === 6 ? (
+                <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                  Unpaid
                 </span>
               ) : (
                 <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
@@ -101,9 +175,14 @@ export default function BookingEndedDetailCard ({ booking }) {
                         {ReturnDate(booking.UpdatedAt)}
                       </span>
                     </div>
-                  ) : (
+                  ) : booking.Status === 5 ? (
                     <div>
                       <span className="font-semibold">Item Not Retrieved</span>
+                    </div>
+                  ) : (
+                    <div className='flex flex-col text-right'>
+                      <span className="font-semibold">Late Payment</span>
+                      <span className='text-xs md:text-sm'><span className='text-red-500'>*</span>Payment must be made 6 hours before booking start date</span>
                     </div>
                   )}
                 </div>
@@ -164,7 +243,7 @@ export default function BookingEndedDetailCard ({ booking }) {
             <span className="font-semibold text-xs text-gray-800">
               Created On: {createdDateStr}
             </span>
-            {booking.Status === 3 && haveRating ? (
+            {booking.Status === 3 && haveRating === true ? (
               <p className="font-regular flex flex-row justify-between text-sm items-center gap-2">
                 <span>Rating:</span>
                 <span className="text-base font-semibold">
@@ -178,16 +257,24 @@ export default function BookingEndedDetailCard ({ booking }) {
                   ))}
                   {/* stars is less than 5, make it repeat the component based on the stars value */}
                   {Array.from({ length: 5 - stars }, (_, index) => (
-                    <FontAwesomeIcon key={index} icon={faStarRegular} />
+                    <FontAwesomeIcon
+                      key={index}
+                      icon={faStarRegular}
+                      className="text-gray-400"
+                    />
                   ))}
                 </span>
               </p>
-            ) : booking.Status === 3 && !haveRating ? (
-              <button className="flex flex-row items-center font-bold text-xs md:text-sm"
+            ) : booking.Status === 3 && haveRating === false ? (
+              <button
+                className="flex flex-row items-center font-bold text-xs md:text-sm"
                 onClick={() => {
                   document.getElementById('giveRatingModal').showModal()
-                }
-                }
+
+                  // append value to input name #bookingId
+                  const bookingId = document.querySelector('#bookingId')
+                  bookingId.value = booking.ID
+                }}
               >
                 <span className="bg-orange-500 px-2 py-1 text-white">
                   Give Rating
@@ -200,12 +287,63 @@ export default function BookingEndedDetailCard ({ booking }) {
       </div>
       <dialog
         id="giveRatingModal"
-        className="modal modal-bottom sm:modal-middle"
+        className={`modal modal-bottom sm:modal-middle ${
+          isReviewEmpty ? 'active' : ''
+        }`}
       >
         <form method="dialog" className="modal-box">
           <h3 className="text-lg font-semibold">Give Rating</h3>
+          {/* get the id from */}
+          <input
+            type="hidden"
+            name="bookingId"
+            id="bookingId"
+          />
+          <div className="flex flex-col mt-4">
+            <label
+              htmlFor="rating"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Rating
+            </label>
+            <StarRating maxStars={5} handleRating={handleRating} />
+          </div>
+          <div className="flex flex-col mt-4">
+            <label
+              htmlFor="review"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Review
+            </label>
+            <textarea
+              id="review"
+              rows="4"
+              className={`block p-2.5 w-full text-sm ${
+                isReviewEmpty ? 'border-red-500 ' : 'border '
+              }text-gray-900 bg-gray-50 rounded-lg border-gray-300`}
+              placeholder="Share more thoughts on the item to help other renters."
+              value={review}
+              onChange={(e) => {
+                setReview(e.target.value)
+              }}
+            ></textarea>
+          </div>
           <div className="modal-action">
-            <button className="btn">Close</button>
+            <button
+              className={`btn btn-warning ${
+                isReviewEmpty ? 'disabled opacity-50' : 'btn-primary'
+              }`}
+              onClick={() => {
+                handleSubmitRating()
+              }}
+              style={{ pointerEvents: isReviewEmpty ? 'none' : 'auto' }}
+            >
+              Submit
+            </button>
+
+            <button className="btn">
+              Cancel
+            </button>
           </div>
         </form>
       </dialog>
