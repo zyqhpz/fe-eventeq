@@ -138,6 +138,10 @@ export default function BookingEndedDetailCard ({ booking }) {
                 <span className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
                   Ended
                 </span>
+              ) : booking.Status === 6 ? (
+                <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                  Late Payment
+                </span>
               ) : (
                 <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
                   Cancelled
@@ -171,9 +175,14 @@ export default function BookingEndedDetailCard ({ booking }) {
                         {ReturnDate(booking.UpdatedAt)}
                       </span>
                     </div>
-                  ) : (
+                  ) : booking.Status === 5 ? (
                     <div>
                       <span className="font-semibold">Item Not Retrieved</span>
+                    </div>
+                  ) : (
+                    <div className='flex flex-col text-right'>
+                      <span className="font-semibold">Late Payment</span>
+                      <span className='text-xs md:text-sm'><span className='text-red-500'>*</span>Payment must be made 6 hours before booking start date</span>
                     </div>
                   )}
                 </div>
