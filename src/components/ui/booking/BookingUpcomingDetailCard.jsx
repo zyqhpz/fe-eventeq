@@ -115,9 +115,17 @@ export default function BookingUpcomingDetailCard ({ booking }) {
         <div className="flex-auto p-4">
           <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1 p-4">
-              <span className="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                Upcoming
-              </span>
+              {
+                booking.Status === -1 ? (
+                  <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                    Unpaid
+                  </span>
+                ) : (
+                  <span className="bg-indigo-100 text-indigo-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                    Upcoming
+                  </span>
+                )
+              }
               <div className="flex flex-col md:flex-row items-center justify-between">
                 <span className="hidden md:flex flex-row items-baseline font-semibold text-xl text-gray-800">
                   Booking Date: {booking.StartDate} - {booking.EndDate}
