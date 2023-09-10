@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
+import { faReceipt, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons'
 
 import path from '../../utils/path'
@@ -180,9 +180,12 @@ export default function BookingEndedDetailCard ({ booking }) {
                       <span className="font-semibold">Item Not Retrieved</span>
                     </div>
                   ) : (
-                    <div className='flex flex-col text-right'>
+                    <div className="flex flex-col text-right">
                       <span className="font-semibold">Late Payment</span>
-                      <span className='text-xs md:text-sm'><span className='text-red-500'>*</span>Payment must be made 6 hours before booking start date</span>
+                      <span className="text-xs md:text-sm">
+                        <span className="text-red-500">*</span>Payment must be
+                        made 6 hours before booking start date
+                      </span>
                     </div>
                   )}
                 </div>
@@ -243,45 +246,63 @@ export default function BookingEndedDetailCard ({ booking }) {
             <span className="font-semibold text-xs text-gray-800">
               Created On: {createdDateStr}
             </span>
-            {booking.Status === 3 && haveRating === true ? (
-              <p className="font-regular flex flex-row justify-between text-sm items-center gap-2">
-                <span>Rating:</span>
-                <span className="text-base font-semibold">
-                  {/* stars is over 5, make it repeat the component based on the stars value */}
-                  {Array.from({ length: stars }, (_, index) => (
-                    <FontAwesomeIcon
-                      key={index}
-                      icon={faStar}
-                      className="text-amber-400"
-                    />
-                  ))}
-                  {/* stars is less than 5, make it repeat the component based on the stars value */}
-                  {Array.from({ length: 5 - stars }, (_, index) => (
-                    <FontAwesomeIcon
-                      key={index}
-                      icon={faStarRegular}
-                      className="text-gray-400"
-                    />
-                  ))}
-                </span>
-              </p>
-            ) : booking.Status === 3 && haveRating === false ? (
-              <button
-                className="flex flex-row items-center font-bold text-xs md:text-sm"
-                onClick={() => {
-                  document.getElementById('giveRatingModal').showModal()
+            <div className="flex flex-row gap-2">
+              {booking.Status === 3 ? (
+                <button
+                  className="flex flex-row items-center font-bold text-xs md:text-sm"
+                  onClick={() => {
+                    // document.getElementById('giveRatingModal').showModal()
+                    // append value to input name #bookingId
+                    // const bookingId = document.querySelector('#bookingId')
+                    // bookingId.value = booking.ID
+                  }}
+                >
+                  <span className="bg-orange-500 px-2 py-1 text-white">
+                    View Receipt
+                    <FontAwesomeIcon icon={faReceipt} className="ml-2" />
+                  </span>
+                </button>
+              ) : null}
+              {booking.Status === 3 && haveRating === true ? (
+                <p className="font-regular flex flex-row justify-between text-sm items-center gap-2">
+                  <span>Rating:</span>
+                  <span className="text-base font-semibold">
+                    {/* stars is over 5, make it repeat the component based on the stars value */}
+                    {Array.from({ length: stars }, (_, index) => (
+                      <FontAwesomeIcon
+                        key={index}
+                        icon={faStar}
+                        className="text-amber-400"
+                      />
+                    ))}
+                    {/* stars is less than 5, make it repeat the component based on the stars value */}
+                    {Array.from({ length: 5 - stars }, (_, index) => (
+                      <FontAwesomeIcon
+                        key={index}
+                        icon={faStarRegular}
+                        className="text-gray-400"
+                      />
+                    ))}
+                  </span>
+                </p>
+              ) : booking.Status === 3 && haveRating === false ? (
+                <button
+                  className="flex flex-row items-center font-bold text-xs md:text-sm"
+                  onClick={() => {
+                    document.getElementById('giveRatingModal').showModal()
 
-                  // append value to input name #bookingId
-                  const bookingId = document.querySelector('#bookingId')
-                  bookingId.value = booking.ID
-                }}
-              >
-                <span className="bg-orange-500 px-2 py-1 text-white">
-                  Give Rating
-                  <FontAwesomeIcon icon={faStar} className="ml-2" />
-                </span>
-              </button>
-            ) : null}
+                    // append value to input name #bookingId
+                    const bookingId = document.querySelector('#bookingId')
+                    bookingId.value = booking.ID
+                  }}
+                >
+                  <span className="bg-orange-500 px-2 py-1 text-white">
+                    Give Rating
+                    <FontAwesomeIcon icon={faStar} className="ml-2" />
+                  </span>
+                </button>
+              ) : null}
+            </div>
           </p>
         </div>
       </div>
@@ -294,11 +315,7 @@ export default function BookingEndedDetailCard ({ booking }) {
         <form method="dialog" className="modal-box">
           <h3 className="text-lg font-semibold">Give Rating</h3>
           {/* get the id from */}
-          <input
-            type="hidden"
-            name="bookingId"
-            id="bookingId"
-          />
+          <input type="hidden" name="bookingId" id="bookingId" />
           <div className="flex flex-col mt-4">
             <label
               htmlFor="rating"
@@ -341,9 +358,7 @@ export default function BookingEndedDetailCard ({ booking }) {
               Submit
             </button>
 
-            <button className="btn">
-              Cancel
-            </button>
+            <button className="btn">Cancel</button>
           </div>
         </form>
       </dialog>
