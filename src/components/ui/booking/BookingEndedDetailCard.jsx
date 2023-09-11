@@ -8,7 +8,7 @@ import path from '../../utils/path'
 
 import StarRating from './StarRating'
 
-export default function BookingEndedDetailCard ({ booking }) {
+export default function BookingEndedDetailCard ({ booking, isOwner }) {
   let count = 0
 
   const createdDate = new Date(booking.CreatedAt)
@@ -285,7 +285,7 @@ export default function BookingEndedDetailCard ({ booking }) {
                     ))}
                   </span>
                 </p>
-              ) : booking.Status === 3 && haveRating === false ? (
+              ) : booking.Status === 3 && haveRating === false && isOwner === false ? (
                 <button
                   className="flex flex-row items-center font-bold text-xs md:text-sm"
                   onClick={() => {

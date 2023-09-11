@@ -379,9 +379,7 @@ export default function InBookingDetailCard ({ booking }) {
   }
 
   const StatusElse = () => {
-    return (
-        <BookingEndedDetailCard booking={booking} />
-    )
+    return <BookingEndedDetailCard booking={booking} isOwner={true} />
   }
 
   return (
