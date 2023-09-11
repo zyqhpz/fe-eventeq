@@ -149,11 +149,31 @@ export default function BookingItem () {
       const month = dateParts[0].padStart(2, '0')
       const day = dateParts[1].padStart(2, '0')
 
+      const timeParts = parts[1].split(':')
+
+      // combine hour, minute, second into one string in HH:mm:ss format
+      const currentTimestamps = timeParts[0] + ':' + timeParts[1] + ':' + timeParts[2]
+
       const formattedDate = `${year}-${month}-${day}`
+
+      // add 1 day to formattedDate
+      const formattedDatePlusOne = new Date(formattedDate)
+      formattedDatePlusOne.setDate(formattedDatePlusOne.getDate() + 1)
 
       // return error if selected date is before dateMY
       if (new Date(newValue.startDate) <= new Date(formattedDate) || new Date(newValue.endDate) <= new Date(formattedDate)) {
         ErrorBooking('Please select a date after today.')
+        newValue = {
+          startDate: null,
+          endDate: null
+        }
+        setDateValue(newValue)
+      } else if (
+        currentTimestamps > '03:00:00 PM' &&
+        new Date(newValue.startDate).getTime() === new Date(formattedDatePlusOne).getTime()
+      ) {
+        // check if currentTimestamps is after 12pm
+        ErrorBooking('Booking must be made before 3pm for next day booking.')
         newValue = {
           startDate: null,
           endDate: null
