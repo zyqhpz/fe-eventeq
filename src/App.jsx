@@ -21,6 +21,9 @@ import ChatPage from './components/pages/chat/ChatPage'
 
 import PaymentRedirectPage from './components/pages/payment/PaymentRedirectPage'
 
+import BookingReceipt from './components/pages/receipt/BookingReceipt'
+import ReactPDF from '@react-pdf/renderer';
+
 function App () {
   return (
     <div className="App">
@@ -57,6 +60,9 @@ function App () {
         <Route
           path="/payment/redirect" element={<PaymentRedirectPage />}
         />
+
+        {/* PDF */}
+        <Route path='/booking/receipt/pdf' element={<BookingReceipt />} />
       </Routes>
     </div>
   )
