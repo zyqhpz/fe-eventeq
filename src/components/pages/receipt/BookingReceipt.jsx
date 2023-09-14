@@ -1,5 +1,6 @@
-import React from 'react';
-import { Page, Text, View, Document, StyleSheet, ReactPDF } from '@react-pdf/renderer';
+import React from 'react'
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer'
+// import { useParams } from 'react-router-dom'
 
 // Create styles
 const styles = StyleSheet.create({
@@ -12,7 +13,11 @@ const styles = StyleSheet.create({
     padding: 10,
     flexGrow: 1
   }
-});
+})
+
+// const { bookingId } = useParams()
+
+// console.log(bookingId)
 
 // Create Document Component
 const MyDocument = () => (
@@ -26,8 +31,8 @@ const MyDocument = () => (
       </View>
     </Page>
   </Document>
-);
+)
 
-ReactPDF.renderToStream(<MyDocument />);
+// ReactPDF.renderToStream(<MyDocument />)
 
-export default MyDocument;
+export default MyDocument
