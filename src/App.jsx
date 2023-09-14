@@ -4,7 +4,7 @@ import NotFound from './components/pages/NotFound'
 import SignUp from './components/pages/SignUp'
 import ManageProfile from './components/pages/profile/ManageProfile'
 
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Link } from 'react-router-dom'
 import DisplayImage from './components/pages/DisplayImage'
 
 import ManageItem from './components/pages/item/ManageItem'
@@ -20,6 +20,9 @@ import ManageEvent from './components/pages/event/ManageEvent'
 import ChatPage from './components/pages/chat/ChatPage'
 
 import PaymentRedirectPage from './components/pages/payment/PaymentRedirectPage'
+
+import BookingReceipt from './components/pages/receipt/BookingReceipt'
+import { PDFViewer } from '@react-pdf/renderer' // Import PDFViewer
 
 function App () {
   return (
@@ -54,8 +57,20 @@ function App () {
         <Route path="/message/" element={<ChatPage />} />
 
         {/* Payment */}
+        <Route path="/payment/redirect" element={<PaymentRedirectPage />} />
+
+        {/* PDF */}
         <Route
-          path="/payment/redirect" element={<PaymentRedirectPage />}
+          path="/booking/:bookingId/receipt/pdf"
+          element={
+            <div className="w-screen h-screen">
+              {/* <Link to="/">Back to Home</Link> */}
+              {/* Wrap the PDF content in PDFViewer */}
+              <PDFViewer width="100%" height="100%">
+                <BookingReceipt />
+              </PDFViewer>
+            </div>
+          }
         />
       </Routes>
     </div>

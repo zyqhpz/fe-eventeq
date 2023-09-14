@@ -286,6 +286,7 @@ export default function BookingItem () {
                           endedBooking.map((booking) => (
                             <BookingEndedDetailCard
                               booking={booking}
+                              isOwner={false}
                               key={booking.ID}
                             />
                           ))
