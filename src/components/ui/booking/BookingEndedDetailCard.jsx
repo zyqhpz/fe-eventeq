@@ -4,9 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faReceipt, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons'
 
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer'
+
 import path from '../../utils/path'
 
 import StarRating from './StarRating'
+
+import BookingReceipt from '../../pages/receipt/BookingReceipt'
 
 export default function BookingEndedDetailCard ({ booking, isOwner }) {
   let count = 0
@@ -247,30 +251,31 @@ export default function BookingEndedDetailCard ({ booking, isOwner }) {
             </span>
             <div className="flex flex-row gap-2">
               {booking.Status === 3 ? (
-                <button
-                  className="flex flex-row items-center font-bold text-xs md:text-sm"
-                  onClick={() => {
-                    // open receipt
-                    window.open(
-                      `/booking/${booking.ID}/receipt/pdf`,
-                      '_blank'
-                    )
-
-                    // download receipt
-                    // window.location.href = `/booking/${booking.ID}/receipt/pdf`
-                  }}
+                <BlobProvider
+                  document={<BookingReceipt bookingId={booking.ID} />}
+                  fileName="EventEQ-Booking Receipt.pdf"
                 >
-                  {/* <a
-                    href={`${path.url}booking/${booking.ID}/receipt/pdf`}
-                    download="EventEQ-Booking Receipt.pdf" // Specify the desired filename here
-                  >
-                    Download PDF
-                  </a> */}
-                  <span className="bg-orange-500 px-2 py-1 text-white">
-                    View Receipt
-                    <FontAwesomeIcon icon={faReceipt} className="ml-2" />
-                  </span>
-                </button>
+                  {({ blob, url, loading, error }) => {
+                    // Do whatever you need with blob here
+                    return (
+                      <a
+                        href={url}
+                        download="EventEQ (Booking Receipt).pdf" // Specify the desired filename here
+                      >
+                        <button className="flex flex-row items-center font-bold text-xs md:text-sm">
+                          <span className="bg-orange-500 px-2 py-1 text-white">
+                            View Receipt
+                            <FontAwesomeIcon
+                              icon={faReceipt}
+                              className="ml-2"
+                            />
+                          </span>
+                        </button>
+                      </a>
+                    )
+                  }
+                  }
+                </BlobProvider>
               ) : null}
               {booking.Status === 3 && haveRating === true ? (
                 <p className="font-regular flex flex-row justify-between text-sm items-center gap-2">
