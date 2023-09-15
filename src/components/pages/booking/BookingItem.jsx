@@ -319,15 +319,6 @@ export default function BookingItem () {
         </div>
         {/* right side */}
         <div className="w-full md:w-1/2 md:pr-3">
-          <div className="flex flex-row items-center justify-end gap-2">
-            <img
-              className="mask mask-squircle h-10 w-10 object-cover hidden md:block"
-              src="https://images.unsplash.com/photo-1457449940276-e8deed18bfff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-            />
-            <h1 className="text-lg font-regular">
-              {/* {user.FirstName + ' ' + user.LastName} */}
-            </h1>
-          </div>
           <div className="flex flex-col-reverse md:flex-col gap-2 relative w-full">
             <div className='mt-4 md:mt-0'>
               <h1 className="text-lg md:text-2xl font-bold">Booking Summary</h1>
