@@ -11,6 +11,9 @@ import {
 
 import EventEQLogo from '../../../../src/assets/EventEQ.png'
 
+import RobotoRegular from '../../../assets/fonts/Roboto/Roboto-Regular.ttf'
+import RobotoBold from '../../../assets/fonts/Roboto/Roboto-Bold.ttf'
+
 import path from '../../utils/path'
 
 const tailwindStyles = {
@@ -25,29 +28,11 @@ Font.register({
   family: 'Roboto',
   fonts: [
     {
-      src: '../../../../src/assets/fonts/Roboto/Roboto-Regular.ttf'
+      src: RobotoRegular
     },
     {
-      src: '../../../../src/assets/fonts/Roboto/Roboto-Bold.ttf',
+      src: RobotoBold,
       fontWeight: 'bold'
-    },
-    {
-      src: '../../../../src/assets/fonts/Roboto/Roboto-Italic.ttf',
-      fontWeight: 'normal',
-      fontStyle: 'italic'
-    },
-    {
-      src: '../../../../src/assets/fonts/Roboto/Roboto-BoldItalic.ttf',
-      fontWeight: 'bold',
-      fontStyle: 'italic'
-    },
-    {
-      src: '../../../../src/assets/fonts/Roboto/Roboto-Light.ttf',
-      fontWeight: 'light'
-    },
-    {
-      src: '../../../../src/assets/fonts/Roboto/Roboto-Medium.ttf',
-      fontWeight: 'medium'
     }
   ]
 })
