@@ -64,8 +64,6 @@ function App () {
           path="/booking/:bookingId/receipt/pdf"
           element={
             <div className="w-screen h-screen">
-              {/* <Link to="/">Back to Home</Link> */}
-              {/* Wrap the PDF content in PDFViewer */}
               <PDFViewer width="100%" height="100%">
                 <BookingReceipt />
               </PDFViewer>
