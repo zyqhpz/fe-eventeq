@@ -155,7 +155,6 @@ export default function BookingReceipt () {
         .then((res) => res.json())
         .then((data) => {
           if (data !== null) {
-            console.log(data)
             setData(data)
           }
         })
