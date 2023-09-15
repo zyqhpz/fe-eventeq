@@ -102,7 +102,6 @@ export default function BookingEndedDetailCard ({ booking, isOwner }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         if (data.status === 'success') {
           window.location.reload()
         }
