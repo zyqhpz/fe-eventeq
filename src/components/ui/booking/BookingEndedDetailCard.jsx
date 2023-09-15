@@ -251,12 +251,22 @@ export default function BookingEndedDetailCard ({ booking, isOwner }) {
                 <button
                   className="flex flex-row items-center font-bold text-xs md:text-sm"
                   onClick={() => {
-                    // document.getElementById('giveRatingModal').showModal()
-                    // append value to input name #bookingId
-                    // const bookingId = document.querySelector('#bookingId')
-                    // bookingId.value = booking.ID
+                    // open receipt
+                    window.open(
+                      `/booking/${booking.ID}/receipt/pdf`,
+                      '_blank'
+                    )
+
+                    // download receipt
+                    // window.location.href = `/booking/${booking.ID}/receipt/pdf`
                   }}
                 >
+                  {/* <a
+                    href={`${path.url}booking/${booking.ID}/receipt/pdf`}
+                    download="EventEQ-Booking Receipt.pdf" // Specify the desired filename here
+                  >
+                    Download PDF
+                  </a> */}
                   <span className="bg-orange-500 px-2 py-1 text-white">
                     View Receipt
                     <FontAwesomeIcon icon={faReceipt} className="ml-2" />
@@ -285,7 +295,9 @@ export default function BookingEndedDetailCard ({ booking, isOwner }) {
                     ))}
                   </span>
                 </p>
-              ) : booking.Status === 3 && haveRating === false && isOwner === false ? (
+              ) : booking.Status === 3 &&
+                haveRating === false &&
+                isOwner === false ? (
                 <button
                   className="flex flex-row items-center font-bold text-xs md:text-sm"
                   onClick={() => {
@@ -301,7 +313,7 @@ export default function BookingEndedDetailCard ({ booking, isOwner }) {
                     <FontAwesomeIcon icon={faStar} className="ml-2" />
                   </span>
                 </button>
-              ) : null}
+                  ) : null}
             </div>
           </p>
         </div>
