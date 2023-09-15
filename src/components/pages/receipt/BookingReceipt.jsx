@@ -125,10 +125,11 @@ const styles = StyleSheet.create({
   }
 })
 
-export default function BookingReceipt () {
+export default function BookingReceipt ({ bookingId }) {
   // Extract the bookingId from the URL
   const pathParts = window.location.pathname.split('/')
-  const bookingId = pathParts[pathParts.indexOf('booking') + 1]
+
+  if (bookingId === undefined) bookingId = pathParts[pathParts.indexOf('booking') + 1]
 
   const [data, setData] = useState({})
 
