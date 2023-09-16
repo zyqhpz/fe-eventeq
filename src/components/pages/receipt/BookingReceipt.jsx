@@ -209,7 +209,11 @@ export default function BookingReceipt ({ bookingId }) {
                 </Text>{' '}
                 {data.Booking.StartDate}
                 {' - '}
-                {data.Booking.EndDate}
+                {data.Booking.EndDate} (
+                {data.Duration === 1
+                  ? data.Duration + ' day'
+                  : data.Duration + ' days'}
+                )
               </Text>
             </View>
           ) : (
@@ -277,7 +281,9 @@ export default function BookingReceipt ({ bookingId }) {
                   <View style={styles.tableCell}>
                     <Text>
                       RM&nbsp;
-                      {parseFloat(item.Quantity * item.Price).toFixed(2)}
+                      {parseFloat(
+                        item.Quantity * item.Price * data.Duration
+                      ).toFixed(2)}
                     </Text>
                   </View>
                 </View>
