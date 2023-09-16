@@ -106,11 +106,16 @@ export default function BookingItem () {
 
   useEffect(() => {
     // calculate subtotal when duration changes
-    const subTotal = bookingItems.reduce(
-      (acc, item) => (acc + item.price * item.quantity) * (duration === 0 ? 1 : duration),
+    const total = bookingItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
       0
     )
+
+    // calculate subTotal after duration is selected
+    const subTotal = total * duration
+
     setSubTotal(subTotal)
+
     // calculate service fee (7%) and round to 2 decimal places
     const serviceFee = Math.round(((subTotal * 7) / 100) * 100) / 100
     setServiceFee(serviceFee)
