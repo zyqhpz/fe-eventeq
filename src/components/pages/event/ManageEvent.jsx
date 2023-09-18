@@ -203,33 +203,35 @@ export default function ManageEvent () {
     setStatus(event.Status)
 
     const endDateParts = event.EndDate.split('/')
-    // const endDateFormatted = `${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}`
+    const endDateFormatted = `${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}`
 
-    // const newValue = {
-    //   startDate: new Date(event.StartDate).toLocaleDateString('en-US', {
-    //     year: 'numeric',
-    //     month: 'numeric',
-    //     day: 'numeric'
-    //   }),
-    //   endDate: new Date(endDateFormatted).toLocaleDateString('en-US', {
-    //     year: 'numeric',
-    //     month: 'numeric',
-    //     day: 'numeric'
-    //   })
-    // }
+    const startDateParts = event.StartDate.split('/')
+    const startDateFormatted = `${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`
 
     const newValue = {
-      startDate: event.StartDate,
-      endDate: event.EndDate
+      startDate: new Date(startDateFormatted).toLocaleDateString('en-US',
+        {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric'
+        }
+      ),
+      endDate: new Date(endDateFormatted).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+      })
     }
 
     console.log(newValue)
 
-    setDateValue(newValue)
     setStartDate(event.StartDate)
     setEndDate(event.EndDate)
 
+    setDateValue(newValue)
     handleDateValueChange(newValue)
+
+    setAllFieldsFilled(true)
 
     localStorage.setItem('eventID', event.ID)
   }

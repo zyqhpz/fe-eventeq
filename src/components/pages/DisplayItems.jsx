@@ -160,12 +160,20 @@ export default function DisplayItems () {
             ))}
           </div>
         ) : (
-          // For loop of items
-          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
-            {itemsFiltered.map((item) => (
-              <ItemCard item={item} key={item.ID} className="m-2" />
-            ))}
-          </div>
+          itemsFiltered.length === 0 ? (
+            <div>
+              <h1 className="text-lg md:text-2xl font-bold text-gray-700">
+                No items found
+              </h1>
+            </div>
+          ) : (
+            // For loop of items
+            <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
+              {itemsFiltered.map((item) => (
+                <ItemCard item={item} key={item.ID} className="m-2" />
+              ))}
+            </div>
+          )
         )}
       </div>
     </div>
