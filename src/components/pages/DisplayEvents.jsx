@@ -6,8 +6,6 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-import Select from 'react-select'
-
 import path from '../utils/path'
 import EventCard from '../ui/EventCard'
 
@@ -16,7 +14,6 @@ export default function DisplayEvents () {
   const [eventsFiltered, setEventsFiltered] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState([])
 
   useEffect(() => {
     axios
@@ -31,6 +28,8 @@ export default function DisplayEvents () {
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value)
+
+    console.log(e.target.value)
 
     // filter items by name and description (case insensitive) and return the filtered items array
     const filteredItems = events.filter((event) => {
@@ -88,24 +87,32 @@ export default function DisplayEvents () {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
-            {events.map((event) => {
-              // event.StartDate is a string in DD/MM/YYYY format
-              const eventStartDate = new Date(
-                event.StartDate.substring(6, 10),
-                event.StartDate.substring(3, 5) - 1,
-                event.StartDate.substring(0, 2)
-              )
-              const currentDate = new Date()
+          eventsFiltered.length === 0 ? (
+            <div>
+              <h1 className="text-lg md:text-2xl font-bold text-gray-700">
+                No events found
+              </h1>
+            </div>
+          )
+            : (
+              <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center justify-center gap-4">
+                {/* Use parentheses () instead of curly braces {} to return JSX */}
+                {eventsFiltered.map((event) => {
+                  const eventStartDate = new Date(
+                    event.StartDate.substring(6, 10),
+                    event.StartDate.substring(3, 5) - 1,
+                    event.StartDate.substring(0, 2)
+                  )
+                  const currentDate = new Date()
 
-              // Compare event start date with the current date
-              if (eventStartDate > currentDate) {
-                return <EventCard key={event.ID} event={event} />
-              } else {
-                return null // Don't render the card if the event has passed
-              }
-            })}
-          </div>
+                  if (eventStartDate > currentDate) {
+                    return <EventCard key={event.ID} event={event} />
+                  } else {
+                    return null // Don't render the card if the event has passed
+                  }
+                })}
+              </div>
+              )
         )}
       </div>
     </div>
