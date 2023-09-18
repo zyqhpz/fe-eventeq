@@ -98,9 +98,6 @@ export default function DisplayEvents () {
               )
               const currentDate = new Date()
 
-              // console.log(eventStartDate)
-              // console.log(currentDate)
-
               // Compare event start date with the current date
               if (eventStartDate > currentDate) {
                 return <EventCard key={event.ID} event={event} />
